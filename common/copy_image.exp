@@ -1,0 +1,7 @@
+#!/usr/bin/expect
+
+set timeout 8
+cd $uclinux_path
+catch {exec cp output/images/$boot_image /tftpboot}
+
+send_log "Copy Images Finished!\n"

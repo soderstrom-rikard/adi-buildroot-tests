@@ -1,0 +1,111 @@
+#!/usr/bin/expect
+
+cd $uclinux_path
+step "user space config - first time"
+set timeout 300
+spawn make config
+while 1 {
+    expect {
+        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+            continue
+        }
+
+        -re "strace.*BR2_PACKAGE_STRACE.*\\\[.*]" {
+            send "N\r"
+        }
+
+        -re "Qt \\\(BR2_PACKAGE_QT\\\) .*\\\[.*]" {
+            send "N\r"
+        }
+
+        -re "openssl \\\(BR2_PACKAGE_OPENSSL.*\\\[.*]" {
+            send "N\r"
+        }
+
+        -re "sqlite.*BR2_PACKAGE_SQLITE.*\\\[.*]" {
+            send "N\r"
+        }
+
+        -re "alsa-lib.*BR2_PACKAGE_ALSA_LIB.*\\\[.*]" {
+            send "N\r"
+        }
+
+        -re "ffmpeg.*BR2_PACKAGE_FFMPEG.*\\\[.*]" {
+            send "N\r"
+        }
+
+        -re "readline.*BR2_PACKAGE_READLINE.*\\\[.*]" {
+            send "N\r"
+        }
+
+        -re "wireless tools.*BR2_PACKAGE_WIRELESS_TOOLS.*\\\[.*]" {
+            send "N\r"
+        }
+
+        -re "tiff.*BR2_PACKAGE_TIFF.*\\\[.*]" {
+            send "N\r"
+        }
+
+        -re "\r\nlib.*LIB.*\\\[Y\/n.*]" {
+            send "N\r"
+        }
+
+        "\\\(*) \\\[*]" {
+            sleep .05
+            send "\r"
+        }
+
+        -re "\[cC]hoice\\\[.*]:" {
+            send "\r"
+        }
+
+        eof {
+            puts "End of configuration"
+            break
+        }
+
+        timeout {
+            puts "\n\nFATAL ERROR: config prompt timeout in make config"
+            break
+        }
+    }
+}
+
+cd $uclinux_path
+step "user space config - second time"
+set timeout 300
+spawn make config
+while 1 {
+    expect {
+        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+            continue
+        }
+
+        -re "ncurses.*BR2_PACKAGE_NCURSES.*\\\[.*]" {
+            send "N\r"
+        }
+
+        -re "\r\nlib.*LIB.*\\\[Y\/n.*]" {
+            send "N\r"
+        }
+
+        "\\\(*) \\\[*]" {
+            sleep .05
+            send "\r"
+        }
+
+        -re "\[cC]hoice\\\[.*]:" {
+            send "\r"
+        }
+
+        eof {
+            puts "End of configuration"
+            break
+        }
+
+        timeout {
+            puts "\n\nFATAL ERROR: config prompt timeout in make config"
+            break
+        }
+    }
+}

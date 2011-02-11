@@ -1,0 +1,16 @@
+#!/usr/bin/expect
+
+cd $uclinux_path
+set timeout 300
+spawn make beagleboard_defconfig
+
+while 1 {
+    expect {
+        "configuration written to" {}
+        eof { break }
+        timeout {
+            puts "\n\nERROR: make default config timeout"
+            break
+        }
+    }
+}
