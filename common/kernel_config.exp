@@ -7,17 +7,20 @@ source  ../common/board_info.exp
 set user /home/test/hudson/workspace
 set project beagle
 set uclinux_path $user/$project
-set log_loc $user/test_scripts/uclinux-dist/logs
+set log_loc $user/$project/logs
 
 # environment settings
 
 set ttydev /dev/ttyS0
 set ttyUSBdev /dev/ttyUSB0
 set kermit_ttydev $ttydev
-set baud_rate   "57600"
+#set baud_rate   "57600"
+set baud_rate "115200"
 set sh_prompt "\[-@].*\[$>#]"
-set uboot_prompt "bfin>"
-set kernel_prompt "root:\[^>].*>"
+#set uboot_prompt "bfin>"
+set uboot_prompt "OMAP3 beagleboard.org #"
+#set kernel_prompt "root:\[^>].*>"
+set kernel_prompt "\n# "
 
 set targetip 10.100.4.50
 set serverip 10.100.4.174

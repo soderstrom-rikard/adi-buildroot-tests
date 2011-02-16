@@ -7,19 +7,19 @@ send_user "Try to figure out if we are in u-boot or the kernel"
 set where_are_we 0
 send " \r"
 expect ">|#"
-send -s "version\r"
+send "version\r"
 set timeout 20
 while 1 {
     expect {
         "U-Boot" {
-            expect ">"
+            expect -re $uboot_prompt
             send_user "We are in u-boot\n"
             set where_are_we "uboot"
             break
         }
 
-        "Linux" {
-            expect ">"
+        "not found" {
+            expect -re $kernel_prompt
             send_user "We are in the kernel\n"
             set where_are_we "kernel"
             break
@@ -53,102 +53,14 @@ if { $where_are_we == "uboot" } {
     }
 }
 
-while 1 {
-    expect {
-        -re  "RAM: +(\[0-9]+) Mi?B" {
-            set ram_size $expect_out(1,string)
-            send_user "\nRAM size is $ram_size MB. \n"
-        }
-
-        "Hit any key " {
-            send "\r"
-            break
-        }
-
-        timeout {
-            send_user "Fail to reboot the kernel.\n"
-            break
-        }
-    }
-}
-
-expect ">"
-send -s "set bootargs $bootargs\r"
-expect ">"
-send -s "set serverip $serverip\r"
-expect ">"
-send -s "set ipaddr $targetip\r"
-expect ">"
-send -s "save\r"
-expect ">"
-
-send -s "printenv ethaddr\r"
-while 1 {
-    expect {
-        -nocase -re "ethaddr=((\[0-9a-f]+:)\{5\}\[0-9a-f]\{2\}).*>" {
-            set target_mac $expect_out(1,string)
-            send_user "mac address=$target_mac\n"
-            break
-        }
-
-        timeout {
-            send_user "FAIL: get mac address\n"
-            break
-        }
-    }
-}
-
-if { $ram_size <= 32 } {
-    set bootaddr $bootaddr_low
-} else {
-    set bootaddr $bootaddr_high
-}
-
-if { $boot_image == "linux" } {
-    set bootcmd bootelf
-} elseif { $boot_image == "uImage" || $boot_image == "vmImage" } {
-    set bootcmd bootm
-}
-
-send -s "tftpboot $bootaddr $boot_image\r"
-while 1 {
-    expect {
-        -re "Bytes transferred = \[0-9]+ \\\((\[0-9a-fA-F]+) hex\\\)" {
-            set image_size $expect_out(1,string)
-            send_user "Image size is $image_size\n"
-            break
-        }
-
-        timeout {
-            send_user "Fail to tftp download linux image."
-            #if tftpboot from high bootaddr failed, try to reload image from low bootaddr
-            break
-        }
-    }
-}
-
-expect ">"
-send -s "run addip\r"
-expect ">"
-send -s "$bootcmd\r"
-
 set timeout 180
 while 1 {
     expect {
-        -re "Kernel panic" {
-            send_user "kernel panic detected... trying to recover from it"
-            exit
-        }
-
-        -re $kernel_prompt {
-            send -s "version\r"
+        -re "login:" {
+            set timeout 15
+            send "root\r"
             expect -re $kernel_prompt
             send_log "successful boot attempt"
-            break
-        }
-
-        -re "turn off boot console early_BFuart0|console handover:boot \\\[early_BFuart0\\\].*-> real \\\[ttyBF1\\\]" {
-            puts "Closed console."
             break
         }
 
@@ -156,20 +68,49 @@ while 1 {
             set linux_version $expect_out(1,string)
         }
 
-# Look for gcc version N.N[.N[.N]]
         -re "gcc version (\[0-9](\.\[0-9]+)+)" {
             set gcc_version [lindex $expect_out(0,string) 2]
         }
 
-        -re "Trace:.*\r\n\r\n" {
-            expect -re "$kernel_prompt"
-            send_user "\nKernel booting up with dump info\n"
+        -re "(Trace:.*\r\n\r\n)|(Kernel panic)" {
+            expect -re $kernel_prompt
+            send_user "\nKernel booting up with dump info or panic\n"
             send_log "\n$TITLE ............\[FAIL\]\n"
             exit
         }
 
         timeout {
             send_user "Reboot the linux kernel timeout!\n"
+            break
+        }
+    }
+}
+
+set timeout 10
+send "ifconfig usb0 $targetip\r"
+while 1 {
+    expect {
+        -re "usb0: link up" {
+            sleep 2
+            break
+        }
+
+        timeout {
+            send_user "Fail to enable ethernet\n"
+            break
+        }
+    }
+}
+
+set timeout 10
+send "inetd\r"
+while 1 {
+    expect {
+        -re $kernel_prompt {
+            break
+        }
+        timeout {
+            send_user "Fail to start inetd\n"
             break
         }
     }
