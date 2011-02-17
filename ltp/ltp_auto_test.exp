@@ -144,6 +144,7 @@ proc recover {} {
    global LTP_SCRIPT_DIR
    global LTP_TESTCASES_DIR
    global kernel_prompt
+   global ltp_test_prompt
    global errorInfo
 
    set MAX_ATTEMPTS  2
@@ -174,11 +175,11 @@ proc recover {} {
                break
             }
 
-            "/bin> " {
+            -re $ltp_test_prompt {
                return 0
             }
 
-             -re $kernel_prompt {
+            -re $kernel_prompt {
                 return 0
             }
 
@@ -231,7 +232,7 @@ proc recover {} {
       if { $state_variable == 2 } {
          set timeout 3
          expect {
-            "> " {
+            "> |# " {
                set state_variable 3
             }
          }
@@ -246,7 +247,7 @@ proc recover {} {
                   report "!!!! error changing dir"
                }
 
-               "/bin> " {
+               -re $ltp_test_prompt {
                   report "!!!! changed to test directory"
                   set state_variable 4
                   break
@@ -265,15 +266,15 @@ proc recover {} {
         expect -nocase -re "up.*full"
 
 	send "export PATH=\$PATH:/bin\r"
-	expect "/bin>"
+	expect -re $ltp_test_prompt
 	send "export TMP=/tmp\r"
-	expect "/bin>"
+	expect -re $ltp_test_prompt
 	send "echo \$PATH\r"
-	expect "/bin>"
+	expect -re $ltp_test_prompt
         send -s "chmod 777 /tmp\r"
 	# Add network configuration.
 	send -s "ifconfig eth0 $ipaddr up\r"
-	expect "/bin>"
+	expect -re $ltp_test_prompt
         if [ catch {exec rcp $LTP_SCRIPT_DIR/config/passwd root@$ipaddr:/etc} ] {
             send_user "$errorInfo\n"
         }
@@ -300,7 +301,7 @@ proc recover {} {
                   set flag 1
                }
 
-               "bin> " {
+               -re $ltp_test_prompt {
                   if { $flag==0} {
                      #sleep 3
                      report "!!!! executed chmod 777 /tmp"
@@ -353,6 +354,7 @@ proc force_reboot {} {
     global LTP_SCRIPT_DIR
     global LTP_TESTCASES_DIR
     global kernel_prompt
+    global ltp_test_prompt
     global errorInfo
 
 
@@ -400,7 +402,7 @@ proc force_reboot {} {
         if { $state_variable == 2 } {
             set timeout 3
                 expect {
-                    "> " {
+                    "> |# " {
                         set state_variable 3
                     }
                 }
@@ -416,7 +418,7 @@ proc force_reboot {} {
                         report "!!!! error change dir"
                     }
 
-                    "/bin> " {
+                    -re $ltp_test_prompt {
                         report "!!!! changed to test directory"
                         set state_variable 4
                         break
@@ -435,14 +437,14 @@ proc force_reboot {} {
             expect -nocase -re "up.*full"
 
             send "export PATH=\$PATH:/bin\r"
-            expect "/bin>"
+            expect -re $ltp_test_prompt
             send "export TMP=/tmp\r"
-            expect "/bin>"
+            expect -re $ltp_test_prompt
             send "echo \$PATH\r"
-            expect "/bin>"
+            expect -re $ltp_test_prompt
             send -s "chmod 777 /tmp\r"
             send -s "ifconfig eth0 $ipaddr up\r"
-            expect "/bin>"
+            expect -re $ltp_test_prompt
             if [ catch {exec rcp $LTP_SCRIPT_DIR/config/passwd root@$ipaddr:/etc} ] {
                 send_user "$errorInfo\n"
             }
@@ -471,7 +473,7 @@ proc force_reboot {} {
                         set flag 1
                     }
 
-                    "bin> " {
+                    -re $ltp_test_prompt {
                         if { $flag==0} {
                             report "!!!! executed chmod 777 /tmp"
                             send -s "ls -l /\r"
@@ -781,6 +783,8 @@ proc all_done { } {
 #
 proc test_cleanup { } {
    global timeout
+   global kernel_prompt
+   global ltp_test_prompt
 
    set old_timeout $timeout
    set crash_flag 0
@@ -800,7 +804,7 @@ proc test_cleanup { } {
             set flag 1
          }
 
-         -re ".*>.*" {
+         -re "$ltp_test_prompt|$kernel_prompt" {
             if { $flag==1} {
 	       report "got kernel prompt"
                break
@@ -857,6 +861,7 @@ proc run_LTP_test { filename command torun mode} {
    global LTP_TESTCASES_DIR
    global ipaddr
    global kernel_prompt
+   global ltp_test_prompt
    global board_type
    global printk_level
    global errorInfo
@@ -1041,12 +1046,12 @@ proc run_LTP_test { filename command torun mode} {
    }
 
    step "get test case \[$filename\] from server"
-   expect ">"
+   expect -re $ltp_test_prompt
    set timeout 1
    send  "\r"
-   expect ">"
-   expect ">"
-   expect ">"
+   expect -re $ltp_test_prompt
+   expect -re $ltp_test_prompt
+   expect -re $ltp_test_prompt
    #while 1 {
    #   expect {
    #      ">" {break}
@@ -1098,7 +1103,7 @@ proc run_LTP_test { filename command torun mode} {
             set result_flag $LTP_FAIL
          }
 
-        "/bin> " {
+         -re $ltp_test_prompt {
             report "---done"
             sleep .5
             break
@@ -1263,10 +1268,10 @@ proc run_LTP_test { filename command torun mode} {
 
   # Check if system is alive
    set timeout 5
-   send "\r"
+   send "ls|grep -c busybox\r"
    while 1 {
       expect {
-         "/bin> " {
+         -re "1.*$ltp_test_prompt" {
             report "System is fine."
             break
          }
@@ -1300,8 +1305,8 @@ set LTP_LOG_DIR                 "$cwd/test/logs"
 set LTP_SCRIPT_DIR              "$cwd"
 
 source $LTP_SCRIPT_DIR/config/config.exp
-source $LTP_SCRIPT_DIR/../kernel_config.exp
-catch {exec cp /home/test/test_scripts/kernel/reset_board $LTP_SCRIPT_DIR/.}
+source $LTP_SCRIPT_DIR/../common/kernel_config.exp
+catch {exec cp $LTP_SCRIPT_DIR/../common/reset_board $LTP_SCRIPT_DIR/.}
 
 # There are rational reasons for defining these things like this.
 # It avoids SUBTLE errors with misspelling in favor of big, obvious errors.
@@ -2747,13 +2752,13 @@ if [ catch {exec rcp $LTP_TESTCASES_DIR/test3 root@$ipaddr:/bin} ] {
 }
 
 send "export PATH=\$PATH:/bin\r"
-expect "/bin>"
+expect -re $ltp_test_prompt
 send "export TMP=/tmp\r"
-expect "/bin>"
+expect -re $ltp_test_prompt
 send "echo \$PATH\r"
-expect "/bin>"
+expect -re $ltp_test_prompt
 send -s "chmod 777 /tmp\r"
-expect "/bin>"
+expect -re $ltp_test_prompt
 #step "chmod /tmp done"
 
 #set timeout 4

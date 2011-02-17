@@ -16,3 +16,4 @@ set cvs_server_addr		"10.99.29.20"
 set SERIAL_PORT_BAUD_RATE	"115200"
 set output_pin			2
 set send_slow			{1 .1}
+set ltp_test_prompt		"(\n#|/bin>) "

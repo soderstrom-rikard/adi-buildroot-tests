@@ -20,7 +20,7 @@ set sh_prompt "\[-@].*\[$>#]"
 #set uboot_prompt "bfin>"
 set uboot_prompt "OMAP3 beagleboard.org #"
 #set kernel_prompt "root:\[^>].*>"
-set kernel_prompt "\n# "
+set kernel_prompt "\n# |root:\[^>].*>"
 
 set targetip 10.100.4.50
 set serverip 10.100.4.174
