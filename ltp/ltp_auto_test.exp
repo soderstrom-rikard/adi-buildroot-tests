@@ -1306,6 +1306,8 @@ set LTP_SCRIPT_DIR              "$cwd"
 
 source $LTP_SCRIPT_DIR/config/config.exp
 source $LTP_SCRIPT_DIR/../common/kernel_config.exp
+source ../common/reboot_kernel.exp
+source ../common/update_image.exp
 catch {exec cp $LTP_SCRIPT_DIR/../common/reset_board $LTP_SCRIPT_DIR/.}
 
 # There are rational reasons for defining these things like this.
