@@ -85,19 +85,3 @@ while 1 {
         }
     }
 }
-
-set timeout 10
-send "ifconfig usb0 $targetip\r"
-while 1 {
-    expect {
-        -re "usb0: link up" {
-            sleep 2
-            break
-        }
-
-        timeout {
-            send_user "Fail to enable ethernet\n"
-            break
-        }
-    }
-}
