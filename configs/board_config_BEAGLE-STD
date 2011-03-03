@@ -1,0 +1,6 @@
+#!/bin/sh
+
+BOARD_CONFIG=BEAGLE-STD
+BINARY_FORMAT=flat
+XENOMAI=off
+BOARD_TYPE=beagle

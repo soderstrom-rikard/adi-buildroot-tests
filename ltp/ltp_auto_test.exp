@@ -146,6 +146,7 @@ proc recover {} {
    global kernel_prompt
    global ltp_test_prompt
    global errorInfo
+   global eth_dev
 
    set MAX_ATTEMPTS  2
 
@@ -201,6 +202,9 @@ proc recover {} {
 
       while 1 {
          expect {
+             "Pelican login:" {
+                 send "root\n"
+             }
 
             "Kernel panic" {
                set state_variable 1
@@ -214,7 +218,6 @@ proc recover {} {
 
             -re $kernel_prompt {
                set state_variable 2
-	       send "\r"
                break
             }
 
@@ -230,13 +233,15 @@ proc recover {} {
 #
 
       if { $state_variable == 2 } {
-         set timeout 3
-         expect {
-            "> |# " {
-               set state_variable 3
-            }
-         }
+          set timeout 3
+          send "\r"
+          expect {
+              -re $kernel_prompt {
+                  set state_variable 3
+              }
+          }
       }
+
       if { $state_variable == 3 } {
          send "cd /bin\r"
          set timeout 1
@@ -273,8 +278,9 @@ proc recover {} {
 	expect -re $ltp_test_prompt
         send -s "chmod 777 /tmp\r"
 	# Add network configuration.
-	send -s "ifconfig eth0 $ipaddr up\r"
-	expect -re $ltp_test_prompt
+	send -s "ifconfig $eth_dev $ipaddr up\r"
+        expect -nocase -re "up.*full"
+
         if [ catch {exec rcp $LTP_SCRIPT_DIR/config/passwd root@$ipaddr:/etc} ] {
             send_user "$errorInfo\n"
         }
@@ -356,6 +362,7 @@ proc force_reboot {} {
     global kernel_prompt
     global ltp_test_prompt
     global errorInfo
+    global eth_dev 
 
 
     report "!!!! force rebooting"
@@ -371,6 +378,9 @@ proc force_reboot {} {
 
         while 1 {
             expect {
+                "Pelican login:" {
+                    send "root\n"
+                }
 
                 "Kernel panic" {
                     set state_variable 1
@@ -384,7 +394,6 @@ proc force_reboot {} {
 
                 -re "BusyBox.*$kernel_prompt" {
                     set state_variable 2
-                    send "\r"
                     break
                 }
 
@@ -401,11 +410,12 @@ proc force_reboot {} {
 
         if { $state_variable == 2 } {
             set timeout 3
-                expect {
-                    "> |# " {
-                        set state_variable 3
-                    }
+            send "\r"
+            expect {
+                -re $kernel_prompt {
+                    set state_variable 3
                 }
+            }
         }
 
         if { $state_variable == 3 } {
@@ -443,8 +453,9 @@ proc force_reboot {} {
             send "echo \$PATH\r"
             expect -re $ltp_test_prompt
             send -s "chmod 777 /tmp\r"
-            send -s "ifconfig eth0 $ipaddr up\r"
-            expect -re $ltp_test_prompt
+            send -s "ifconfig $eth_dev $ipaddr up\r"
+            expect -nocase -re "up.*full"
+
             if [ catch {exec rcp $LTP_SCRIPT_DIR/config/passwd root@$ipaddr:/etc} ] {
                 send_user "$errorInfo\n"
             }
@@ -1159,11 +1170,6 @@ proc run_LTP_test { filename command torun mode} {
             if {$result_flag != $LTP_FAIL} {
                report "---brok"
                set result_flag $LTP_BROKEN
-               if {$filename == "pause03"} {
-                      set result_flag $LTP_CRASH
-                      reset_board
-                      break
-                }
             }
          }
 
@@ -1306,8 +1312,6 @@ set LTP_SCRIPT_DIR              "$cwd"
 
 source $LTP_SCRIPT_DIR/config/config.exp
 source $LTP_SCRIPT_DIR/../common/kernel_config.exp
-source ../common/reboot_kernel.exp
-source ../common/update_image.exp
 catch {exec cp $LTP_SCRIPT_DIR/../common/reset_board $LTP_SCRIPT_DIR/.}
 
 # There are rational reasons for defining these things like this.
@@ -2624,6 +2628,9 @@ for {set i 0} {$i < 50} {incr i} {
    set timeout 180
    while 1 {
       expect {
+          "Pelican login:" {
+              send "root\n"
+          }
 
          -re "Kernel panic|Hardware Trace:" {
             report "Kernel panic detected, exit LTP test!"
@@ -2644,6 +2651,11 @@ for {set i 0} {$i < 50} {incr i} {
          -re $kernel_prompt {
             report "successful boot attempt"
             incr successful_boots
+            if { $board_type == "beagle" } {
+                set timeout 10
+                send "ifconfig $eth_dev $ipaddr\r"
+                expect -nocase -re "up.*full"
+            }
             break
          }
 
@@ -2728,8 +2740,8 @@ set timeout 30
 expect -nocase -re "up.*full"
 
 set timeout 5
-send -s "ifconfig eth0 $ipaddr up\r"
-expect  -re $kernel_prompt
+send -s "ifconfig $eth_dev $ipaddr up\r"
+expect -nocase -re "up.*full"
 
 step "additional setup for tests"
 if [ catch {exec rcp $LTP_SCRIPT_DIR/config/passwd root@$ipaddr:/etc} ] {

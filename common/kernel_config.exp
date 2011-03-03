@@ -3,23 +3,25 @@
 source  ../common/board_info.exp
 
 # directory and file locations
-
-set user /home/test/hudson/workspace
+set workspace_root /home/test/workspace
 set project beagle
-set uclinux_path $user/$project
-set log_loc $user/$project/logs
+set uclinux_path $workspace_root/$project
+set log_loc $workspace_root/logs
 
 # environment settings
+if { $board_type == "beagle" } {
+    set baud_rate "115200"
+    set eth_dev "usb0"
+} else {
+    set baud_rate "57600"
+    set eth_dev "eth0"
+}
 
 set ttydev /dev/ttyS0
 set ttyUSBdev /dev/ttyUSB0
 set kermit_ttydev $ttydev
-#set baud_rate   "57600"
-set baud_rate "115200"
 set sh_prompt "\[-@].*\[$>#]"
-#set uboot_prompt "bfin>"
-set uboot_prompt "OMAP3 beagleboard.org #"
-#set kernel_prompt "root:\[^>].*>"
+set uboot_prompt "OMAP3 beagleboard.org #|bfin>"
 set kernel_prompt "\n# |root:\[^>].*>"
 
 set targetip 10.100.4.50

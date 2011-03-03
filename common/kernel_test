@@ -1,0 +1,302 @@
+#!/bin/bash
+
+#################### Set up variables ####################
+WORKSPACE_ROOT=/home/test/workspace
+BOARD_CONFIG=BEAGLE-STD
+BOARD_TYPE=beagle
+BINARY_FORMAT=flat
+XENOMAI=off
+THIS_LOG=$WORKSPACE_ROOT/log/$BOARD_CONFIG
+
+if [ $# -lt 1 ] ; then
+    echo "Please input [ BOARD_CONFIG BINARY_FORMAT XENOMAI THIS_LOG ]:"
+    echo
+    echo "BOARD_CONFIG :  BEAGLE-STD, etc"
+    echo "BOARD_TYPE :    beagle, etc"
+    echo "BINARY_FORMAT : flat, elf, shared-flat"
+    echo "XENOMAI :       on, off"
+    echo "Example: ./kernel_test $BOARD_CONFIG $BOARD_TYPE $BINARY_FORMAT $WORKSPACE_ROOT $THIS_LOG $XENOMAI"
+    exit 1
+fi
+
+if [ -n "$1" ] ; then
+    BOARD_CONFIG=$1
+fi
+
+if [ -n "$2" ] ; then
+    BOARD_TYPE=$2
+fi
+
+if [ -n "$3" ] ; then
+    BINARY_FORMAT=$3
+fi
+
+if [ -n "$4" ] ; then
+    WORKSPACE_ROOT=$4
+fi
+
+if [ -n "$5" ] ; then
+    THIS_LOG=$5
+fi
+
+if [ -n "$6" ] ; then
+    XENOMAI=$6
+fi
+
+SRC_ROOT=$WORKSPACE_ROOT/$BOARD_TYPE
+TESTSUITES_DIR=$SRC_ROOT/testsuites
+KERNEL_DIR=$SRC_ROOT/linux/linux-2.6.x
+OUTPUT_DIR=$SRC_ROOT/output
+IMAGE_DIR=$OUTPUT_DIR/images
+
+echo -e "# Test environment variables:
+# BOARD_CONFIG=$BOARD_CONFIG
+# BOARD_TYPE=$BOARD_TYPE
+# BINARY_FORMAT=$BINARY_FORMAT
+# WORKSPACE_ROOT=$WORKSPACE_ROOT
+# SRC_ROOT=$SRC_ROOT
+# THIS_LOG=$THIS_LOG
+# XENOMAI=$XENOMAI
+"
+
+
+#################### Check directories ####################
+
+# TODO: create back up directory
+#if [ -d $SRC_ROOT_BAK ] ; then
+#  rm -rf $SRC_ROOT_BAK
+#fi
+if [ ! -d $SRC_ROOT ] ; then
+    exit 2
+fi
+
+if [ ! -d $THIS_LOG ] ; then
+    mkdir -p $THIS_LOG
+else
+    rm -rf $THIS_LOG/*
+fi
+
+
+#################### Set up arrays for all testcase ####################
+
+# Set RESET_BOARD to 1 if your target board could be restarted from host machine parallel port.
+RESET_BOARD=0
+BUILD_POLICY=0
+
+n=100
+
+AUTO_TESTCASE=( [0]="" [$((n+1))]="ltp" )
+
+AUTO_RUN_STATUS=( [0]="0" [$((n+1))]="0" )
+
+MANUAL_TESTCASE=( [0]="" [$((n+1))]="" )
+
+MANUAL_RUN_STATUS=( [0]="0" [$((n+1))]="0" )
+
+
+#################### Secific BOARD_CONFIG definition ####################
+
+if [ $BOARD_CONFIG = "BEAGLE-STD" ] ; then
+    BOARD_TYPE=beagle
+
+    for i in `seq 0 $n`;
+    do
+        AUTO_RUN_STATUS[$i]=0
+        AUTO_RUN_STATUS[$((n+i))]="0"
+    done
+    for i in `seq 0 $n`;
+    do
+        MANUAL_RUN_STATUS[$i]=0
+        MANUAL_RUN_STATUS[$((n+i))]="0"
+    done
+
+    AUTO_RUN_STATUS[$((n+1))]="1";
+
+fi
+
+
+#################### List the tests to be run on the machine ####################
+
+testcase_list=(${AUTO_TESTCASE[@]:0} ${MANUAL_TESTCASE[@]:0})
+run_status_list=(${AUTO_RUN_STATUS[@]:0} ${MANUAL_RUN_STATUS[@]:0})
+
+p1=${#AUTO_TESTCASE[*]}
+q1=${#MANUAL_TESTCASE[*]}
+p=${#testcase_list[*]}
+q=${#run_status_list[*]}
+
+if [ $p -eq $q ] ; then
+    echo "**********************************************"
+    echo "All the testcases that run on this machine:"
+    echo "(Auto test and manual test.)"
+    echo "*** Auto test *** "
+    for i in `seq 0 $p`
+    do
+        if [ ! -z ${run_status_list[$i]} ] && [ ${run_status_list[$i]} == 1 ] ; then
+            if [ $i -eq $p1 ]; then
+                echo
+                echo "*** Manual test *** "
+            fi
+            echo "${testcase_list[$i]}"
+
+        fi
+    done
+    echo "**********************************************"
+fi
+
+
+#################### Preparation before test ####################
+
+TOOLCHAIN_DIR=/opt/arm/bin
+CROSS_COMPILER=$TOOLCHAIN_DIR/arm-none-linux-gnueabi-gcc
+# export PATH=$PATH:/opt/arm/bin
+# /opt/arm/bin/arm-none-linux-gnueabi-gcc -v
+export PATH=$PATH:$TOOLCHAIN_DIR
+$CROSS_COMPILER -v
+echo
+
+cd $TESTSUITES_DIR
+#chmod +x *.exp  */*.exp
+#cp  $TESTSUITES_DIR/test_scripts/compare_kernel_results  $UCLINUX_DIST_SCRIPTS/uclinux-dist
+#cp  $TESTSUITES_DIR/test_scripts/get_test_summary  $UCLINUX_DIST_SCRIPTS/uclinux-dist
+#cp  $TESTSUITES_DIR/test_scripts/get_performance_result  $UCLINUX_DIST_SCRIPTS/uclinux-dist
+#cp  $TESTSUITES_DIR/test_scripts/test_runtime_control  $UCLINUX_DIST_SCRIPTS/uclinux-dist
+#cp  $UCLINUX_DIST_SCRIPTS/uclinux-dist/reset_board $TESTSUITES_DIR
+cp $TESTSUITES_DIR/common/reset_board $TESTSUITES_DIR/ltp
+
+
+#################### Function declaration ####################
+
+# Usage of function gen_testcase:
+# gen_testcase "$result" "$class_name" "$case_name" "$test_time" "$result_xml" "$err_msg"
+gen_testcase () {
+    if [ $1 == "PASS" ] ; then
+        echo -e "<testcase classname=\"$2\" name=\"$3\" time=\"$4\"></testcase>" >>$5
+    elif [ $1 == "FAIL" ] ; then
+        echo -e "<testcase classname=\"$2\" name=\"$3\" time=\"$4\">\n<failure message=\"test fail\">\n$6\n</failure>\n</testcase>" >>$5
+    else
+        echo -e "<testcase classname=\"$2\" name=\"$3\" time=\"$4\">\n<failure message=\"N/A\">\nUnknow result!\n</failure>\n</testcase>" >>$5
+    fi
+}
+
+# Usage of function complete_xml:
+# complete_xml "$testsuite_name" "$err_num" "$failure_num" "$skip_num" "$test_num" "$overall_time" "$result_xml"
+complete_xml () {
+    sed -i '1i\<?xml version=\"1.0\" encoding=\"utf-8\"?>' $7
+    sed -i "2i\<testsuite name=\"$1\" errors=\"$2\" failures=\"$3\" skips=\"$4\" tests=\"$5\" time=\"$6\">" $7
+    sed -i '$a\</testsuite>' $7
+}
+
+
+#################### BUILD POLICY ####################
+
+if [ $BUILD_POLICY -eq 1  ] ; then
+    echo  "Running build policy"
+
+    cd $TESTSUITES_DIR/policy
+    echo "./build_policy_kernel.exp $BOARD_TYPE $BINARY_FORMAT $XENOMAI >/dev/null  2>&1"
+    ./build_policy_kernel.exp $BOARD_TYPE $BINARY_FORMAT $XENOMAI >/dev/null  2>&1
+
+    cp $IMAGE_DIR/uImage $THIS_LOG/uImage.policy
+    cp $KERNEL_DIR/.config $THIS_LOG/config.policy
+    cp $TESTSUITES_DIR/policy/build_policy_kernel_log $THIS_LOG
+
+    if [ ! -f $IMAGE_DIR/uImage ] ; then
+        echo  "Kernel image fails to generate. Error!"
+        tail -50  ./build_policy_kernel_log
+        exit 3
+    fi
+
+    sleep 30
+
+    if [ $RESET_BOARD -eq 1  ] ; then
+        cd $TESTSUITES_DIR
+        ./reset_board.exp  >/dev/null  2>&1 
+        sleep 10
+    fi
+
+    #echo  "cp uclinux-dist source to SRC_ROOT_BAK."
+    #cp -a $SRC_ROOT $SRC_ROOT_BAK 
+
+    sleep 10
+
+fi
+
+
+#############################################################################################
+########################## TEST LTP #########################################################
+
+if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
+    echo "Testing LTP..."
+
+    ltp_args=( [0]="1 1" [1]="1 2" [2]="2 1" [3]="2 2" [4]="1 1 1" )
+    ltp_suf=(wb_slab wb_slob wt_slab wt_slob high_res_timer_preempt)
+
+    class_name="$BOARD_CONFIG"
+    test_time=0
+
+    for i in 0 1 2 3 4
+    do
+        case_name=LTP_${ltp_suf[i]}
+        result=FAIL
+
+        echo "Test ltp with option ${ltp_suf[i]}"
+        cd $TESTSUITES_DIR/ltp
+        echo "./build_ltp_kernel.exp $BOARD_TYPE $SRC_ROOT ${ltp_args[i]}"
+        ./build_ltp_kernel.exp $BOARD_TYPE $SRC_ROOT ${ltp_args[i]}> /dev/null 2>&1
+
+        if [ ! -f $IMAGE_DIR/uImage ]
+        then
+            echo "ltp build uclinux-dist failed for ${ltp_suf[i]}"
+            err_msg=`tail -50 ./build_ltp_kernel_log`
+            cp $TESTSUITES_DIR/ltp/build_ltp_kernel_log $THIS_LOG/build_ltp_kernel_log_${ltp_suf[i]}
+            cp $KERNEL_DIR/.config $THIS_LOG/config.ltp_${ltp_suf[i]}
+        else	
+            # do if build uclinux-dist succeed
+            echo "build_ltp_kernel.exp done"
+            sleep 30
+            ./ltp_auto_test.exp $BOARD_TYPE /dev/ttyS0 2 > /dev/null 2>&1
+            echo "ltp_auto_test.exp done"
+            ./ltp_compare_results_all.sh config/summary.base $TESTSUITES_DIR/ltp/test/logs/summary.new >> ltp_test_log
+            if [ $? == 1 ] ; then
+                err_msg=`head -50 $TESTSUITES_DIR/ltp/test/logs/summary.new`
+                echo "ltp test fail"
+                echo "LTP Test ............[FAIL]" >> ltp_test_log
+            else
+                result=PASS
+                echo "ltp test pass"
+                echo "LTP Test ............[PASS]" >> ltp_test_log
+            fi
+
+            cp $IMAGE_DIR/uImage $THIS_LOG/uImage.ltp_${ltp_suf[i]}
+            cp $KERNEL_DIR/.config $THIS_LOG/config.ltp_${ltp_suf[i]}
+            cp $TESTSUITES_DIR/ltp/build_ltp_kernel_log $THIS_LOG/build_ltp_kernel_log_${ltp_suf[i]}
+            if [ -e $THIS_LOG/build_ltp_kernel_log_${ltp_suf[i]} ]; then
+                rm -fr $TESTSUITES_DIR/ltp/build_ltp_kernel_log
+            fi
+            mv $TESTSUITES_DIR/ltp/test/logs/summary.new $THIS_LOG/ltp-summary_test_log_${ltp_suf[i]}
+            mv $TESTSUITES_DIR/ltp/test/logs/detailed.new $THIS_LOG/ltp-detailed_test_log_${ltp_suf[i]}
+            mv $TESTSUITES_DIR/ltp/build_ltp_log $THIS_LOG/build_ltp_log_${ltp_suf[i]}
+            mv $TESTSUITES_DIR/ltp/ltp_test_log $THIS_LOG/ltp_test_log_${ltp_suf[i]}
+
+            sleep 30    
+
+            if [ $RESET_BOARD -eq 1  ] ; then
+                cd $TESTSUITES_DIR
+                ./reset_board.exp   >/dev/null  2>&1       
+                sleep 10
+            fi
+            # end, do if build uclinux-dist succeed
+        fi
+
+        gen_testcase "$result" "$class_name" "$case_name" "$test_time" "$err_msg" >> $THIS_LOG/result.xml
+
+        cd $SRC_ROOT
+        make clean  > /dev/null 2>&1
+
+    done
+
+fi
+
+echo  "Testing Done."
+exit 0
