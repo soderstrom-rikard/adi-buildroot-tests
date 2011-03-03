@@ -63,6 +63,7 @@ fi
 cp $COMMON_TESTSCRIPTS/kernel_test_log $THIS_LOG
 
 $COMMON_TESTSCRIPTS/get_test_summary $THIS_LOG $BOARD_TYPE $BOARD_CONFIG
+cp $THIS_LOG/*.xml $WORKSPACE_ROOT
 
 echo -e "Here is the difference between lastrun and thisrun test results: \n"
 
