@@ -95,7 +95,7 @@ fi
 cd $SRC_ROOT
 find testsuites -name "*log" -type f | xargs rm
 
-rm -rf $OUTPUT_DIR/
+rm -rf $OUTPUT_DIR/build
 
 cd $LOG_DIR
 rm -rf $LASTRUN
