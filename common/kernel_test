@@ -165,29 +165,6 @@ cd $TESTSUITES_DIR
 cp $TESTSUITES_DIR/common/reset_board $TESTSUITES_DIR/ltp
 
 
-#################### Function declaration ####################
-
-# Usage of function gen_testcase:
-# gen_testcase "$result" "$class_name" "$case_name" "$test_time" "$result_xml" "$err_msg"
-gen_testcase () {
-    if [ $1 == "PASS" ] ; then
-        echo -e "<testcase classname=\"$2\" name=\"$3\" time=\"$4\"></testcase>" >>$5
-    elif [ $1 == "FAIL" ] ; then
-        echo -e "<testcase classname=\"$2\" name=\"$3\" time=\"$4\">\n<failure message=\"test fail\">\n$6\n</failure>\n</testcase>" >>$5
-    else
-        echo -e "<testcase classname=\"$2\" name=\"$3\" time=\"$4\">\n<failure message=\"N/A\">\nUnknow result!\n</failure>\n</testcase>" >>$5
-    fi
-}
-
-# Usage of function complete_xml:
-# complete_xml "$testsuite_name" "$err_num" "$failure_num" "$skip_num" "$test_num" "$overall_time" "$result_xml"
-complete_xml () {
-    sed -i '1i\<?xml version=\"1.0\" encoding=\"utf-8\"?>' $7
-    sed -i "2i\<testsuite name=\"$1\" errors=\"$2\" failures=\"$3\" skips=\"$4\" tests=\"$5\" time=\"$6\">" $7
-    sed -i '$a\</testsuite>' $7
-}
-
-
 #################### BUILD POLICY ####################
 
 if [ $BUILD_POLICY -eq 1  ] ; then
@@ -238,7 +215,6 @@ if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
     for i in 0 1 2 3 4
     do
         case_name=LTP_${ltp_suf[i]}
-        result=FAIL
 
         echo "Test ltp with option ${ltp_suf[i]}"
         cd $TESTSUITES_DIR/ltp
@@ -248,7 +224,6 @@ if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
         if [ ! -f $IMAGE_DIR/uImage ]
         then
             echo "ltp build uclinux-dist failed for ${ltp_suf[i]}"
-            err_msg=`tail -50 ./build_ltp_kernel_log`
             cp $TESTSUITES_DIR/ltp/build_ltp_kernel_log $THIS_LOG/build_ltp_kernel_log_${ltp_suf[i]}
             cp $KERNEL_DIR/.config $THIS_LOG/config.ltp_${ltp_suf[i]}
         else	
@@ -259,11 +234,9 @@ if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
             echo "ltp_auto_test.exp done"
             ./ltp_compare_results_all.sh config/summary.base $TESTSUITES_DIR/ltp/test/logs/summary.new >> ltp_test_log
             if [ $? == 1 ] ; then
-                err_msg=`head -50 $TESTSUITES_DIR/ltp/test/logs/summary.new`
                 echo "ltp test fail"
                 echo "LTP Test ............[FAIL]" >> ltp_test_log
             else
-                result=PASS
                 echo "ltp test pass"
                 echo "LTP Test ............[PASS]" >> ltp_test_log
             fi
@@ -288,8 +261,6 @@ if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
             fi
             # end, do if build uclinux-dist succeed
         fi
-
-        gen_testcase "$result" "$class_name" "$case_name" "$test_time" "$err_msg" >> $THIS_LOG/result.xml
 
         cd $SRC_ROOT
         make clean  > /dev/null 2>&1
