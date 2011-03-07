@@ -206,25 +206,19 @@ fi
 if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
     echo "Testing LTP..."
 
-    ltp_args=( [0]="1 1" [1]="1 2" [2]="2 1" [3]="2 2" [4]="1 1 1" )
-    ltp_suf=(wb_slab wb_slob wt_slab wt_slob high_res_timer_preempt)
+    ltp_args=( [0]="1" [1]="1" )
+    ltp_suf=(slab slob)
 
-    class_name="$BOARD_CONFIG"
-    test_time=0
-
-    for i in 0 1 2 3 4
+    for i in 0 1
     do
-        case_name=LTP_${ltp_suf[i]}
 
         echo "Test ltp with option ${ltp_suf[i]}"
-        cd $TESTSUITES_DIR/ltp
-        rm build_ltp_kernel_log         # clean log before build
-        echo "./build_ltp_kernel.exp $BOARD_TYPE $SRC_ROOT ${ltp_args[i]}"
-        ./build_ltp_kernel.exp $BOARD_TYPE $SRC_ROOT ${ltp_args[i]}> /dev/null 2>&1
+        echo "./build_ltp_kernel.exp $BOARD_TYPE ${ltp_args[i]}"
+        ./build_ltp_kernel.exp $BOARD_TYPE ${ltp_args[i]}> /dev/null 2>&1
 
         if [ ! -f $IMAGE_DIR/uImage ]
         then
-            echo "ltp build uclinux-dist failed for ${ltp_suf[i]}"
+            echo "Build kernel failed for ltp ${ltp_suf[i]} test"
             cp $TESTSUITES_DIR/ltp/build_ltp_kernel_log $THIS_LOG/build_ltp_kernel_log_${ltp_suf[i]}
             cp $KERNEL_CONFIG_DIR/.config $THIS_LOG/config.ltp_${ltp_suf[i]}
         else	
@@ -244,10 +238,7 @@ if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
 
             cp $IMAGE_DIR/uImage $THIS_LOG/uImage.ltp_${ltp_suf[i]}
             cp $KERNEL_CONFIG_DIR/.config $THIS_LOG/config.ltp_${ltp_suf[i]}
-            cp $TESTSUITES_DIR/ltp/build_ltp_kernel_log $THIS_LOG/build_ltp_kernel_log_${ltp_suf[i]}
-            if [ -e $THIS_LOG/build_ltp_kernel_log_${ltp_suf[i]} ]; then
-                rm -fr $TESTSUITES_DIR/ltp/build_ltp_kernel_log
-            fi
+            mv $TESTSUITES_DIR/ltp/build_ltp_kernel_log $THIS_LOG/build_ltp_kernel_log_${ltp_suf[i]}
             mv $TESTSUITES_DIR/ltp/test/logs/summary.new $THIS_LOG/ltp-summary_test_log_${ltp_suf[i]}
             mv $TESTSUITES_DIR/ltp/test/logs/detailed.new $THIS_LOG/ltp-detailed_test_log_${ltp_suf[i]}
             mv $TESTSUITES_DIR/ltp/build_ltp_log $THIS_LOG/build_ltp_log_${ltp_suf[i]}
