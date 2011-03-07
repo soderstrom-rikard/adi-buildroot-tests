@@ -1,6 +1,6 @@
 #!/usr/bin/expect
 
-cd $uclinux_path
+cd $src_root
 step "user space config - first time"
 set timeout 300
 spawn make config
@@ -71,7 +71,7 @@ while 1 {
     }
 }
 
-cd $uclinux_path
+cd $src_root
 step "user space config - second time"
 set timeout 300
 spawn make config

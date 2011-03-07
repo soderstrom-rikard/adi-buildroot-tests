@@ -5,14 +5,14 @@ source  ../common/kernel_config.exp
 log_file [log_file_name "$argv0"]
 send_user "Starting $argv0\n"
 
-cd $uclinux_path/testsuites/common
+cd $src_root/testsuites/common
 step "Make default config"
 source  make_default_config.exp
 
-cd $uclinux_path/testsuites/common
+cd $src_root/testsuites/common
 source  cut_app.exp
 
-cd $uclinux_path
+cd $src_root
 step "Make user space config"
 set timeout 300
 spawn make config
@@ -43,11 +43,11 @@ while 1 {
     }
 }
 
-cd $uclinux_path/testsuites/common
+cd $src_root/testsuites/common
 step "Make"
 source make_kernel.exp
 
-cd $uclinux_path/testsuites/common
+cd $src_root/testsuites/common
 step "Copy linux"
 source copy_image.exp
 

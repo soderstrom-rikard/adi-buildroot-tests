@@ -5,7 +5,7 @@ source  ../common/board_info.exp
 # directory and file locations
 set workspace_root /home/test/workspace
 set project beagle
-set uclinux_path $workspace_root/$project
+set src_root $workspace_root/$project
 set log_loc $workspace_root/logs
 
 # environment settings
@@ -55,7 +55,7 @@ set HAVE_JFFS2_IMAGE     0
 set HAVE_KERNEL_ONLY_IMAGE     0
 set HAVE_ROMFS_IMAGE     0
 
-if { [ catch { set def_uart_port [  exec grep  CONFIG_SERIAL_BFIN_UART.*=y $uclinux_path/linux-2.6.x/arch/blackfin/configs/$board_type\_defconfig | head -1 | awk  -F= {{print $1}}  ]  } ] } {
+if { [ catch { set def_uart_port [  exec grep  CONFIG_SERIAL_BFIN_UART.*=y $src_root/linux-2.6.x/arch/blackfin/configs/$board_type\_defconfig | head -1 | awk  -F= {{print $1}}  ]  } ] } {
 
 set def_uart_port 0  
 puts "$board_type\_defconfig not found. Set def_uart_port to 0.\n "
