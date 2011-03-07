@@ -10,6 +10,18 @@ while 1 {
             continue
         }
 
+        -re "bluez_utils.*BR2_PACKAGE_BLUEZ_UTILS.*\\\[.*]" {
+            send "N\r"
+        }
+
+        -re "flac.*BR2_PACKAGE_FLAC.*\\\[.*]" {
+            send "N\r"
+        }
+
+        -re "lirc.*BR2_PACKAGE_LIRC.*\\\[.*]" {
+            send "N\r"
+        }
+
         -re "strace.*BR2_PACKAGE_STRACE.*\\\[.*]" {
             send "N\r"
         }
@@ -82,6 +94,10 @@ while 1 {
         }
 
         -re "ncurses.*BR2_PACKAGE_NCURSES.*\\\[.*]" {
+            send "N\r"
+        }
+
+        -re "jpeg.*BR2_PACKAGE_JPEG.*\\\[.*]" {
             send "N\r"
         }
 
