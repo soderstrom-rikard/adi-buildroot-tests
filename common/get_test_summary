@@ -3,11 +3,11 @@ THIS_LOG=`pwd`
 testsuite_name="testsuite_name"
 class_name="class_name"
 test_time=0
-result_xml=$THIS_LOG/result.xml
 
 if [ -n "$1" ] ; then
     THIS_LOG=$1
 fi
+result_xml=$THIS_LOG/result.xml
 
 if [ -n "$2" ] ; then
     testsuite_name=$2
