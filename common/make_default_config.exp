@@ -1,8 +1,8 @@
 #!/usr/bin/expect
 
 cd $src_root
-set timeout 300
-spawn make beagleboard_defconfig
+set timeout 60
+spawn make $board_defconfig
 
 while 1 {
     expect {

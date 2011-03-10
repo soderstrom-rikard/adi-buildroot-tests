@@ -1,7 +1,7 @@
 #!/usr/bin/expect
 
 cd $src_root
-spawn make image
+spawn make ARCH=$arch image
 set timeout 300
 set bfin_make_status failure
 while 1 {

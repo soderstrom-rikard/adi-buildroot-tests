@@ -1,7 +1,7 @@
 #!/usr/bin/expect
 
 cd $src_root
-spawn make
+spawn make ARCH=$arch CROSS_COMPILE=$cross_compile
 set timeout 1200
 set bfin_make_status failure
 while 1 {

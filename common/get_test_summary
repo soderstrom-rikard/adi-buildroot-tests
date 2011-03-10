@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 THIS_LOG=`pwd`
 testsuite_name="testsuite_name"
 class_name="class_name"
@@ -53,8 +53,8 @@ complete_xml () {
 
 ls build*kernel_log*  > test_summary/all_build_log_list
 
-grep -r "Leaving directory.*uclinux-dist\/vendors\/AnalogDevices" -m 30 -A 3 build*kernel_log* | grep "STEP .* Copy" | sed 's/\-\*/ \*/'| awk '{print$1}'| uniq > test_summary/build_kernel_pass_log
-# TODO: grep -r "rm.*\.fakeroot" -m 30 -A 3 build*kernel_log* | grep "STEP .* Copy" | sed 's/\-\*/ \*/'| awk '{print$1}'| uniq > test_summary/build_kernel_pass_log
+#grep -r "Leaving directory.*uclinux-dist\/vendors\/AnalogDevices" -m 30 -A 3 build*kernel_log* | grep "STEP .* Copy" | sed 's/\-\*/ \*/'| awk '{print$1}'| uniq > test_summary/build_kernel_pass_log
+grep -r "rm.*\.fakeroot" -m 30 -A 3 * | grep "STEP .* Copy" | sed 's/\-\*/ \*/'| awk '{print$1}'| uniq > test_summary/build_kernel_pass_log
 
 echo -e "\n######The following build kernel fails:#######\n" > test_summary/summary
 comm -3  test_summary/all_build_log_list  test_summary/build_kernel_pass_log > test_summary/build_kernel_fail_log
@@ -121,7 +121,7 @@ rm -f test_summary/test_log_without_result
 
 num=`cat test_summary/pass_summary | wc -l`
 echo -e "\n############ Pass Num is: $num.#############\n" >> test_summary/summary
-cat test_summary/pass_summary   >> test_summary/summary
+cat test_summary/pass_summary  >> test_summary/summary
 
 num=`cat test_summary/fail_summary | wc -l`
 echo -e "\n############ Fail Num is: $num.#############\n" >> test_summary/summary

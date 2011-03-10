@@ -5,6 +5,8 @@ source  ../common/kernel_config.exp
 log_file [log_file_name "$argv0"]
 send_user "Starting $argv0\n"
 
+set allocator [lindex $argv 1]
+
 cd $src_root/testsuites/common
 step "Make default config"
 source  make_default_config.exp
@@ -12,14 +14,18 @@ source  make_default_config.exp
 cd $src_root/testsuites/common
 source  cut_app.exp
 
-cd $src_root
-step "Make user space config"
+step "Make kernel config"
+cd $kernel_config_dir
 set timeout 300
-spawn make config
+spawn make ARCH=$arch config
 while 1 {
     expect {
         -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
+        }
+
+        -re "Choose SLAB allocator\r\n.*(\[0-9]+). SLAB.*SLUB.*SLOB.*\\\[.*]" {
+            send "$allocator\r"
         }
 
         "\\\(*) \\\[*]" {

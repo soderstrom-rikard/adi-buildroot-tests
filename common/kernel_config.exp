@@ -6,10 +6,17 @@ source  ../common/board_info.exp
 set workspace_root /home/test/workspace
 set project beagle
 set src_root $workspace_root/$project
+set kernel_root $src_root/linux/linux-2.6.x
+set custom_kernel $src_root/output/build/linux-custom
+set kernel_config_dir $custom_kernel
 set log_loc $workspace_root/logs
 
 # environment settings
 if { $board_type == "beagle" } {
+    set arch "arm"
+    set cross_compile "arm-none-linux-gnueabi-"
+    set board_defconfig "beagleboard_defconfig"
+    set kernel_defconfig "omap3_beagle_xm_defconfig"
     set baud_rate "115200"
     set eth_dev "usb0"
 } else {

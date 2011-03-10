@@ -46,7 +46,8 @@ fi
 SRC_ROOT=$WORKSPACE_ROOT/$BOARD_TYPE
 TESTSUITES_DIR=$SRC_ROOT/testsuites
 OUTPUT_DIR=$SRC_ROOT/output
-KERNEL_CONFIG_DIR=$OUTPUT_DIR/build/linux-custom
+OUTPUT_BAK_DIR=$SRC_ROOT/output.bak
+KERNEL_CUSTOM_DIR=$OUTPUT_DIR/build/linux-custom
 IMAGE_DIR=$OUTPUT_DIR/images
 
 echo -e "# Test environment variables:
@@ -62,10 +63,10 @@ echo -e "# Test environment variables:
 
 #################### Check directories ####################
 
-# TODO: create back up directory
-#if [ -d $SRC_ROOT_BAK ] ; then
-#  rm -rf $SRC_ROOT_BAK
-#fi
+if [ -d $OUTPUT_BAK_DIR ] ; then
+  rm -rf $OUTPUT_BAK_DIR
+fi
+
 if [ ! -d $SRC_ROOT ] ; then
     exit 2
 fi
@@ -80,8 +81,8 @@ fi
 #################### Set up arrays for all testcase ####################
 
 # Set RESET_BOARD to 1 if your target board could be restarted from host machine parallel port.
-RESET_BOARD=0
-BUILD_POLICY=0
+RESET_BOARD=1
+BUILD_POLICY=1
 
 n=100
 
@@ -155,45 +156,46 @@ export PATH=$PATH:$TOOLCHAIN_DIR
 $CROSS_COMPILER -v
 echo
 
-cd $TESTSUITES_DIR
-#chmod +x *.exp  */*.exp
-#cp  $TESTSUITES_DIR/test_scripts/compare_kernel_results  $UCLINUX_DIST_SCRIPTS/uclinux-dist
-#cp  $TESTSUITES_DIR/test_scripts/get_test_summary  $UCLINUX_DIST_SCRIPTS/uclinux-dist
-#cp  $TESTSUITES_DIR/test_scripts/get_performance_result  $UCLINUX_DIST_SCRIPTS/uclinux-dist
-#cp  $TESTSUITES_DIR/test_scripts/test_runtime_control  $UCLINUX_DIST_SCRIPTS/uclinux-dist
-#cp  $UCLINUX_DIST_SCRIPTS/uclinux-dist/reset_board $TESTSUITES_DIR
 cp $TESTSUITES_DIR/common/reset_board $TESTSUITES_DIR/ltp
+
+# clean kernel source
+cd $SRC_ROOT/linux/linux-2.6.x
+make mrproper
+git checkout `git status| grep modified | awk '{print $3}'`
 
 
 #################### BUILD POLICY ####################
 
 if [ $BUILD_POLICY -eq 1  ] ; then
-    echo  "Running build policy"
+    echo "Running build policy"
 
     cd $TESTSUITES_DIR/policy
     echo "./build_policy_kernel.exp $BOARD_TYPE $BINARY_FORMAT $XENOMAI >/dev/null  2>&1"
     ./build_policy_kernel.exp $BOARD_TYPE $BINARY_FORMAT $XENOMAI >/dev/null  2>&1
 
     cp $IMAGE_DIR/uImage $THIS_LOG/uImage.policy
-    cp $KERNEL_CONFIG_DIR/.config $THIS_LOG/config.policy
+    cp $KERNEL_CUSTOM_DIR/.config $THIS_LOG/config.kernel.policy
+    cp $SRC_ROOT/.config $THIS_LOG/config.user.policy
+    mv $SRC_ROOT/linux/linux-2.6.x/defconfig $THIS_LOG/defconfig.policy
     cp $TESTSUITES_DIR/policy/build_policy_kernel_log $THIS_LOG
 
     if [ ! -f $IMAGE_DIR/uImage ] ; then
-        echo  "Kernel image fails to generate. Error!"
-        tail -50  ./build_policy_kernel_log
+        echo "Kernel image fails to generate. Terminate test!"
+        tail -50 ./build_policy_kernel_log
         exit 3
     fi
+
+    # back up compiled stuff for future build
+    cp $SRC_ROOT/.config $SRC_ROOT/config.user.policy
+    cp -fr $OUTPUT_DIR $OUTPUT_BAK_DIR
 
     sleep 30
 
     if [ $RESET_BOARD -eq 1  ] ; then
-        cd $TESTSUITES_DIR
-        ./reset_board.exp  >/dev/null  2>&1 
+        cd $TESTSUITES_DIR/common
+        ./reset_board.exp >/dev/null  2>&1
         sleep 10
     fi
-
-    #echo  "cp uclinux-dist source to SRC_ROOT_BAK."
-    #cp -a $SRC_ROOT $SRC_ROOT_BAK 
 
     sleep 10
 
@@ -206,22 +208,29 @@ fi
 if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
     echo "Testing LTP..."
 
-    ltp_args=( [0]="1" [1]="1" )
-    ltp_suf=(slab slob)
+    ltp_args=( [0]="1" [1]="2" [2]="3" )
+    ltp_suf=(slab slub slob)
 
-    for i in 0 1
+    for i in 0 1 2
     do
 
+	rm -fr $OUTPUT_DIR
+	cp -a $OUTPUT_BAK_DIR $OUTPUT_DIR
+	cp $THIS_LOG/config.user.policy $SRC_ROOT/.config
+	rm $KERNEL_CUSTOM_DIR/.stamp_compiled
+
         echo "Test ltp with option ${ltp_suf[i]}"
+	cd $TESTSUITES_DIR/ltp
         echo "./build_ltp_kernel.exp $BOARD_TYPE ${ltp_args[i]}"
         ./build_ltp_kernel.exp $BOARD_TYPE ${ltp_args[i]}> /dev/null 2>&1
 
         if [ ! -f $IMAGE_DIR/uImage ]
         then
             echo "Build kernel failed for ltp ${ltp_suf[i]} test"
-            cp $TESTSUITES_DIR/ltp/build_ltp_kernel_log $THIS_LOG/build_ltp_kernel_log_${ltp_suf[i]}
-            cp $KERNEL_CONFIG_DIR/.config $THIS_LOG/config.ltp_${ltp_suf[i]}
-        else	
+            cp $KERNEL_CUSTOM_DIR/.config $THIS_LOG/config.ltp_${ltp_suf[i]}
+	    cp $SRC_ROOT/.config $THIS_LOG/config.user.ltp_${ltp_suf[i]}
+            mv $TESTSUITES_DIR/ltp/build_ltp_kernel_log $THIS_LOG/build_ltp_kernel_log_${ltp_suf[i]}
+        else
             # do if build uclinux-dist succeed
             echo "build_ltp_kernel.exp done"
             sleep 30
@@ -237,29 +246,27 @@ if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
             fi
 
             cp $IMAGE_DIR/uImage $THIS_LOG/uImage.ltp_${ltp_suf[i]}
-            cp $KERNEL_CONFIG_DIR/.config $THIS_LOG/config.ltp_${ltp_suf[i]}
+            cp $KERNEL_CUSTOM_DIR/.config $THIS_LOG/config.ltp_${ltp_suf[i]}
+	    cp $SRC_ROOT/.config $THIS_LOG/config.user.ltp_${ltp_suf[i]}
             mv $TESTSUITES_DIR/ltp/build_ltp_kernel_log $THIS_LOG/build_ltp_kernel_log_${ltp_suf[i]}
             mv $TESTSUITES_DIR/ltp/test/logs/summary.new $THIS_LOG/ltp-summary_test_log_${ltp_suf[i]}
             mv $TESTSUITES_DIR/ltp/test/logs/detailed.new $THIS_LOG/ltp-detailed_test_log_${ltp_suf[i]}
             mv $TESTSUITES_DIR/ltp/build_ltp_log $THIS_LOG/build_ltp_log_${ltp_suf[i]}
             mv $TESTSUITES_DIR/ltp/ltp_test_log $THIS_LOG/ltp_test_log_${ltp_suf[i]}
 
-            sleep 30    
+            sleep 30
 
             if [ $RESET_BOARD -eq 1  ] ; then
-                cd $TESTSUITES_DIR
-                ./reset_board.exp   >/dev/null  2>&1       
+                cd $TESTSUITES_DIR/common
+                ./reset_board.exp >/dev/null 2>&1
                 sleep 10
             fi
             # end, do if build uclinux-dist succeed
         fi
 
-        cd $SRC_ROOT
-        make clean  > /dev/null 2>&1
-
     done
 
 fi
 
-echo  "Testing Done."
+echo "Testing Done."
 exit 0

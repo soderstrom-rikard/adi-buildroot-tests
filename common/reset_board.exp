@@ -26,7 +26,7 @@ while 1 {
    expect {
       -re "\[Pp]assword:" {
          sleep .5
-         send -s "$password\r"
+         send "$password\r"
          break
       }
 
@@ -53,7 +53,7 @@ while 1 {
 set su_id $spawn_id
   
 
-send -s "./reset_board 2\r"
+send "./reset_board 2\r"
 while 1 {
    expect {
       -re "powering OFF.* ON" { 
@@ -162,7 +162,7 @@ set timeout 50
 
 
 expect ">"
-send -s "\r"
+send "\r"
 expect ">"
 
 log_file

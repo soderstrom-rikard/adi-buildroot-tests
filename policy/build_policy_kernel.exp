@@ -58,6 +58,85 @@ while 1 {
     }
 }
 
+step "Make default kernel config"
+cd $kernel_root
+set timeout 60
+spawn make ARCH=$arch $kernel_defconfig
+while 1 {
+    expect {
+        "configuration written to" {}
+        eof { break }
+        timeout {
+            send_user "\n\nERROR: make kernel default config timeout"
+            exit
+        }
+    }
+}
+
+step "Make kernel config"
+cd $kernel_root
+set timeout 300
+spawn make ARCH=$arch config
+while 1 {
+    expect {
+        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+            continue
+        }
+
+        "\\\(*) \\\[*]" {
+            sleep .05
+            send "\r"
+        }
+
+        -re "\[cC]hoice\\\[.*]:" {
+            send "\r"
+        }
+
+        eof {
+            puts "End of configuration"
+            break
+        }
+
+        timeout {
+            puts "\n\nFATAL ERROR: config prompt timeout in make config"
+            break
+        }
+    }
+}
+
+step "Generate kernel defconfig"
+cd $kernel_root
+set timeout 60
+spawn make ARCH=$arch savedefconfig
+while 1 {
+    expect {
+        "savedefconfig=defconfig Kconfig" {}
+
+        eof {
+            puts "End of configuration"
+            break
+        }
+
+        timeout {
+            puts "\n\nFATAL ERROR: Generate kernel defconfig timeout"
+            break
+        }
+    }
+}
+
+spawn cp defconfig $kernel_root/arch/$arch/configs/$kernel_defconfig
+
+cd $kernel_root
+spawn make ARCH=$arch mrproper
+set timeout 1200
+while 1 {
+    expect {
+        "CLEAN" {}
+        eof { break }
+    }
+}
+
+
 cd $src_root/testsuites/common
 step "Make"
 source make_kernel.exp
