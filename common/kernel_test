@@ -4,18 +4,20 @@
 WORKSPACE_ROOT=/home/test/workspace
 BOARD_CONFIG=BEAGLE-STD
 BOARD_TYPE=beagle
+ARCH_TYPE=arm
 BINARY_FORMAT=flat
 XENOMAI=off
 THIS_LOG=$WORKSPACE_ROOT/log/$BOARD_CONFIG
 
 if [ $# -lt 1 ] ; then
-    echo "Please input [ BOARD_CONFIG BINARY_FORMAT XENOMAI THIS_LOG ]:"
+    echo "Please input [ BOARD_CONFIG BOARD_TYPE ARCH_TYPE BINARY_FORMAT XENOMAI THIS_LOG ]:"
     echo
     echo "BOARD_CONFIG :  BEAGLE-STD, etc"
     echo "BOARD_TYPE :    beagle, etc"
+    echo "ARCH_TYPE :     arm, etc"
     echo "BINARY_FORMAT : flat, elf, shared-flat"
     echo "XENOMAI :       on, off"
-    echo "Example: ./kernel_test $BOARD_CONFIG $BOARD_TYPE $BINARY_FORMAT $WORKSPACE_ROOT $THIS_LOG $XENOMAI"
+    echo "Example: ./kernel_test $BOARD_CONFIG $BOARD_TYPE $ARCH_TYPE $BINARY_FORMAT $WORKSPACE_ROOT $THIS_LOG $XENOMAI"
     exit 1
 fi
 
@@ -28,19 +30,23 @@ if [ -n "$2" ] ; then
 fi
 
 if [ -n "$3" ] ; then
-    BINARY_FORMAT=$3
+    ARCH_TYPE=$3
 fi
 
 if [ -n "$4" ] ; then
-    WORKSPACE_ROOT=$4
+    BINARY_FORMAT=$4
 fi
 
 if [ -n "$5" ] ; then
-    THIS_LOG=$5
+    WORKSPACE_ROOT=$5
 fi
 
 if [ -n "$6" ] ; then
-    XENOMAI=$6
+    THIS_LOG=$6
+fi
+
+if [ -n "$7" ] ; then
+    XENOMAI=$7
 fi
 
 SRC_ROOT=$WORKSPACE_ROOT/$BOARD_TYPE
@@ -160,7 +166,7 @@ cp $TESTSUITES_DIR/common/reset_board $TESTSUITES_DIR/ltp
 
 # clean kernel source
 cd $SRC_ROOT/linux/linux-2.6.x
-make mrproper
+make ARCH=$ARCH_TYPE mrproper
 git checkout `git status| grep modified | awk '{print $3}'`
 
 
@@ -214,10 +220,10 @@ if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
     for i in 0 1 2
     do
 
-	rm -fr $OUTPUT_DIR
+        make ARCH=$ARCH_TYPE clean              # rm -fr $OUTPUT_DIR and delete kernel patch
 	cp -a $OUTPUT_BAK_DIR $OUTPUT_DIR
 	cp $THIS_LOG/config.user.policy $SRC_ROOT/.config
-	rm $KERNEL_CUSTOM_DIR/.stamp_compiled
+	rm $KERNEL_CUSTOM_DIR/.stamp_compiled   # delete .stamp_compiled to trigger new build
 
         echo "Test ltp with option ${ltp_suf[i]}"
 	cd $TESTSUITES_DIR/ltp

@@ -1,6 +1,7 @@
 #!/bin/sh
 
 BOARD_CONFIG=BEAGLE-STD
+BOARD_TYPE=beagle
+ARCH_TYPE=arm
 BINARY_FORMAT=flat
 XENOMAI=off
-BOARD_TYPE=beagle
