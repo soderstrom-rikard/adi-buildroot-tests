@@ -111,7 +111,7 @@ proc reset_board {} {
       }
       while 1 {
          expect {
-            -re "\[Pp]assword:" {
+            -re "\[Pp]assword.*:" {
                send -r "$password\r"
             }
             timeout {
@@ -1468,9 +1468,9 @@ set result_matrix {
        { exit02     	     {exit02}                     	 notrun		UCLINUX }
        { exit_group01  	     {exit_group01}                   	 notrun		UCLINUX }
        { faccessat01         {faccessat01}                       notrun		UCLINUX }
-       { fallocate01         {fallocate01}                       notrun		UCLINUX }
-       { fallocate02         {fallocate02}                       notrun		UCLINUX }
-       { fallocate03         {fallocate03}                       notrun		UCLINUX }
+       { fallocate01         {fallocate01}                       notrun		NA }
+       { fallocate02         {fallocate02}                       notrun		NA }
+       { fallocate03         {fallocate03}                       notrun		NA }
        { fchdir01     	     {fchdir01}                     	 notrun		UCLINUX }
        { fchdir02     	     {fchdir02}                     	 notrun		UCLINUX }
        { fchdir03     	     {fchdir03}                     	 notrun		UCLINUX }
