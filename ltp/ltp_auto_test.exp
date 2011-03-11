@@ -202,7 +202,7 @@ proc recover {} {
 
       while 1 {
          expect {
-             "Pelican login:" {
+             "login:" {
                  send "root\n"
              }
 
@@ -378,7 +378,7 @@ proc force_reboot {} {
 
         while 1 {
             expect {
-                "Pelican login:" {
+                "login:" {
                     send "root\n"
                 }
 
@@ -392,7 +392,7 @@ proc force_reboot {} {
                     break
                 }
 
-                -re "BusyBox.*$kernel_prompt" {
+                -re $kernel_prompt {
                     set state_variable 2
                     break
                 }
@@ -2628,7 +2628,7 @@ for {set i 0} {$i < 50} {incr i} {
    set timeout 180
    while 1 {
       expect {
-          "Pelican login:" {
+          "login:" {
               send "root\n"
           }
 
