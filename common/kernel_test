@@ -69,6 +69,10 @@ echo -e "# Test environment variables:
 
 #################### Check directories ####################
 
+if [ -d $OUTPUT_DIR ] ; then
+    rm -rf $OUTPUT_DIR
+fi
+
 if [ -d $OUTPUT_BAK_DIR ] ; then
   rm -rf $OUTPUT_BAK_DIR
 fi
@@ -167,7 +171,7 @@ cp $TESTSUITES_DIR/common/reset_board $TESTSUITES_DIR/ltp
 # clean kernel source
 cd $SRC_ROOT/linux/linux-2.6.x
 make ARCH=$ARCH_TYPE mrproper
-git checkout `git status| grep modified | awk '{print $3}'`
+git checkout .          # clean all modified files
 
 
 #################### BUILD POLICY ####################
@@ -220,9 +224,10 @@ if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
     for i in 0 1 2
     do
 
+        cd $SRC_ROOT
         make ARCH=$ARCH_TYPE clean              # rm -fr $OUTPUT_DIR and delete kernel patch
 	cp -a $OUTPUT_BAK_DIR $OUTPUT_DIR
-	cp $THIS_LOG/config.user.policy $SRC_ROOT/.config
+	cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
 	rm $KERNEL_CUSTOM_DIR/.stamp_compiled   # delete .stamp_compiled to trigger new build
 
         echo "Test ltp with option ${ltp_suf[i]}"
