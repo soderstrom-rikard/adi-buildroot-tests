@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 BOARD_CONFIG=BEAGLE-STD
 BOARD_TYPE=beagle

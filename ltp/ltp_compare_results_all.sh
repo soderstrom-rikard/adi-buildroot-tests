@@ -1,4 +1,4 @@
-#!/bin/sh 
+#!/bin/bash 
 
 BEFORE=$1
 NOW=$2
