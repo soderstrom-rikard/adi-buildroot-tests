@@ -168,16 +168,32 @@ echo
 
 cp $TESTSUITES_DIR/common/reset_board $TESTSUITES_DIR/ltp
 
-# clean kernel source
-cd $SRC_ROOT/linux/linux-2.6.x
-make ARCH=$ARCH_TYPE mrproper
-git checkout .          # clean all modified files
+
+########################### Functions ###########################
+
+# manually clean all sources
+# Don't use 'make clean' in base root as it may render mistakes of 
+#+ patching and unpatching problem to kernel source.
+clean_src () {
+    # delete build files
+    if [ -d $OUTPUT_DIR ] ; then
+        rm -rf $OUTPUT_DIR
+    fi
+
+    # clean kernel source
+    cd $SRC_ROOT/linux/linux-2.6.x
+    make ARCH=$ARCH_TYPE mrproper
+    git checkout .
+}
 
 
 #################### BUILD POLICY ####################
 
 if [ $BUILD_POLICY -eq 1  ] ; then
     echo "Running build policy"
+
+    # always clean source before build
+    clean_src
 
     cd $TESTSUITES_DIR/policy
     echo "./build_policy_kernel.exp $BOARD_TYPE $BINARY_FORMAT $XENOMAI >/dev/null  2>&1"
@@ -224,8 +240,9 @@ if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
     for i in 0 1 2
     do
 
-        cd $SRC_ROOT
-        make ARCH=$ARCH_TYPE clean              # rm -fr $OUTPUT_DIR and delete kernel patch
+        # always clean source before build
+        clean_src
+
 	cp -a $OUTPUT_BAK_DIR $OUTPUT_DIR
 	cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
 	rm $KERNEL_CUSTOM_DIR/.stamp_compiled   # delete .stamp_compiled to trigger new build
