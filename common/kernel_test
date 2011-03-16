@@ -186,6 +186,22 @@ clean_src () {
     git checkout .
 }
 
+# copy image and config files after each test
+copy_result () {
+    if [ -n "$1" ] ; then
+        post_fix=$1
+    else
+        post_fix=unknow
+    fi
+
+    if [ -f $IMAGE_DIR/uImage ] ; then
+        cp $IMAGE_DIR/uImage $THIS_LOG/uImage.$post_fix
+    fi
+
+    cp $KERNEL_CUSTOM_DIR/.config $THIS_LOG/config.kernel.$post_fix
+    cp $SRC_ROOT/.config $THIS_LOG/config.user.$post_fix
+}
+
 
 #################### BUILD POLICY ####################
 
@@ -199,9 +215,7 @@ if [ $BUILD_POLICY -eq 1  ] ; then
     echo "./build_policy_kernel.exp $BOARD_TYPE $BINARY_FORMAT $XENOMAI >/dev/null  2>&1"
     ./build_policy_kernel.exp $BOARD_TYPE $BINARY_FORMAT $XENOMAI >/dev/null  2>&1
 
-    cp $IMAGE_DIR/uImage $THIS_LOG/uImage.policy
-    cp $KERNEL_CUSTOM_DIR/.config $THIS_LOG/config.kernel.policy
-    cp $SRC_ROOT/.config $THIS_LOG/config.user.policy
+    copy_result policy
     mv $SRC_ROOT/linux/linux-2.6.x/defconfig $THIS_LOG/defconfig.policy
     cp $TESTSUITES_DIR/policy/build_policy_kernel_log $THIS_LOG
 
@@ -252,11 +266,11 @@ if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
         echo "./build_ltp_kernel.exp $BOARD_TYPE ${ltp_args[i]}"
         ./build_ltp_kernel.exp $BOARD_TYPE ${ltp_args[i]}> /dev/null 2>&1
 
+        copy_result ltp_${ltp_suf[i]}
+
         if [ ! -f $IMAGE_DIR/uImage ]
         then
             echo "Build kernel failed for ltp ${ltp_suf[i]} test"
-            cp $KERNEL_CUSTOM_DIR/.config $THIS_LOG/config.ltp_${ltp_suf[i]}
-	    cp $SRC_ROOT/.config $THIS_LOG/config.user.ltp_${ltp_suf[i]}
             mv $TESTSUITES_DIR/ltp/build_ltp_kernel_log $THIS_LOG/build_ltp_kernel_log_${ltp_suf[i]}
         else
             # do if build uclinux-dist succeed
@@ -273,9 +287,6 @@ if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
                 echo "LTP Test ............[PASS]" >> ltp_test_log
             fi
 
-            cp $IMAGE_DIR/uImage $THIS_LOG/uImage.ltp_${ltp_suf[i]}
-            cp $KERNEL_CUSTOM_DIR/.config $THIS_LOG/config.ltp_${ltp_suf[i]}
-	    cp $SRC_ROOT/.config $THIS_LOG/config.user.ltp_${ltp_suf[i]}
             mv $TESTSUITES_DIR/ltp/build_ltp_kernel_log $THIS_LOG/build_ltp_kernel_log_${ltp_suf[i]}
             mv $TESTSUITES_DIR/ltp/test/logs/summary.new $THIS_LOG/ltp-summary_test_log_${ltp_suf[i]}
             mv $TESTSUITES_DIR/ltp/test/logs/detailed.new $THIS_LOG/ltp-detailed_test_log_${ltp_suf[i]}
