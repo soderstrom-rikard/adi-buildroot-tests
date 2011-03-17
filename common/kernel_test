@@ -96,7 +96,7 @@ BUILD_POLICY=1
 
 n=100
 
-AUTO_TESTCASE=( [0]="" [$((n+1))]="ltp" )
+AUTO_TESTCASE=( [0]="serial" [$((n+1))]="ltp" )
 
 AUTO_RUN_STATUS=( [0]="0" [$((n+1))]="0" )
 
@@ -121,7 +121,7 @@ if [ $BOARD_CONFIG = "BEAGLE-STD" ] ; then
         MANUAL_RUN_STATUS[$((n+i))]="0"
     done
 
-    AUTO_RUN_STATUS[$((n+1))]="1";
+    AUTO_RUN_STATUS[0]="1"; AUTO_RUN_STATUS[$((n+1))]="1";
 
 fi
 

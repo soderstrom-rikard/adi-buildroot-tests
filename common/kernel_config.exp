@@ -17,8 +17,9 @@ if { $board_type == "beagle" } {
     set cross_compile "arm-none-linux-gnueabi-"
     set board_defconfig "beagleboard_defconfig"
     set kernel_defconfig "omap3_beagle_xm_defconfig"
-    set baud_rate "115200"
     set eth_dev "usb0"
+    set baud_rate "115200"
+    set def_uart_port ttyO2
 } else {
     set baud_rate "57600"
     set eth_dev "eth0"
@@ -29,7 +30,7 @@ set ttyUSBdev /dev/ttyUSB0
 set kermit_ttydev $ttydev
 set sh_prompt "\[-@].*\[$>#]"
 set uboot_prompt "OMAP3 beagleboard.org #|bfin>"
-set kernel_prompt "\n# |root:\[^>].*>"
+set kernel_prompt "# |root:\[^>].*>"
 
 set targetip 10.100.4.50
 set serverip 10.100.4.174
@@ -51,7 +52,7 @@ set kernel_and_cramfs_image linux.cramfs
 set kernel_and_romfs_image  uImage.romfs
 
 set compressed_kernel_and_ext2_image   uImage.ext2
-set compressed_kernel_and_cramfs_image uImage.cramfs  
+set compressed_kernel_and_cramfs_image uImage.cramfs
 
 set ext2_rootfs_image    rootfs.ext2
 set jffs2_rootfs_image   rootfs.jffs2
@@ -62,33 +63,8 @@ set HAVE_JFFS2_IMAGE     0
 set HAVE_KERNEL_ONLY_IMAGE     0
 set HAVE_ROMFS_IMAGE     0
 
-if { [ catch { set def_uart_port [  exec grep  CONFIG_SERIAL_BFIN_UART.*=y $src_root/linux-2.6.x/arch/blackfin/configs/$board_type\_defconfig | head -1 | awk  -F= {{print $1}}  ]  } ] } {
-
-set def_uart_port 0  
-puts "$board_type\_defconfig not found. Set def_uart_port to 0.\n "
-
-} else {
-set def_uart_port [ string index $def_uart_port end ]
-puts "$board_type\_defconfig is found. Set def_uart_port to $def_uart_port.\n "
-}
 
 set bootargs_param0  "root=/dev/mtdblock0 rw ip=$targetip earlyprintk=serial,uart$def_uart_port,$baud_rate console=ttyBF$def_uart_port,$baud_rate"
-# For linux mount jffs2 as rootfs, which need mtd ext2 support.
-set bootargs_param1  "root=/dev/mtdblock2 rw rootfstype=jffs2 earlyprintk=serial,uart$def_uart_port,$baud_rate console=ttyBF$def_uart_port,$baud_rate"
-# The needed ROM fs may be placed before the MTD partition, so the mtd sequence is following it. 
-set bootargs_param2  "root=/dev/mtdblock3 rw rootfstype=jffs2 earlyprintk=serial,uart$def_uart_port,$baud_rate console=ttyBF$def_uart_port,$baud_rate" 
-set bootargs_param3  "root=/dev/mtdblock4 rw rootfstype=jffs2 earlyprintk=serial,uart$def_uart_port,$baud_rate console=ttyBF$def_uart_port,$baud_rate"
-
-if [ info exists nand_rootfs_num ] {
-set bootargs_param4  "ubi.mtd=$nand_rootfs_num root=ubi0:ubifs1 rw rootfstype=ubifs earlyprintk=serial,uart$def_uart_port,$baud_rate console=ttyBF$def_uart_port,$baud_rate" 
-#puts "nand_rootfs_num is found. Set bootargs_param4 $bootargs_param4.\n "
-}
-set bootargs_param5  "root=/dev/mtdblock0 rw mem=32M max_mem=64M console=ttyBF$def_uart_port,$baud_rate "
-set bootargs_param6  "root=/dev/mtdblock0 rw ip=$targetip earlyprintk=serial,uart$def_uart_port,$baud_rate " 
-#set bootargs_param7  "root=/dev/mtdblock0 rw ip=$targetip earlyprintk=serial,uart$def_uart_port,$baud_rate" 
-#set bootargs_param8  "ubi.mtd=1 root=ubi0:ubifs1 rw rootfstype=ubifs earlyprintk=serial,uart$def_uart_port,$baud_rate console=ttyBF$def_uart_port,$baud_rate" 
-set bootargs_param9  "root=/dev/mtdblock0 rw earlyprintk=serial,uart$def_uart_port,$baud_rate console=tty0 console=ttyBF$def_uart_port,$baud_rate" 
-set bootargs_param10 "root=/dev/mtdblock0 rw earlyprintk=serial,uart$def_uart_port,$baud_rate console=ttyBFJC0,$baud_rate"
 set bootargs 	     $bootargs_param0
 
 set linux_version "not found"
@@ -105,64 +81,61 @@ set TITLE "undefined"
 set CACHE_ENABLED           "enabled"
 set CACHE_DISABLED          "disabled"
 
+set step_sequence_number    1
+
+
 proc log_file_name { file_name } {
-    
-  return [ exec echo "$file_name" | sed "s/\\.exp/_log/g" | sed "s/\\.\\(\[a-zA-Z\]\\)/_\\1/g" | sed "s/\\(\.\*\\)\\(_\.\*_log\\)\\(\.\*\\)/\\1\\3\\2/g" ]
+    return [ exec echo "$file_name" | sed "s/\\.exp/_log/g" | sed "s/\\.\\(\[a-zA-Z\]\\)/_\\1/g" | sed "s/\\(\.\*\\)\\(_\.\*_log\\)\\(\.\*\\)/\\1\\3\\2/g" ]
 }
 
 proc title { file_name } {
-    
-  return [ exec echo "$file_name" | sed "s/_/ /g" | sed "s/\\.\\/\\(\.\*\\).exp/\\1/g" | tr 'a-z' 'A-Z' ]
+    return [ exec echo "$file_name" | sed "s/_/ /g" | sed "s/\\.\\/\\(\.\*\\).exp/\\1/g" | tr 'a-z' 'A-Z' ]
 }
-
-set step_sequence_number    1
 
 proc step { message } {
+    global step_sequence_number
 
-  global step_sequence_number
-
-  puts "\n*******************************************************************"
-  puts "STEP $step_sequence_number: $message\n\n"
-  send_log "\n************** STEP $step_sequence_number: $message\n\n"
-  incr step_sequence_number
+    puts "\n*******************************************************************"
+    puts "STEP $step_sequence_number: $message\n\n"
+    send_log "\n************** STEP $step_sequence_number: $message\n\n"
+    incr step_sequence_number
 }
 
-
 proc case_pass { casenum } {
-  send_user "\nCase $casenum ...PASS\n"
-  send_log "\nCase $casenum ...PASS\n"
+    send_user "\nCase $casenum ...PASS\n"
+    send_log "\nCase $casenum ...PASS\n"
 }
 
 proc case_fail { casenum } {
-  global TITLE
-  global log_loc
+    global TITLE
+    global log_loc
 
-  if {[ catch { eval exec grep -nrl {"$TITLE"} [glob $log_loc/\*/test_summary/pass_summary] } errmsg ]} {
-      send_user "\nLast passed test result is not found!!\n"
-  } else {
-      set pass_files [ eval exec grep -nrl {"$TITLE"} [glob $log_loc/\*/test_summary/pass_summary] ]
-      set last_pass_dir [exec echo $pass_files | awk -F/ {{print $9}} | sort -t_ +0n +1M | tail -n 1 ]
+    if {[ catch { eval exec grep -nrl {"$TITLE"} [glob $log_loc/\*/test_summary/pass_summary] } errmsg ]} {
+        send_user "\nLast passed test result is not found!!\n"
+    } else {
+        set pass_files [ eval exec grep -nrl {"$TITLE"} [glob $log_loc/\*/test_summary/pass_summary] ]
+        set last_pass_dir [exec echo $pass_files | awk -F/ {{print $9}} | sort -t_ +0n +1M | tail -n 1 ]
 
-      if {[ catch { exec grep Revision $log_loc/$last_pass_dir/kernel_test_log } errmsg ]} {
-          send_user "\nLast passed time: $last_pass_dir. Revision is not found!\n"
-      } else {
-          set last_pass_ucdist [exec grep Revision $log_loc/$last_pass_dir/kernel_test_log | awk {NR==1 {print $2}} ]
-          set last_pass_kernel [exec grep Revision $log_loc/$last_pass_dir/kernel_test_log | awk {NR==2 {print $2}} ]
-          send_user "\nLast passed time: $last_pass_dir, ucdist ver: $last_pass_ucdist, kernel ver: $last_pass_kernel\n"
-      }
-  }
+        if {[ catch { exec grep Revision $log_loc/$last_pass_dir/kernel_test_log } errmsg ]} {
+            send_user "\nLast passed time: $last_pass_dir. Revision is not found!\n"
+        } else {
+            set last_pass_ucdist [exec grep Revision $log_loc/$last_pass_dir/kernel_test_log | awk {NR==1 {print $2}} ]
+            set last_pass_kernel [exec grep Revision $log_loc/$last_pass_dir/kernel_test_log | awk {NR==2 {print $2}} ]
+            send_user "\nLast passed time: $last_pass_dir, ucdist ver: $last_pass_ucdist, kernel ver: $last_pass_kernel\n"
+        }
+    }
 
-  send_user "\nCase $casenum ...FAIL\n"
-  send_log "\nCase $casenum ...FAIL\n"
-  send_user "\n$TITLE FAIL\n"
-  send_log "$TITLE ............\[FAIL\]\n"
+    send_user "\nCase $casenum ...FAIL\n"
+    send_log "\nCase $casenum ...FAIL\n"
+    send_user "\n$TITLE FAIL\n"
+    send_log "$TITLE ............\[FAIL\]\n"
 
-  exit
+    exit
 }
 
 proc all_pass {} {
-  global TITLE
+    global TITLE
 
-  send_log "\n"
-  send_log "\n$TITLE ............\[PASS\]\n"
+    send_log "\n"
+    send_log "\n$TITLE ............\[PASS\]\n"
 }
