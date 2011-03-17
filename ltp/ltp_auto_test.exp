@@ -1182,10 +1182,23 @@ proc run_LTP_test { filename command torun mode} {
          }
 
          timeout {
+             if { $filename == "unshare02" && result_flag == $LTP_PASS } {
+                 send "\r"
+                 while 1 {
+                     expect {
+                         -re "$ltp_test_prompt" { break }
+                         timeout {
+                             set result_flag $LTP_CRASH
+                             break
+                         }
+                     }
+                 }
+             } else {
                  step "timeout!"
                  report "---timeout"
                  set result_flag $LTP_CRASH
-                 break
+             }
+             break
          }
       }
    }

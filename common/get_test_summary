@@ -136,4 +136,4 @@ complete_xml "$testsuite_name" "$err_num" "$fail_num" "$skip_num" "$test_num" "$
 
 
 rm -f summary
-ln -s test_summary/summary summary
+cp test_summary/summary summary
