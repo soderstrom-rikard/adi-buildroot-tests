@@ -53,10 +53,11 @@ while 1 {
     }
 }
 
+set timeout 20
 incr case_num
 set host_id $spawn_id
 
-for {set i 0} {$i<5000} {incr i} {
+for {set i 0} {$i<500} {incr i} {
     send "1"
     expect {
         "1" {
@@ -322,8 +323,23 @@ append bootargs_param6 " console=null"
 set bootargs             $bootargs_param6
 source ../common/reboot_kernel.exp
 
+set timeout 10
 incr case_num
+send "ifconfig $eth_dev $targetip\r"
+while 1 {
+    expect {
+        -re "$eth_dev: link up" {
+            sleep 2
+            case_pass $case_num
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
 
+incr case_num
 send -s "\x81"
 send -s "c"
 while 1 {
@@ -360,36 +376,38 @@ set telnet_id $spawn_id
 expect  -re  $sh_prompt
 
 ### This case is sending file from  host to target.
-
+incr case_num
 send -s "telnet $targetip\r"
 while 1 {
     expect {
         -re $kernel_prompt { break }
         timeout {
             send_user "Failed inital telnet\n"
-            exit
+            case_fail $case_num
         }
     }
 }
 
+incr case_num
 send -s "cat /proc/kallsyms > $save_file \r"
 while 1 {
     expect {
         -re $kernel_prompt { break }
         timeout {
             send_user "Failed to save file.\n"
-            exit
+            case_fail $case_num
         }
     }
 }
 
+incr case_num
 send -s "stty -F $target_tty ispeed $baud_rate ospeed $baud_rate $ttyflags\r"
 while 1 {
     expect {
         -re $kernel_prompt { break }
         timeout {
             send_user "Failed to set uart speed.\n"
-            exit
+            case_fail $case_num
         }
     }
 }
@@ -413,7 +431,7 @@ while 1 {
         -re  $sh_prompt { break }
         timeout {
             send_user "Failed to rcp $target_file to host.\n"
-            exit
+            case_fail $case_num
         }
     }
 }
@@ -505,7 +523,7 @@ while 1 {
         -re $kernel_prompt { break }
         timeout {
             send_user "Failed to set uart speed.\n"
-            exit
+            case_fail $case_num
         }
     }
 }
@@ -521,7 +539,7 @@ while 1 {
         -re $sh_prompt { break }
         timeout {
             send_user "Failed to set uart speed.\n"
-            exit
+            case_fail $case_num
         }
     }
 }
@@ -551,7 +569,7 @@ while 1 {
         -re "$kernel_prompt" { break }
         timeout {
             send_user "Failed inital telnet\n"
-            exit
+            case_fail $case_num
         }
     }
 }
