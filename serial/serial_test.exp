@@ -29,7 +29,7 @@ send -s "stty -echo;cat\r"
 set timeout 3
 while 1 {
     expect {
-        -re $kernel_prompt {
+        -re "# " {
             case_fail $case_num
         }
         timeout {
