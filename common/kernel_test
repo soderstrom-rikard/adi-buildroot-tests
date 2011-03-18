@@ -242,8 +242,54 @@ if [ $BUILD_POLICY -eq 1  ] ; then
 fi
 
 
-#############################################################################################
-########################## TEST LTP #########################################################
+################################# AUTOMATED TESTING #################################
+for i in `seq 0 $n`
+do
+
+    if [ -z ${AUTO_TESTCASE[$i]} ] ; then
+        continue
+    fi
+
+    if [ ${AUTO_RUN_STATUS[$i]} -eq 1  ] ; then
+
+        # always clean source before build
+        clean_src
+
+        cp -a $OUTPUT_BAK_DIR $OUTPUT_DIR
+        cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
+        rm $KERNEL_CUSTOM_DIR/.stamp_compiled   # delete .stamp_compiled to trigger new build
+
+        echo  "Start testing ${AUTO_TESTCASE[$i]}..."
+
+        cd $TESTSUITES_DIR/${AUTO_TESTCASE[$i]}    
+        ./build_${AUTO_TESTCASE[$i]}_kernel.exp  $BOARD_TYPE >/dev/null 2>&1
+
+        copy_result ${AUTO_TESTCASE[$i]}
+
+        if [ ! -f $IMAGE_DIR/uImage ]
+        then
+            echo "$0:   Error, failed."
+            tail -50 ./build_${AUTO_TESTCASE[$i]}_kernel_log
+        else
+            ./${AUTO_TESTCASE[$i]}_test.exp  $BOARD_TYPE >/dev/null 2>&1
+            cp $TESTSUITES_DIR/${AUTO_TESTCASE[$i]}/*_log  $THIS_LOG   
+        fi
+
+    fi
+
+    echo  "End testing ${AUTO_TESTCASE[$i]}..."
+    sleep 10
+
+    if [ $RESET_BOARD -eq 1  ] ; then
+        cd $TESTSUITES_DIR/common
+        ./reset_board.exp  >/dev/null  2>&1 
+        sleep 10
+    fi 
+
+done
+
+
+######################################### TEST LTP #########################################
 
 if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
     echo "Testing LTP..."
@@ -306,6 +352,54 @@ if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
     done
 
 fi
+
+
+################################# MANUAL TESTING #################################
+for i in `seq 0 $n`
+do
+
+    if [ -z ${MANUAL_TESTCASE[$i]} ] ; then
+        continue
+    fi
+
+    if [ ${MANUAL_RUN_STATUS[$i]} -eq 1  ] ; then
+
+        # always clean source before build
+        clean_src
+
+        cp -a $OUTPUT_BAK_DIR $OUTPUT_DIR
+        cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
+        rm $KERNEL_CUSTOM_DIR/.stamp_compiled   # delete .stamp_compiled to trigger new build
+
+        echo  "Start testing ${MANUAL_TESTCASE[$i]}..."
+
+        cd $TESTSUITES_DIR/${MANUAL_TESTCASE[$i]}    
+        ./build_${MANUAL_TESTCASE[$i]}_kernel.exp  $BOARD_TYPE >/dev/null 2>&1
+
+        copy_result ${MANUAL_TESTCASE[$i]}
+
+        if [ ! -f $IMAGE_DIR/uImage ]
+        then
+            echo "$0:   Error, failed."
+            tail -50 ./build_${MANUAL_TESTCASE[$i]}_kernel_log
+        else
+            ./${MANUAL_TESTCASE[$i]}_test.exp  $BOARD_TYPE >/dev/null 2>&1
+            cp $TESTSUITES_DIR/${MANUAL_TESTCASE[$i]}/*_log  $THIS_LOG   
+        fi
+
+    fi
+
+    echo  "End testing ${MANUAL_TESTCASE[$i]}..."
+    sleep 10
+
+    if [ $RESET_BOARD -eq 1  ] ; then
+        cd $TESTSUITES_DIR/common
+        ./reset_board.exp  >/dev/null  2>&1 
+        sleep 10
+    fi 
+
+done
+
 
 echo "Testing Done."
 exit 0
