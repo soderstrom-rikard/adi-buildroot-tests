@@ -1063,12 +1063,6 @@ proc run_LTP_test { filename command torun mode} {
    expect -re $ltp_test_prompt
    expect -re $ltp_test_prompt
    expect -re $ltp_test_prompt
-   #while 1 {
-   #   expect {
-   #      ">" {break}
-   #      timeout {break}
-   #   }
-   #}
 
    if { [string match "mount*" $filename] && $board_type == "BF548-EZKIT" } {
        set timeout 60
@@ -1088,8 +1082,8 @@ proc run_LTP_test { filename command torun mode} {
    }
 
    step "execute \[$command\] ..."
-   send "$command\r"
    set timeout 60
+   send "$command\r"
 
    while 1 {
    	
@@ -1098,7 +1092,6 @@ proc run_LTP_test { filename command torun mode} {
          "CURRENT PROCESS" {	
             report "---crash"
             set result_flag $LTP_CRASH
-          #  reset_board
             break
          }
 
@@ -1112,19 +1105,6 @@ proc run_LTP_test { filename command torun mode} {
          $LTP_FAIL {
             report "---fail"
             set result_flag $LTP_FAIL
-         }
-
-         -re $ltp_test_prompt {
-            report "---done"
-            sleep .5
-            break
-         }
-
-         # Some testcases leave the current directory in root
-          -re $kernel_prompt {
-            report "---done"
-            sleep .5
-            break
          }
 
          # Someone wrote sigprocmask2 with a non-standard passing response.
@@ -1178,6 +1158,19 @@ proc run_LTP_test { filename command torun mode} {
             report "---crash"
             set result_flag $LTP_CRASH
             reset_board
+            break
+         }
+
+         -re $ltp_test_prompt {
+            report "---done"
+            sleep .5
+            break
+         }
+
+         # Some testcases leave the current directory in root
+          -re $kernel_prompt {
+            report "---done"
+            sleep .5
             break
          }
 
@@ -1279,6 +1272,8 @@ proc run_LTP_test { filename command torun mode} {
    }
 
    send "rm -f /bin/$filename\r"
+   expect -re $ltp_test_prompt
+
    step "remove testcase done"
 
    if { $filename == "munlock01" || $filename == "semget05"} {
