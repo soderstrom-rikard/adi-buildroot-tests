@@ -277,9 +277,25 @@ proc recover {} {
 	send "echo \$PATH\r"
 	expect -re $ltp_test_prompt
         send -s "chmod 777 /tmp\r"
+
 	# Add network configuration.
 	send -s "ifconfig $eth_dev $ipaddr up\r"
         expect -nocase -re "up.*full"
+
+        set timeout 4
+        send "ifconfig $eth_dev\r"
+        while 1 {
+            expect {
+               -re "$ipaddr.*$ltp_test_prompt" {
+                       report "!!!! kernel is prepared for ltp test"
+                       return 1
+               }
+               timeout {
+                  report "!!!! Fail to prepare kernel for ltp test"
+                  break
+               }
+            }
+         }
 
         if [ catch {exec rcp $LTP_SCRIPT_DIR/config/passwd root@$ipaddr:/etc} ] {
             send_user "$errorInfo\n"
@@ -299,49 +315,7 @@ proc recover {} {
         if [ catch {exec rcp $LTP_TESTCASES_DIR/test3 root@$ipaddr:/bin} ] {
             send_user "$errorInfo\n"
         }
-        set timeout 4
-        set flag 0
-        while 1 {
-            expect {
-               "No such file or directory" {
-                  set flag 1
-               }
 
-               -re $ltp_test_prompt {
-                  if { $flag==0} {
-                     #sleep 3
-                     report "!!!! executed chmod 777 /tmp"
-                     report "!!!! recovered ok"
-		     send -s "ls -l /\r"
-
-                     while 1 {
-				expect {
-				"tmp" {
-			#	puts "2222222"
-                                #sleep 2
-				break
-				}
-								
-				timeout {
-					report "timeout during chmod 777 /tmp"					
-					break
-				}
-				}
-			}
-                     return 1
-                  } else {
-                     report "!!!! problem with chmod 777 /tmp"
-                     return 1
-                  }
-               }
-
-               timeout {
-                  report "!!!! timeout during chmod 777 /tmp"
-                  break
-               }
-            }
-         }
-	
       }
    }
    report "!!!! Not able to recover"
@@ -453,8 +427,24 @@ proc force_reboot {} {
             send "echo \$PATH\r"
             expect -re $ltp_test_prompt
             send -s "chmod 777 /tmp\r"
+
             send -s "ifconfig $eth_dev $ipaddr up\r"
             expect -nocase -re "up.*full"
+
+            set timeout 4
+            send "ifconfig $eth_dev\r"
+            while 1 {
+                expect {
+                    -re "$ipaddr.*$ltp_test_prompt" {
+                        report "!!!! kernel is prepared for ltp test"
+                        return 1
+                    }
+                    timeout {
+                        report "!!!! Fail to prepare kernel for ltp test"
+                        break
+                    }
+                }
+            }
 
             if [ catch {exec rcp $LTP_SCRIPT_DIR/config/passwd root@$ipaddr:/etc} ] {
                 send_user "$errorInfo\n"
@@ -474,46 +464,7 @@ proc force_reboot {} {
             if [ catch {exec rcp $LTP_TESTCASES_DIR/test3 root@$ipaddr:/bin} ] {
                 send_user "$errorInfo\n"
             }
-            set timeout 4
-            set flag 0
 
-            while 1 {
-                expect {
-
-                    "No such file or directory" {
-                        set flag 1
-                    }
-
-                    -re $ltp_test_prompt {
-                        if { $flag==0} {
-                            report "!!!! executed chmod 777 /tmp"
-                            send -s "ls -l /\r"
-
-                            while 1 {
-                                expect {
-                                    "tmp" {
-                                        break
-                                    }
-
-                                    timeout {
-                                        report "timeout during chmod 777 /tmp"
-                                        break
-                                    }
-                                }
-                            }
-                            return 1
-                        } else {
-                            report "!!!! problem with chmod 777 /tmp"
-                            return 1
-                        }
-                    }
-
-                    timeout {
-                        report "!!!! timeout during chmod 777 /tmp"
-                        break
-                    }
-                }
-            }
         }
     }
 
