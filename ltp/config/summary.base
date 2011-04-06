@@ -1,23 +1,22 @@
 
-test started Mar-12-2011-05:45am
+test started Apr-06-2011-02:15pm
 
 Test Results
 =====================================
   Total Tests        :  958
-  Passed Tests       :  733
+  Passed Tests       :  735
   Failed Tests       :  0
-  Broken Tests       :  2
+  Broken Tests       :  1
   Warning Tests      :  4
   Crashing Tests     :  0
-  Skipped Tests     :  109
-  NA on uClinux Tests     :  110
+  Skipped Tests     :  106
+  NA on uClinux Tests     :  112
 
 Failed Tests List
 =====================================
 
 Broken Tests List
 =====================================
-  -  lchown02_16
   -  readv02
 
 Warning Tests List
@@ -296,6 +295,7 @@ Passed Tests List
   -  lchown01
   -  lchown01_16
   -  lchown02
+  -  lchown02_16
   -  link02
   -  link03
   -  link04
@@ -333,6 +333,7 @@ Passed Tests List
   -  mkdir05A
   -  mkdir08
   -  mkdir09
+  -  mkdirat01
   -  mknod01
   -  mknod02
   -  mknod03
@@ -643,6 +644,7 @@ Passed Tests List
   -  sigaction01
   -  sigaction02
   -  sigaltstack01
+  -  sigaltstack02
   -  sighold02
   -  signal01
   -  signal02
@@ -703,6 +705,7 @@ Passed Tests List
   -  tee01
   -  time01
   -  time02
+  -  timerfd01
   -  timerfd02
   -  timerfd03
   -  timer_getoverrun01
@@ -725,12 +728,11 @@ Passed Tests List
   -  umask03
   -  uname01
   -  uname03
+  -  unlink01
   -  unlink05
   -  unlink06
   -  unlink08
   -  unlinkat01
-  -  unshare01
-  -  unshare02
   -  ustat01
   -  ustat02
   -  utime01
@@ -750,7 +752,6 @@ Passed Tests List
   -  wait402
   -  waitpid01
   -  waitpid02
-  -  waitpid03
   -  waitpid04
   -  waitpid05
   -  waitpid06
@@ -820,13 +821,10 @@ Skipped Tests List(Tests Not Run)
   -  io_setup01
   -  io_submit01
   -  keyctl01
-  -  llseek01
-  -  llseek02
   -  mallopt01
   -  mbind01
   -  mincore01
   -  mincore02
-  -  mkdirat01
   -  mlock01
   -  mlock02
   -  mlockall01
@@ -867,15 +865,15 @@ Skipped Tests List(Tests Not Run)
   -  settimeofday01
   -  settimeofday02
   -  sgetmask01
-  -  sigaltstack02
   -  signalfd01
   -  ssetmask01
   -  sysinfo02
-  -  timerfd01
   -  uname02
-  -  unlink01
   -  unlink07
+  -  unshare01
+  -  unshare02
   -  utimensat01
+  -  waitpid03
   -  write03
 
 NA on uClinux Tests List(Tests Not Avaliable to run on uClinux)
@@ -915,6 +913,8 @@ NA on uClinux Tests List(Tests Not Avaliable to run on uClinux)
   -  ioctl02
   -  ioctl03
   -  kill11
+  -  llseek01
+  -  llseek02
   -  mmap01
   -  mmap05
   -  mmap09
@@ -993,8 +993,8 @@ NA on uClinux Tests List(Tests Not Avaliable to run on uClinux)
 
 Measurement Tests
 =====================================
-  linux version            = 2.6.37.3-ADI-2011R1-pre-g3a7f250-dirty (test@lab-desktop)
-  gcc version              = 4.5.1
+  linux version            = 2.6.37.3-ADI-2011R1-pre-g9b73698-dirty (test@lab-desktop) (gcc version
+  gcc version              = not found
   BogoMips                 = not measured
   Dhrystones per second    = not measured
   system clock             = not measured

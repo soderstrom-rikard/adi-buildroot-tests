@@ -2103,14 +2103,14 @@ set result_matrix {
        { sigaction01         {sigaction01}                     	 notrun		UCLINUX }
        { sigaction02         {sigaction02}                     	 notrun		UCLINUX }
        { sigaltstack01       {sigaltstack01}                     notrun		UCLINUX }
-       { sigaltstack02       {sigaltstack03}                     notrun		UCLINUX }
+       { sigaltstack02       {sigaltstack02}                     notrun		UCLINUX }
        { sighold02     	     {sighold02}                     	 notrun		UCLINUX }
        { signal01     	     {signal01}                     	 notrun		UCLINUX }
        { signal02     	     {signal02}                     	 notrun		UCLINUX }
        { signal03     	     {signal03}                     	 notrun		UCLINUX }
        { signal04     	     {signal04}                     	 notrun		UCLINUX }
        { signal05     	     {signal05}                     	 notrun		UCLINUX }
-       { signalfd01   	     {signalfd01}                     	 notrun		UCLINUX }
+       { signalfd01   	     {signalfd01}                     	 notrun		NA }
        { signalfd4_01  	     {signalfd4_01}                   	 notrun		UCLINUX }
        { signalfd4_02  	     {signalfd4_02}                   	 notrun		UCLINUX }
        { sigpending02        {sigpending02}                      notrun		UCLINUX }
