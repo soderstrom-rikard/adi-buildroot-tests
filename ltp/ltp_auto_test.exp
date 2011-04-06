@@ -1674,8 +1674,8 @@ set result_matrix {
        { link07     	     {link07}                     	 notrun		UCLINUX }
        { linkat01     	     {linkat01}                     	 notrun		UCLINUX }
        { listen01     	     {listen01}                     	 notrun		UCLINUX }
-       { llseek01     	     {llseek01}                     	 notrun		UCLINUX }
-       { llseek02     	     {llseek02}                     	 notrun		UCLINUX }
+       { llseek01     	     {llseek01}                     	 notrun		NA }
+       { llseek02     	     {llseek02}                     	 notrun		NA }
        { lseek01     	     {lseek01}                     	 notrun		UCLINUX }
        { lseek02     	     {lseek02}                     	 notrun		UCLINUX }
        { lseek03     	     {lseek03}                     	 notrun		UCLINUX }
@@ -1709,7 +1709,7 @@ set result_matrix {
        { mkdir05A     	     {symlink01 -T mkdir05}            	 notrun		UCLINUX }
        { mkdir08     	     {mkdir08}                     	 notrun		UCLINUX }
        { mkdir09     	     {mkdir09}                     	 notrun		UCLINUX }
-       { mkdirat01     	     {mkdir01}                     	 notrun		UCLINUX }
+       { mkdirat01     	     {mkdirat01}                     	 notrun		UCLINUX }
        { mknod01     	     {mknod01}                     	 notrun		UCLINUX }
        { mknod02     	     {mknod02}                     	 notrun		UCLINUX }
        { mknod03     	     {mknod03}                     	 notrun		UCLINUX }
