@@ -1090,7 +1090,7 @@ proc run_LTP_test { filename command torun mode} {
          }
 
          # Someone wrote timerfd01 with a non-standard passing response.
-         "success\r\n*success\r\n" {
+         "success\r\n*success\r" {
             if {$result_flag == $LTP_NOT_RUN} {
                report "---pass"
                set result_flag $LTP_PASS
