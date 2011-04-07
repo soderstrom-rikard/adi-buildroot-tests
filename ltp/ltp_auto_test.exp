@@ -953,6 +953,13 @@ proc run_LTP_test { filename command torun mode} {
        }
    }
 
+   if { $filename == "readlink04" } {
+       if [ catch {exec rcp $LTP_TESTCASES_DIR/creat_slink root@$ipaddr:/bin} ] {
+           send_user "rcp test file fail\n"
+           send_user "$errorInfo\n"
+       }
+   }
+
    if { $filename == "rename01A" } {
        if [ catch {exec rcp $LTP_TESTCASES_DIR/symlink01 root@$ipaddr:/bin} ] {
            send_user "rcp test file fail\n"
@@ -1183,9 +1190,8 @@ proc run_LTP_test { filename command torun mode} {
    if { $filename == "lchown02" || $filename == "lchown02_16" } {
       send "rm -f /bin/create_link\r"
    }
-   if { $filename == "link01" || $filename == "open01A" } {
+   if { $filename == "link01" || $filename == "open01A" || $filename == "stat04" || $filename == "unlink01" } {
       send "rm -f /bin/symlink01\r"
-      send "rm -f /bin/open01\r"
    }
    if { $filename == "lstat01A" } {
       send "rm -f /bin/symlink01\r"

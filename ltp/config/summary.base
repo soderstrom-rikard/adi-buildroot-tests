@@ -4,13 +4,13 @@ test started Apr-06-2011-02:15pm
 Test Results
 =====================================
   Total Tests        :  958
-  Passed Tests       :  735
+  Passed Tests       :  736
   Failed Tests       :  0
   Broken Tests       :  1
   Warning Tests      :  4
   Crashing Tests     :  0
-  Skipped Tests     :  106
-  NA on uClinux Tests     :  112
+  Skipped Tests     :  104
+  NA on uClinux Tests     :  113
 
 Failed Tests List
 =====================================
@@ -865,12 +865,10 @@ Skipped Tests List(Tests Not Run)
   -  settimeofday01
   -  settimeofday02
   -  sgetmask01
-  -  signalfd01
   -  ssetmask01
   -  sysinfo02
   -  uname02
   -  unlink07
-  -  unshare01
   -  unshare02
   -  utimensat01
   -  waitpid03
@@ -953,6 +951,7 @@ NA on uClinux Tests List(Tests Not Avaliable to run on uClinux)
   -  set_robust_list01
   -  shmat01
   -  shmdt01
+  -  signalfd01
   -  swapoff01
   -  swapoff02
   -  swapon01
@@ -993,8 +992,8 @@ NA on uClinux Tests List(Tests Not Avaliable to run on uClinux)
 
 Measurement Tests
 =====================================
-  linux version            = 2.6.37.3-ADI-2011R1-pre-g9b73698-dirty (test@lab-desktop) (gcc version
-  gcc version              = not found
+  linux version            = 2.6.37.3-ADI-2011R1-pre-g9b73698-dirty
+  gcc version              = 4.4.1
   BogoMips                 = not measured
   Dhrystones per second    = not measured
   system clock             = not measured
