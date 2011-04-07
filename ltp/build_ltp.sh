@@ -74,7 +74,7 @@ fi
 
 # Build ltp testsuites
 echo "$0:	Make ..."
-make UCLINUX=1 > /dev/null 2>&1
+make > /dev/null 2>&1
 if [ $? -ne 0 ]
 then
 	echo "$0:	Error, make failed" 
@@ -82,7 +82,7 @@ then
 fi
 
 echo "$0:	make install ..."
-make UCLINUX=1 install > /dev/null 2>&1
+make install > /dev/null 2>&1
 if [ $? -ne 0 ]
 then
 	echo "$0:	Error, make install failed" 
