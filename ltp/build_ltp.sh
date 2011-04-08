@@ -55,7 +55,7 @@ cd $LTP_SUB_DIR
 
 # configure ltp
 echo "$0:	Configure ..."
-./configure --prefix=$CWD/$LTP_SUB_DIR --host=arm-none-linux-gnueabi --build=i686-pc-linux-gnu > /dev/null 2>&1
+./configure --prefix=$CWD/$LTP_SUB_DIR/installation --host=arm-none-linux-gnueabi --build=i686-pc-linux-gnu > /dev/null 2>&1
 if [ $? -ne 0 ]
 then
 	echo "$0:	Error, configure failed" 
@@ -74,7 +74,7 @@ fi
 
 # Build ltp testsuites
 echo "$0:	Make ..."
-make > /dev/null 2>&1
+make all > /dev/null 2>&1
 if [ $? -ne 0 ]
 then
 	echo "$0:	Error, make failed" 
