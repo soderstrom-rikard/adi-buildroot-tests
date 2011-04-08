@@ -3,6 +3,40 @@
 # This file couldn't be indepently executed.
 # It is meant to be included into ***_test.exp scripts.
 
+set timeout 8
+send "\r"
+while 1 {
+    expect {
+        -re "\[Pp]assword:" {
+            sleep .5
+            send "$password\r"
+            expect -re $kernel_prompt
+            break
+        }
+        -re $kernel_prompt {
+            break
+        }
+        timeout {
+            send_user "Fail: no kernel response" 
+            exit
+        }
+    }
+}
+ 
+set timeout 5
+send "\r"
+while 1 {
+    expect {
+        -re $kernel_prompt {
+            break
+        }
+        timeout {
+            send_user "Fail: kernel is not started properly" 
+            exit
+        }
+    }
+}
+ 
 set timeout 10
 send "ifconfig $eth_dev $targetip\r"
 while 1 {
