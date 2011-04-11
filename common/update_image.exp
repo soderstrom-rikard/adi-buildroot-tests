@@ -7,6 +7,11 @@ set timeout 8
 send "\r"
 while 1 {
     expect {
+        -re "\[lL]ogin:" {
+            sleep .5
+            send "$login_user\r"
+            continue
+        }
         -re "\[Pp]assword:" {
             sleep .5
             send "$password\r"
