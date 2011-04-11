@@ -1,15 +1,15 @@
 
-test started Apr-06-2011-02:15pm
+test started Apr-09-2011-03:07am
 
 Test Results
 =====================================
   Total Tests        :  958
-  Passed Tests       :  736
+  Passed Tests       :  770
   Failed Tests       :  0
-  Broken Tests       :  1
+  Broken Tests       :  0
   Warning Tests      :  4
   Crashing Tests     :  0
-  Skipped Tests     :  104
+  Skipped Tests     :  71
   NA on uClinux Tests     :  113
 
 Failed Tests List
@@ -17,7 +17,6 @@ Failed Tests List
 
 Broken Tests List
 =====================================
-  -  readv02
 
 Warning Tests List
 =====================================
@@ -34,6 +33,7 @@ Passed Tests List
   -  accept01
   -  access01
   -  access02
+  -  access03
   -  access04
   -  access05
   -  acct01
@@ -52,6 +52,7 @@ Passed Tests List
   -  bdflush01
   -  bind01
   -  bind02
+  -  brk01
   -  chdir01
   -  chdir01A
   -  chdir02
@@ -187,6 +188,7 @@ Passed Tests List
   -  flock04
   -  flock05
   -  flock06
+  -  fmtmsg01
   -  fpathconf01
   -  fstat01
   -  fstat01_64
@@ -196,6 +198,8 @@ Passed Tests List
   -  fstat03_64
   -  fstat04
   -  fstat04_64
+  -  fstat05
+  -  fstat05_64
   -  fstatat01
   -  fstatat01_64
   -  fstatfs01
@@ -239,6 +243,7 @@ Passed Tests List
   -  getgroups04_16
   -  gethostname01
   -  getitimer01
+  -  getitimer02
   -  getitimer03
   -  getpagesize01
   -  getpeername01
@@ -321,10 +326,13 @@ Passed Tests List
   -  lstat02_64
   -  lstat03
   -  lstat03_64
+  -  mallopt01
   -  mem03
   -  memcmp01
   -  memcpy01
   -  memset01
+  -  mincore01
+  -  mincore02
   -  mkdir01
   -  mkdir02
   -  mkdir03
@@ -344,6 +352,11 @@ Passed Tests List
   -  mknod08
   -  mknod09
   -  mknodat01
+  -  mlock01
+  -  mlock02
+  -  mlockall01
+  -  mlockall02
+  -  mlockall03
   -  mmap001
   -  mmap02
   -  mmap03
@@ -351,6 +364,9 @@ Passed Tests List
   -  mmap06
   -  mmap07
   -  mmap08
+  -  mprotect01
+  -  mprotect02
+  -  mprotect03
   -  msgctl01
   -  msgctl02
   -  msgctl03
@@ -375,7 +391,10 @@ Passed Tests List
   -  msgsnd05
   -  msgsnd06
   -  munlock01
+  -  munlock02
+  -  munlockall01
   -  munmap01
+  -  munmap02
   -  munmap03
   -  nanosleep01
   -  nanosleep02
@@ -438,6 +457,8 @@ Passed Tests List
   -  pwrite01_64
   -  pwrite02
   -  pwrite02_64
+  -  pwrite03
+  -  pwrite03_64
   -  pwrite04
   -  pwrite04_64
   -  read01
@@ -452,6 +473,7 @@ Passed Tests List
   -  readlink04
   -  readlinkat01
   -  readv01
+  -  readv02
   -  readv03
   -  reboot01
   -  reboot02
@@ -486,6 +508,7 @@ Passed Tests List
   -  rt_sigprocmask02
   -  rt_sigqueueinfo01
   -  rt_sigsuspend01
+  -  sbrk01
   -  sched_getaffinity01
   -  sched_getparam01
   -  sched_getparam02
@@ -568,10 +591,13 @@ Passed Tests List
   -  setgroups02_16
   -  setgroups03
   -  setgroups03_16
+  -  setgroups04
+  -  setgroups04_16
   -  sethostname01
   -  sethostname02
   -  sethostname03
   -  setitimer01
+  -  setitimer02
   -  setitimer03
   -  setpgid01
   -  setpgid02
@@ -621,6 +647,8 @@ Passed Tests List
   -  setsid01
   -  setsockopt01
   -  set_tid_address01
+  -  settimeofday01
+  -  settimeofday02
   -  setuid01
   -  setuid01_16
   -  setuid02
@@ -702,6 +730,7 @@ Passed Tests List
   -  syscall01
   -  sysconf01
   -  sysinfo01
+  -  sysinfo02
   -  tee01
   -  time01
   -  time02
@@ -727,12 +756,15 @@ Passed Tests List
   -  umask02
   -  umask03
   -  uname01
+  -  uname02
   -  uname03
   -  unlink01
   -  unlink05
   -  unlink06
+  -  unlink07
   -  unlink08
   -  unlinkat01
+  -  unshare01
   -  ustat01
   -  ustat02
   -  utime01
@@ -752,6 +784,7 @@ Passed Tests List
   -  wait402
   -  waitpid01
   -  waitpid02
+  -  waitpid03
   -  waitpid04
   -  waitpid05
   -  waitpid06
@@ -764,14 +797,13 @@ Passed Tests List
   -  waitpid13
   -  write01
   -  write02
+  -  write03
   -  write04
   -  write05
 
 Skipped Tests List(Tests Not Run)
 =====================================
   -  accept4_01
-  -  access03
-  -  brk01
   -  cacheflush01
   -  endian_switch01
   -  fcntl01
@@ -800,9 +832,6 @@ Skipped Tests List(Tests Not Run)
   -  fcntl25_64
   -  fcntl26
   -  fcntl26_64
-  -  fmtmsg01
-  -  fstat05
-  -  fstat05_64
   -  ftruncate04
   -  ftruncate04_64
   -  getcpu01
@@ -813,7 +842,6 @@ Skipped Tests List(Tests Not Run)
   -  getdents04
   -  getdents04_64
   -  gethostid01
-  -  getitimer02
   -  get_mempolicy01
   -  io_cancel01
   -  io_destroy01
@@ -821,15 +849,7 @@ Skipped Tests List(Tests Not Run)
   -  io_setup01
   -  io_submit01
   -  keyctl01
-  -  mallopt01
   -  mbind01
-  -  mincore01
-  -  mincore02
-  -  mlock01
-  -  mlock02
-  -  mlockall01
-  -  mlockall02
-  -  mlockall03
   -  modify_ldt01
   -  modify_ldt02
   -  move_pages01
@@ -843,36 +863,17 @@ Skipped Tests List(Tests Not Run)
   -  move_pages09
   -  move_pages10
   -  move_pages11
-  -  mprotect01
-  -  mprotect02
-  -  mprotect03
-  -  munlock02
-  -  munlockall01
   -  munlockall02
-  -  munmap02
   -  personality01
   -  personality02
-  -  pwrite03
-  -  pwrite03_64
   -  quotactl01
   -  read03
-  -  sbrk01
-  -  setgroups04
-  -  setgroups04_16
-  -  setitimer02
   -  set_thread_area01
   -  set_thread_area02
-  -  settimeofday01
-  -  settimeofday02
   -  sgetmask01
   -  ssetmask01
-  -  sysinfo02
-  -  uname02
-  -  unlink07
   -  unshare02
   -  utimensat01
-  -  waitpid03
-  -  write03
 
 NA on uClinux Tests List(Tests Not Avaliable to run on uClinux)
 =====================================
