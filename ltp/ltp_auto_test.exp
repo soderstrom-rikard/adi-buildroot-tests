@@ -160,7 +160,7 @@ proc recover {} {
          # First three times, try to send a command.
          set timeout 1
          send "cd /bin\r"
-         report "!!!! hit ENTER"	
+         report "!!!! hit ENTER"
       } else {
          # After that doesn't work, try Control-C
          set timeout 1
@@ -336,7 +336,7 @@ proc force_reboot {} {
     global kernel_prompt
     global ltp_test_prompt
     global errorInfo
-    global eth_dev 
+    global eth_dev
 
 
     report "!!!! force rebooting"
@@ -1044,13 +1044,21 @@ proc run_LTP_test { filename command torun mode} {
    send "$command\r"
 
    while 1 {
-   	
       expect {
-
-         "CURRENT PROCESS" {	
+         "CURRENT PROCESS" {
             report "---crash"
             set result_flag $LTP_CRASH
             break
+         }
+
+         # following cases have different responses with kernel prompt
+         # Make sure these cases are not considered as skipped.
+         -re "# (rt_sigqueueinfo01|unshare01|unshare02)" {
+            continue
+         }
+
+         -re "(rt_sigqueueinfo01|unshare01|unshare02)\r\n# " {
+            continue
          }
 
          $LTP_PASS {
@@ -1112,7 +1120,7 @@ proc run_LTP_test { filename command torun mode} {
          }
 
          # Detect kernel painic message printed out
-         "Kernel panic" {	
+         "Kernel panic" {
             report "---crash"
             set result_flag $LTP_CRASH
             reset_board
@@ -1133,7 +1141,7 @@ proc run_LTP_test { filename command torun mode} {
          }
 
          timeout {
-             if { [string match "unshare0*" $filename] && $result_flag == $LTP_PASS } {
+             if { ( [string match "unshare0*" $filename] || $filename == "rt_sigqueueinfo01" ) && $result_flag == $LTP_PASS } {
                  send "\r"
                  while 1 {
                      expect {
