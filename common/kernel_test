@@ -121,7 +121,7 @@ if [ $BOARD_CONFIG = "BEAGLE-STD" ] ; then
         MANUAL_RUN_STATUS[$((n+i))]="0"
     done
 
-    AUTO_RUN_STATUS[0]="0"; AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[2]="1"; AUTO_RUN_STATUS[3]="1"; AUTO_RUN_STATUS[$((n+1))]="1";
+    AUTO_RUN_STATUS[0]="1"; AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[2]="1"; AUTO_RUN_STATUS[3]="1"; AUTO_RUN_STATUS[$((n+1))]="1";
 
 fi
 
