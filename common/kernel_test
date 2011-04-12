@@ -96,9 +96,9 @@ BUILD_POLICY=1
 
 n=100
 
-AUTO_TESTCASE=( [0]="serial" [1]="sd" [$((n+1))]="ltp" )
+AUTO_TESTCASE=( [0]="ethernet" [1]="serial" [2]="sd" [3]="usb_storage" [$((n+1))]="ltp" )
 
-AUTO_RUN_STATUS=( [0]="0" [1]="0"[$((n+1))]="0" )
+AUTO_RUN_STATUS=( [0]="0" [1]="0" [2]="0" [3]="0" [$((n+1))]="0" )
 
 MANUAL_TESTCASE=( [0]="" [$((n+1))]="" )
 
@@ -121,7 +121,7 @@ if [ $BOARD_CONFIG = "BEAGLE-STD" ] ; then
         MANUAL_RUN_STATUS[$((n+i))]="0"
     done
 
-    AUTO_RUN_STATUS[0]="1"; AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[$((n+1))]="1";
+    AUTO_RUN_STATUS[0]="0"; AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[2]="1"; AUTO_RUN_STATUS[3]="1"; AUTO_RUN_STATUS[$((n+1))]="1";
 
 fi
 
