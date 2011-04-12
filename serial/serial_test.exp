@@ -1,7 +1,14 @@
 #!/usr/bin/expect
 #
-# Test program to test the serial driver.
+# This is test program of serial driver.
 #
+# Usage:
+#   ./serial_test.exp board_type
+#
+# Example:
+#   ./serial_test.exp beagle
+#
+
 
 source  ../common/kernel_config.exp
 log_file [log_file_name "$argv0"]

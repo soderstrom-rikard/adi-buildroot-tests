@@ -1,9 +1,16 @@
 #!/usr/bin/expect
 #
-# Program to test the SD/MMC driver
-# Prepare SD card before test starts
+# Test SD/MMC driver on target board;
+#
+# Prepare SD card as follow:
 # p1 is the boot partition(fat32)
 # p2(fat32) and p3(ext2) are for testing
+#
+# Usage:
+#   ./sd_test.exp board_type
+#
+# Example:
+#   ./sd_test.exp beagle
 #
 
 source  ../common/kernel_config.exp
