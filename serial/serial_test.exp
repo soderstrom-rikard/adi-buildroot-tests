@@ -26,49 +26,53 @@ source ../common/spawn_kermit.exp
 step "Update kernel image"
 source ../common/update_image.exp
 
-step "Start testing"
+
+step "Send message from host tty device to target board"
+
 set target_id $spawn_id
 set ttyflags "-icrnl -ixon igncr -opost -onlcr -isig -icanon -iexten -echo -echoe -echok -echoke -hupcl -echoctl -parenb -parodd cs8 hupcl -cstopb cread clocal -crtscts min 1 time 0"
 
-set case_num 0
-
-send -s "stty -echo;cat\r"
+incr case_num
 set timeout 3
+send -s "stty -echo;cat\r"
 while 1 {
     expect {
         -re "# " {
             case_fail $case_num
         }
         timeout {
+            case_pass $case_num
             break
         }
     }
 }
 
-set timeout 3
-set this_case FAIL
+
 spawn /bin/bash
+set host_id $spawn_id
+
+incr case_num
+set timeout 5
+send "\r"
 while 1 {
     expect {
         -re $sh_prompt {
+            case_pass $case_num
             break
         }
         timeout {
-            send_user "No prompt!\n"
-            break
+            send_user "Fail: start console on host\n"
+            case_fail $case_num
         }
     }
 }
 
-set timeout 20
 incr case_num
-set host_id $spawn_id
-
-for {set i 0} {$i<500} {incr i} {
+set timeout 20
+for { set i 0 } { $i < 500 } { incr i } {
     send "1"
     expect {
-        "1" {
-        }
+        "1" {}
         timeout {
             send_user "Fail to receive single byte in a long loop!\n"
             case_fail $case_num
@@ -88,18 +92,18 @@ expect {
 }
 
 incr case_num
-for {set i 0} {$i<30} {incr i} {
-
+set timeout 20
+for { set i 0 } { $i < 30 } { incr i } {
     set spawn_id $host_id
-    send  "echo $STRDATA > $ttydev \r"
+    send "echo $STRDATA > $ttydev\r"
     while 1 {
         expect {
             -re $sh_prompt {
                 break
             }
             timeout {
-                send_user "No prompt!\n"
-                break
+                send_user "Fail: send string to serial device in host\n"
+                case_fail $case_num
             }
         }
     }
@@ -108,7 +112,6 @@ for {set i 0} {$i<30} {incr i} {
     while 1 {
         expect {
             "$STRDATA" {
-                set this_case PASS
                 break
             }
             timeout {
@@ -117,41 +120,44 @@ for {set i 0} {$i<30} {incr i} {
         }
     }
 }
+#If test is failed, script will exit during above loop.
+#So this case is pass when reach here.
+case_pass $case_num
 
-if { $this_case == "PASS" } {
-    case_pass $case_num
-} else {
-    case_fail $case_num
-}
 
-send -s "\3"
+send "\3"
 expect -re $kernel_prompt
 
-incr case_num
-set this_case FAIL
-
+# set tty to normal on target board
 send "stty echo\r"
 expect -re $kernel_prompt
 
+incr case_num
 set timeout 3
 send "\r"
 while 1 {
     expect {
         -re $kernel_prompt {
+            case_pass $case_num
             break
         }
         timeout {
+            send_user "Fail: can't get kernel prompt"
             case_fail $case_num
         }
     }
 }
 
-for {set i 0} {$i<30} {incr i} {
-    send  "$STRDATA\r"
+
+step "On target board, give some input and check the output"
+
+incr case_num
+set timeout 5
+for { set i 0 } { $i < 30 } { incr i } {
+    send "$STRDATA\r"
     while 1 {
         expect {
             "$STRDATA" {
-                set this_case PASS
                 break
             }
             timeout {
@@ -160,44 +166,14 @@ for {set i 0} {$i<30} {incr i} {
         }
     }
 }
-
-if { $this_case == "PASS" } {
-    case_pass $case_num
-} else {
-    case_fail $case_num
-}
+#If test is failed, script will exit during above loop.
+#So this case is pass when reach here.
+case_pass $case_num
 
 
 incr case_num
-while 1 {
-    set timeout 5
-    send -s "ls\n"
-    expect {
-        -re $kernel_prompt {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
-
-incr case_num
-while 1 {
-    set timeout 5
-    send -s "dmesg\n"
-    send -s "dmesg\n"
-    send -s "dmesg\n"
-    send -s "cat /proc/slabinfo\n"
-    expect {
-        "slabinfo - version" { break }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
-
+set timeout 5
+send "ls /\n"
 while 1 {
     expect {
         -re $kernel_prompt {
@@ -211,9 +187,27 @@ while 1 {
 }
 
 incr case_num
+set timeout 10
+send "dmesg\n"
+send "dmesg\n"
+send "dmesg\n"
+send "cat /proc/slabinfo\n"
 while 1 {
-    set timeout 5
-    send -s "cat /proc/kallsyms\n"
+    expect {
+        -re "slabinfo - version.*$kernel_prompt" {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
+
+incr case_num
+set timeout 5
+send "cat /proc/kallsyms\n"
+while 1 {
     expect {
         "start" {
             break
@@ -224,9 +218,9 @@ while 1 {
     }
 }
 
+sleep 1
+send "\3"
 while 1 {
-    sleep 1
-    send -s "\3"
     expect {
         -re $kernel_prompt {
             case_pass $case_num
@@ -238,14 +232,12 @@ while 1 {
     }
 }
 
-
 incr case_num
 set timeout 30
-for {set i 0} {$i<100} {incr i} {
+for { set i 0 } { $i < 100 } { incr i } {
     send "$STRDATA\n"
 }
 send -s "====================================\n"
-
 while 1 {
     expect {
         -re "=========\[']?: \[Nn]o" {
@@ -258,12 +250,16 @@ while 1 {
     }
 }
 
+
+step "On target board, give input in vi"
+
 incr case_num
+set timeout 5
+send -s "vi\n"
 while 1 {
-    set timeout 5
-    send -s "vi\n"
     expect {
-        -re  "1.*1" {
+        -re "1.*1" {
+            case_pass $case_num
             break
         }
         timeout {
@@ -272,42 +268,45 @@ while 1 {
     }
 }
 
-while 1 {
-    set timeout 60
-    send -s "i"
-    send -s "adskf\n"
-    send -s "werigji\n"
-    send -s "werigji\n"
-    send -s "werigji\n"
-    send -s "werigji\n"
-    send -s "werigji\n"
-    send -s "werigji\n"
-    for {set i 0} {$i<100} {incr i} {
-        send -s "x"
+# This case is to write lots of stuff in vi
+incr case_num
+send -s "i"
+send -s "adskf\n"
+send -s "werigji\n"
+send -s "werigji\n"
+send -s "werigji\n"
+send -s "werigji\n"
+send -s "werigji\n"
+send -s "werigji\n"
+for { set i 0 } { $i < 100 } { incr i } {
+    set timeout 3
+    send -s "x"
+    while 1 {
         expect {
-            "x" {
-            }
+            "x" {}
             timeout {
                 case_fail $case_num
             }
         }
     }
-
-    send -s "a\n"
-    send -s "b\n"
-    send -s "c\n"
-    send -s "d\n"
-    send -s "e\n"
-    send -s "f\n"
-    send -s "\n"
-    send -s "$STRDATA"
-    send -s "$STRDATA"
-    send -s "$STRDATA"
-    send -s "$STRDATA\n"
-    for {set i 0} {$i<100} {incr i} {
-        send "$STRDATA\n"
-    }
-    send -s "===================================#"
+}
+send -s "a\n"
+send -s "b\n"
+send -s "c\n"
+send -s "d\n"
+send -s "e\n"
+send -s "f\n"
+send -s "\n"
+send -s "$STRDATA"
+send -s "$STRDATA"
+send -s "$STRDATA"
+send -s "$STRDATA\n"
+for { set i 0 } { $i < 100 } { incr i } {
+    send "$STRDATA\n"
+}
+send -s "===================================#"
+set timeout 60
+while 1 {
     expect {
         "#" {
             sleep 2
@@ -328,7 +327,6 @@ while 1 {
 incr case_num
 send_user "\n #######################################################################################################\n"
 step "Reboot the kernel."
-set boot_image uImage
 append bootargs_param6 " console=null"
 set bootargs             $bootargs_param6
 source ../common/reboot_kernel.exp
@@ -390,6 +388,11 @@ incr case_num
 send -s "telnet $targetip\r"
 while 1 {
     expect {
+        -re "\[lL]ogin:" {
+            sleep .5
+            send "$login_user\r"
+            continue
+        }
         -re $kernel_prompt { break }
         timeout {
             send_user "Failed inital telnet\n"
@@ -399,7 +402,7 @@ while 1 {
 }
 
 incr case_num
-send -s "cat /proc/kallsyms > $save_file \r"
+send -s "cat /proc/kallsyms > /$save_file\r"
 while 1 {
     expect {
         -re $kernel_prompt { break }
@@ -422,7 +425,7 @@ while 1 {
     }
 }
 
-send -s "cat $target_tty > $target_file\r"
+send -s "cat $target_tty > /$target_file\r"
 while 1 {
     expect {
         -re $kernel_prompt { break }
@@ -430,12 +433,11 @@ while 1 {
     }
 }
 
-
 spawn /bin/bash
 set host_sh_id $spawn_id
 expect  -re  $sh_prompt
 
-send -s "rcp root@$targetip:/$save_file . \r"
+send -s "rcp root@$targetip:/$save_file .\r"
 while 1 {
     expect {
         -re  $sh_prompt { break }
@@ -459,7 +461,7 @@ while 1 {
 
 set timeout 60
 while 1 {
-    send -s " cat $save_file > $ttydev  \r"
+    send -s "cat $save_file > $ttydev\r"
     expect {
         -re $sh_prompt { break }
         timeout {
@@ -499,25 +501,27 @@ while 1 {
 }
 
 set timeout 60
-send -s "diff -u $save_file $target_file \r"
+send -s "diff -u /$save_file /$target_file\r"
 while 1 {
     expect {
         -re "\\\+\\\+\\\+" {
             expect -re  "$kernel_prompt"
             send_log "\nTwo files diffs.\n "
             case_fail $case_num
-            break
         }
         "differ" {
             send_log "Two files diffs!\n"
             case_fail $case_num
+        }
+        "No such file" {
+            case_fail $case_num
+        }
+        -re $kernel_prompt {
+            case_pass $case_num
             break
         }
         timeout {
-            expect -re  "$kernel_prompt"
-            send_log "Success case.\n"
-            case_pass $case_num
-            break
+            case_fail $case_num
         }
     }
 }
@@ -574,11 +578,16 @@ while 1 {
 set spawn_id $telnet_id
 set timeout 60
 while 1 {
-    send -s "cat $save_file > $target_tty\r"
+    send -s "cat /$save_file > $target_tty\r"
     expect {
-        -re "$kernel_prompt" { break }
+        "No such file" {
+            case_fail $case_num
+        }
+        -re $kernel_prompt {
+            break
+        }
         timeout {
-            send_user "Failed inital telnet\n"
+	    send_user "Fail: cat /$save_file to $target_tty timeout in target"
             case_fail $case_num
         }
     }
