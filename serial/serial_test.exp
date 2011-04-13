@@ -131,7 +131,10 @@ incr case_num
 set this_case FAIL
 
 send "stty echo\r"
+expect -re $kernel_prompt
+
 set timeout 3
+send "\r"
 while 1 {
     expect {
         -re $kernel_prompt {
