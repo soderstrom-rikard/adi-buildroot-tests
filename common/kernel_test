@@ -400,6 +400,9 @@ do
 
 done
 
+# Clean kernel source after one regression cycle is finished
+# to avoid git problem in next cycle.
+clean_src
 
 echo "Testing Done."
 exit 0
