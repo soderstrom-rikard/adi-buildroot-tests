@@ -3,6 +3,7 @@
 # This file couldn't be indepently executed.
 # It is meant to be included into ***_test.exp scripts.
 
+set uboot_flag 0
 set timeout 8
 send "\r"
 while 1 {
@@ -21,9 +22,73 @@ while 1 {
         -re $kernel_prompt {
             break
         }
+        -re $uboot_prompt {
+            set uboot_flag 1
+            break
+        }
         timeout {
             send_user "Fail: no kernel response" 
             exit
+        }
+    }
+}
+
+if { $uboot_flag == 1 } {
+    set timeout 5
+    send "setenv console $def_uart_port,${baud_rate}n8\r"
+    while 1 {
+        expect {
+            -re $uboot_prompt {
+                break
+            }
+            timeout {
+                send_user "Fail: set console in uboot" 
+                exit
+            }
+        }
+    }
+
+    set timeout 5
+    send "mmcinfo\r"
+    while 1 {
+        expect {
+            -re "Capacity.*$uboot_prompt" {
+                break
+            }
+            timeout {
+                send_user "Fail: get mmc info" 
+                exit
+            }
+        }
+    }
+
+    set timeout 10
+    send "run loaduimage\r"
+    while 1 {
+        expect {
+            -re "bytes read.*$uboot_prompt" {
+                break
+            }
+            timeout {
+                send_user "Fail: load uimage in mmc" 
+                exit
+            }
+        }
+    }
+
+    set timeout 180
+    send "run mmcboot\r"
+    while 1 {
+        expect {
+            -re "login:" {
+                send "root\r"
+                expect -re $kernel_prompt
+                break
+            }
+            timeout {
+                send_user "Fail: boot kernel" 
+                exit
+            }
         }
     }
 }
@@ -88,6 +153,7 @@ while 1 {
     }
 }
 
+sleep 3
 if [ catch {exec rcp /tftpboot/uImage root@$targetip:/mnt} ] {
     send_user "Fail to rcp uImage to memory card\n"
     send_user "$errorInfo\n"
