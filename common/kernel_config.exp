@@ -140,3 +140,51 @@ proc all_pass {} {
     send_log "\n"
     send_log "\n$TITLE ............\[PASS\]\n"
 }
+
+proc before_boot {} {
+    global def_uart_port
+    global baud_rate
+    global uboot_prompt
+
+    set timeout 5
+    send "setenv console $def_uart_port,${baud_rate}n8\r"
+    while 1 {
+        expect {
+            -re $uboot_prompt {
+                break
+            }
+            timeout {
+                send_user "Fail: set console in uboot" 
+                exit
+            }
+        }
+    }
+
+    set timeout 5
+    send "mmcinfo\r"
+    while 1 {
+        expect {
+            -re "Capacity.*$uboot_prompt" {
+                break
+            }
+            timeout {
+                send_user "Fail: get mmc info" 
+                exit
+            }
+        }
+    }
+
+    set timeout 10
+    send "run loaduimage\r"
+    while 1 {
+        expect {
+            -re "bytes read.*$uboot_prompt" {
+                break
+            }
+            timeout {
+                send_user "Fail: load uimage in mmc" 
+                exit
+            }
+        }
+    }
+}
