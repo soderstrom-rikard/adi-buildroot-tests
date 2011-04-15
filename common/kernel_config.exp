@@ -20,6 +20,13 @@ if { $board_type == "beagle" } {
     set eth_dev "usb0"
     set baud_rate "115200"
     set def_uart_port ttyO2
+
+    set console_def "$def_uart_port,${baud_rate}n8"
+    set console_null "null"
+    set console_args $console_def
+
+    set ipargs "10.100.4.50:10.100.4.174:10.100.4.174:255.255.255.0:beagle:usb0:off"
+    set bootargs "setenv bootargs console=\$\{console\} mpurate=\$\{mpurate\} vram=\$\{vram\} omapfb.mode=dvi:\$\{dvimode\} omapfb.debug=y omapdss.def_disp=\$\{defaultdisplay\} root=\$\{mmcroot\} rootfstype=\$\{mmcrootfstype\}"
 } else {
     set baud_rate "57600"
     set eth_dev "eth0"
@@ -63,10 +70,6 @@ set romfs_rootfs_image   rootfs.romfs
 set HAVE_JFFS2_IMAGE     0
 set HAVE_KERNEL_ONLY_IMAGE     0
 set HAVE_ROMFS_IMAGE     0
-
-
-set bootargs_param0  "root=/dev/mtdblock0 rw ip=$targetip earlyprintk=serial,uart$def_uart_port,$baud_rate console=ttyBF$def_uart_port,$baud_rate"
-set bootargs 	     $bootargs_param0
 
 set linux_version "not found"
 set gcc_version "not found"
@@ -145,9 +148,10 @@ proc before_boot {} {
     global def_uart_port
     global baud_rate
     global uboot_prompt
+    global console_args
 
     set timeout 5
-    send "setenv console $def_uart_port,${baud_rate}n8\r"
+    send "setenv console $console_args\r"
     while 1 {
         expect {
             -re $uboot_prompt {

@@ -327,29 +327,162 @@ while 1 {
 }
 
 
-step "Get and send files through serial console"
+step "Update kernel with tty disabled in inittab"
+set console $console_null
+set boot_image uImage.serial.no_tty
+
 incr case_num
-send_user "\n #######################################################################################################\n"
-step "Reboot the kernel."
-append bootargs_param6 " console=null"
-set bootargs             $bootargs_param6
-source ../common/reboot_kernel.exp
- 
 set timeout 10
-incr case_num
-send "ifconfig $eth_dev $targetip\r"
+send "mount /dev/mmcblk0p1 /mnt/; sleep 2; ls /mnt\r"
 while 1 {
     expect {
-        -re "$eth_dev: link up" {
-            sleep 2
-            case_pass $case_num
+        -re "u-boot.*$kernel_prompt" {
             break
         }
         timeout {
+            send_user "Fail to mount memory card\n"
             case_fail $case_num
         }
     }
 }
+
+sleep 3
+send_user "\nRun command on host: rcp /tftpboot/$boot_image root@$targetip:/mnt/uImage\n"
+if [ catch {exec rcp /tftpboot/$boot_image root@$targetip:/mnt/uImage} ] {
+    send_user "$errorInfo\n"
+    case_fail $case_num
+}
+
+incr case_num
+set timeout 20
+send "umount /mnt\r"
+while 1 {
+    expect {
+        -re "cannot umount.*$kernel_prompt" {
+            send_user "Fail to umount memory card\n"
+            case_fail $case_num
+        }
+        -re $kernel_prompt {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            send_user "umount timeout\n"
+            case_fail $case_num
+        }
+    }
+}
+
+incr case_num
+set timeout 20
+send "reboot\r"
+while 1 {
+    expect {
+        "Hit any key" {
+            send "\r"
+            case_pass $case_num
+            break
+        }
+        " 2 " {
+            send "\r"
+            case_pass $case_num
+            break
+        }
+        timeout {
+            send_user "Fail: get into uboot\n"
+            case_fail $case_num
+        }
+    }
+}
+
+set timeout 5
+expect -re $uboot_prompt
+send "\r"
+expect -re $uboot_prompt
+
+incr case_num
+set timeout 5
+send "setenv ip \'$ipargs\'\r"
+expect -re $uboot_prompt
+send "setenv mmcargs \'$bootargs ip=\$\{ip\}\'\r"
+while 1 {
+    expect {
+        -re $uboot_prompt {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            send_user "Fail: set bootargs in uboot" 
+            case_fail $case_num
+        }
+    }
+}
+
+incr case_num
+set timeout 5
+send "setenv console $console\r"
+while 1 {
+    expect {
+        -re $uboot_prompt {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            send_user "Fail: set console in uboot" 
+            case_fail $case_num
+        }
+    }
+}
+
+incr case_num
+set timeout 5
+send "mmcinfo\r"
+while 1 {
+    expect {
+        -re "Capacity.*$uboot_prompt" {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            send_user "Fail: get mmc info" 
+            case_fail $case_num
+        }
+    }
+}
+
+incr case_num
+set timeout 10
+send "run loaduimage\r"
+while 1 {
+    expect {
+        -re "bytes read.*$uboot_prompt" {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            send_user "Fail: load uimage in mmc" 
+            case_fail $case_num
+        }
+    }
+}
+
+set timeout 180
+send "run mmcboot\r"
+while 1 {
+    expect {
+        -re "login:" {
+            send_user "Fail to disable tty"
+            case_fail $case_num
+        }
+        timeout {
+            case_pass $case_num
+            break
+        }
+    }
+}
+
+
+step "Get and send files through serial console"
 
 incr case_num
 set timeout 10
@@ -381,12 +514,11 @@ while 1 {
     }
 }
 
-spawn /bin/bash
-set telnet_id $spawn_id
-
 ####################################################
 # Bellow case is to send file from host to target. #
 ####################################################
+spawn /bin/bash
+set telnet_id $spawn_id
 
 set timeout 3
 send "\r"
@@ -408,6 +540,22 @@ while 1 {
         }
         timeout {
             send_user "Fail: inital telnet\n"
+            case_fail $case_num
+        }
+    }
+}
+
+incr case_num
+set timeout 5
+send "cat /proc/cmdline\r"
+while 1 {
+    expect {
+        -re "console=$console_null.*$kernel_prompt" {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            send_user "Fail: set console to $console_null\n"
             case_fail $case_num
         }
     }
@@ -745,6 +893,71 @@ while 1 {
             break
         }
         timeout {
+            case_fail $case_num
+        }
+    }
+}
+
+
+step "Update kernel to normal image which enables tty"
+set spawn_id $telnet_id
+
+set console $console_def
+set boot_image uImage.serial.tty
+
+incr case_num
+set timeout 10
+send "mount /dev/mmcblk0p1 /mnt/; sleep 2; ls /mnt\r"
+while 1 {
+    expect {
+        -re "u-boot.*$kernel_prompt" {
+            break
+        }
+        timeout {
+            send_user "Fail to mount memory card\n"
+            case_fail $case_num
+        }
+    }
+}
+
+sleep 3
+send_user "\nRun command on host: rcp /tftpboot/$boot_image root@$targetip:/mnt/uImage\n"
+if [ catch {exec rcp /tftpboot/$boot_image root@$targetip:/mnt/uImage} ] {
+    send_user "$errorInfo\n"
+    case_fail $case_num
+}
+
+incr case_num
+set timeout 20
+send "umount /mnt\r"
+while 1 {
+    expect {
+        -re "cannot umount.*$kernel_prompt" {
+            send_user "Fail to umount memory card\n"
+            case_fail $case_num
+        }
+        -re $kernel_prompt {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            send_user "umount timeout\n"
+            case_fail $case_num
+        }
+    }
+}
+
+incr case_num
+set timeout 20
+send "reboot\r"
+while 1 {
+    expect {
+        "Connection closed by foreign host" {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            send_user "Fail: reboot\n"
             case_fail $case_num
         }
     }
