@@ -117,6 +117,7 @@ while 1 {
 }
 
 sleep 3
+send_user "Run command on host: rcp /tftpboot/uImage root@$targetip:/mnt\n"
 if [ catch {exec rcp /tftpboot/uImage root@$targetip:/mnt} ] {
     send_user "Fail to rcp uImage to memory card\n"
     send_user "$errorInfo\n"

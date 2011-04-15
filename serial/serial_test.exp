@@ -283,7 +283,9 @@ for { set i 0 } { $i < 100 } { incr i } {
     send -s "x"
     while 1 {
         expect {
-            "x" {}
+            "x" {
+                break
+            }
             timeout {
                 case_fail $case_num
             }
