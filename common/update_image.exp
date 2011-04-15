@@ -71,11 +71,14 @@ set timeout 10
 send "ifconfig $eth_dev $targetip\r"
 while 1 {
     expect {
-        -re "$eth_dev: link up" {
+        -re "ifconfig:" {
+            send_user "Fail to enable ethernet\n"
+            exit
+        }
+        -re "$eth_dev: link up|$kernel_prompt" {
             sleep 2
             break
         }
-
         timeout {
             send_user "Fail to enable ethernet\n"
             exit
