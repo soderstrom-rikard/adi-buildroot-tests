@@ -93,10 +93,9 @@ while 1 {
         -re "mmcblk0: p1.*$kernel_prompt" {
             break
         }
-
         timeout {
-            send_user "Fail to find memory card\n"
-            exit
+            send_user "Fail to find mmc info in dmesg, but we still may proceed\n"
+            break
         }
     }
 }
