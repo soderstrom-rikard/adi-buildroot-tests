@@ -77,7 +77,7 @@ if [ catch {exec cp $src_root/output/images/$boot_image /tftpboot/$boot_image.se
     exit
 }
 
-if [ catch {exec cp /tftpboot/$boot_image.serial $src_root/output/images/$boot_image } ] {
+if [ catch {exec mv /tftpboot/$boot_image.serial $src_root/output/images/$boot_image } ] {
     send_user "$errorInfo\n"
     exit
 }

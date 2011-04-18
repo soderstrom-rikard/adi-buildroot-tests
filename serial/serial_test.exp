@@ -347,8 +347,8 @@ while 1 {
 }
 
 sleep 3
-send_user "\nRun command on host: rcp /tftpboot/$boot_image root@$targetip:/mnt/uImage\n"
-if [ catch {exec rcp /tftpboot/$boot_image root@$targetip:/mnt/uImage} ] {
+send_user "\nRun command on host: rcp /tftpboot/$boot_image root@$targetip:/mnt\n"
+if [ catch {exec rcp /tftpboot/$boot_image root@$targetip:/mnt} ] {
     send_user "$errorInfo\n"
     case_fail $case_num
 }
@@ -452,7 +452,7 @@ while 1 {
 
 incr case_num
 set timeout 10
-send "run loaduimage\r"
+send "fatload mmc \$\{mmcdev\} \$\{loadaddr\} $boot_image\r"
 while 1 {
     expect {
         -re "bytes read.*$uboot_prompt" {
@@ -899,11 +899,8 @@ while 1 {
 }
 
 
-step "Update kernel to normal image which enables tty"
+step "Clean image on card and reboot kernel to normal"
 set spawn_id $telnet_id
-
-set console $console_def
-set boot_image uImage.serial
 
 incr case_num
 set timeout 10
@@ -911,6 +908,7 @@ send "mount /dev/mmcblk0p1 /mnt/; sleep 2; ls /mnt\r"
 while 1 {
     expect {
         -re "u-boot.*$kernel_prompt" {
+            case_pass $case_num
             break
         }
         timeout {
@@ -920,11 +918,23 @@ while 1 {
     }
 }
 
-sleep 3
-send_user "\nRun command on host: rcp /tftpboot/$boot_image root@$targetip:/mnt/uImage\n"
-if [ catch {exec rcp /tftpboot/$boot_image root@$targetip:/mnt/uImage} ] {
-    send_user "$errorInfo\n"
-    case_fail $case_num
+incr case_num
+set timeout 10
+send "rm /mnt/uImage.serial*\r"
+while 1 {
+    expect {
+        -re "rm:.*$kernel_prompt" {
+            case_fail $case_num
+        }
+        -re $kernel_prompt {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            send_user "Fail to remove image on memory card\n"
+            case_fail $case_num
+        }
+    }
 }
 
 incr case_num

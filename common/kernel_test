@@ -297,10 +297,10 @@ if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
     ./build_serial_kernel.exp $BOARD_TYPE >/dev/null 2>&1
 
     copy_result "serial"
-    cp /tftpboot/uImage.serial.no_tty $THIS_LOG
 
     # run this test only when two images exist
-    if [ -f /tftpboot/uImage.serial ] && [ -f /tftpboot/uImage.serial.no_tty ] ; then
+    if [ -f /tftpboot/uImage.serial.no_tty ] ; then
+        cp /tftpboot/uImage.serial.no_tty $THIS_LOG
         ./serial_test.exp $BOARD_TYPE >/dev/null 2>&1
     else
         echo "$0:   Error, failed."
