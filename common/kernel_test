@@ -204,7 +204,7 @@ if [ $BUILD_POLICY -eq 1  ] ; then
     echo "./build_policy_kernel.exp $BOARD_TYPE $BINARY_FORMAT $XENOMAI >/dev/null  2>&1"
     ./build_policy_kernel.exp $BOARD_TYPE $BINARY_FORMAT $XENOMAI >/dev/null  2>&1
 
-    copy_result policy
+    copy_result "policy"
     mv $SRC_ROOT/linux/linux-2.6.x/defconfig $THIS_LOG/defconfig.policy
     cp $TESTSUITES_DIR/policy/build_policy_kernel_log $THIS_LOG
 
@@ -253,7 +253,7 @@ do
         cd $TESTSUITES_DIR/${AUTO_TESTCASE[$i]}
         ./build_${AUTO_TESTCASE[$i]}_kernel.exp  $BOARD_TYPE >/dev/null 2>&1
 
-        copy_result ${AUTO_TESTCASE[$i]}
+        copy_result "${AUTO_TESTCASE[$i]}"
 
         if [ ! -f $IMAGE_DIR/uImage ]
         then
@@ -286,38 +286,25 @@ if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
 
     rm -fr /tftpboot/uImage.serial*
 
-    # build two images for serial test
-    for tty_status in "tty no_tty"
-    do
+    # always clean source before build
+    clean_src
 
-        # always clean source before build
-        clean_src
+    cp -a $OUTPUT_BAK_DIR $OUTPUT_DIR
+    cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
+    rm $KERNEL_CUSTOM_DIR/.stamp_compiled   # delete .stamp_compiled to trigger new build
 
-        cp -a $OUTPUT_BAK_DIR $OUTPUT_DIR
-        cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
-        rm $KERNEL_CUSTOM_DIR/.stamp_compiled   # delete .stamp_compiled to trigger new build
+    cd $TESTSUITES_DIR/serial
+    ./build_serial_kernel.exp $BOARD_TYPE >/dev/null 2>&1
 
-        cd $TESTSUITES_DIR/serial
-        ./build_serial_kernel.exp $BOARD_TYPE $tty_status >/dev/null 2>&1
-
-        copy_result "serial.$tty_status"
-
-        if [ ! -f $IMAGE_DIR/uImage ]
-        then
-            echo "$0:   Error, failed."
-            tail -50 ./build_serial_kernel_log
-        else
-            cp $IMAGE_DIR/uImage /tftpboot/uImage.serial.$tty_status
-        fi
-
-    done
+    copy_result "serial"
+    cp /tftpboot/uImage.serial.no_tty $THIS_LOG
 
     # run this test only when two images exist
-    if [ -f /tftpboot/uImage.serial.tty ] ; then
-        cp /tftpboot/uImage.serial.tty /tftpboot/uImage
-        if [ -f /tftpboot/uImage.serial.no_tty ] ; then
-            ./serial_test.exp $BOARD_TYPE >/dev/null 2>&1
-        fi
+    if [ -f /tftpboot/uImage.serial ] && [ -f /tftpboot/uImage.serial.no_tty ] ; then
+        ./serial_test.exp $BOARD_TYPE >/dev/null 2>&1
+    else
+        echo "$0:   Error, failed."
+        tail -50 ./build_serial_kernel_log
     fi
 
     cp $TESTSUITES_DIR/serial/*_log  $THIS_LOG
@@ -357,7 +344,7 @@ if [ ${AUTO_RUN_STATUS[$((n+2))]} -eq 1 ] ; then
         echo "./build_ltp_kernel.exp $BOARD_TYPE ${ltp_args[i]}"
         ./build_ltp_kernel.exp $BOARD_TYPE ${ltp_args[i]}> /dev/null 2>&1
 
-        copy_result ltp_${ltp_suf[i]}
+        copy_result "ltp_${ltp_suf[i]}"
 
         if [ ! -f $IMAGE_DIR/uImage ]
         then
@@ -421,7 +408,7 @@ do
         cd $TESTSUITES_DIR/${MANUAL_TESTCASE[$i]}
         ./build_${MANUAL_TESTCASE[$i]}_kernel.exp  $BOARD_TYPE >/dev/null 2>&1
 
-        copy_result ${MANUAL_TESTCASE[$i]}
+        copy_result "${MANUAL_TESTCASE[$i]}"
 
         if [ ! -f $IMAGE_DIR/uImage ]
         then

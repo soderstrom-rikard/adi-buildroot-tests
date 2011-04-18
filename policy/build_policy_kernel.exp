@@ -142,7 +142,7 @@ step "Make"
 source make_kernel.exp
 
 cd $src_root/testsuites/common
-step "Copy linux"
+step "Copy image"
 source copy_image.exp
 
 send_user "Ending $argv0\n"

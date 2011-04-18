@@ -903,7 +903,7 @@ step "Update kernel to normal image which enables tty"
 set spawn_id $telnet_id
 
 set console $console_def
-set boot_image uImage.serial.tty
+set boot_image uImage.serial
 
 incr case_num
 set timeout 10
