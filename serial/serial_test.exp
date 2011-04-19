@@ -664,10 +664,10 @@ set timeout 180
 send -s "time cat $save_file > $ttydev\r"
 while 1 {
     expect {
-        -re "cat:" {
+        -re "cat:.*$sh_prompt" {
             case_fail $case_num
         }
-        -re $sh_prompt {
+        -re "sys.*$sh_prompt" {
             case_pass $case_num
             break
         }
@@ -824,10 +824,10 @@ set timeout 180
 send "time cat /$save_file > $target_tty\r"
 while 1 {
     expect {
-        "No such file" {
+        -re "cat:.*$kernel_prompt" {
             case_fail $case_num
         }
-        -re $kernel_prompt {
+        -re "sys.*$kernel_prompt" {
             case_pass $case_num
             break
         }
