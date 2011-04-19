@@ -103,7 +103,7 @@ do
 done
 
 # generate xml content for failed test log
-test_fail_log=`grep -l "T[Ee][Ss][Tt] .*\.\.\.\[FAIL]" *log* --binary-files=text`
+test_fail_log="`grep -l "T[Ee][Ss][Tt] .*\.\.\.\[FAIL]" *log* --binary-files=text` `cat test_summary/test_log_without_result`"
 for test_log in $test_fail_log
 do
     result=FAIL
