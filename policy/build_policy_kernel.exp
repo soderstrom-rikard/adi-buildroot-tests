@@ -47,13 +47,13 @@ while 1 {
         }
 
         eof {
-            puts "End of configuration"
+            send_user "End of configuration"
             break
         }
 
         timeout {
-            puts "\n\nFATAL ERROR: config prompt timeout in make config"
-            break
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config"
+            exit
         }
     }
 }
@@ -61,9 +61,14 @@ while 1 {
 step "Make default kernel config"
 cd $kernel_root
 set timeout 60
+spawn cp $src_root/target/device/AnalogDevices/arch-$arch/$kernel_defconfig $kernel_root/arch/$arch/configs/
 spawn make ARCH=$arch $kernel_defconfig
 while 1 {
     expect {
+        -re "make:.*Error" {
+            send_user "\n\nERROR: make kernel default config"
+            exit
+        }
         "configuration written to" {}
         eof { break }
         timeout {
@@ -93,13 +98,13 @@ while 1 {
         }
 
         eof {
-            puts "End of configuration"
+            send_user "End of configuration"
             break
         }
 
         timeout {
-            puts "\n\nFATAL ERROR: config prompt timeout in make config"
-            break
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config"
+            exit
         }
     }
 }
@@ -110,16 +115,17 @@ set timeout 60
 spawn make ARCH=$arch savedefconfig
 while 1 {
     expect {
+        -re "make:.*Error" {
+            send_user "\n\nERROR: Generate kernel defconfig"
+            exit
+        }
         "savedefconfig=defconfig Kconfig" {}
-
         eof {
-            puts "End of configuration"
             break
         }
-
         timeout {
-            puts "\n\nFATAL ERROR: Generate kernel defconfig timeout"
-            break
+            send_user "\n\nERROR: Generate kernel defconfig timeout"
+            exit
         }
     }
 }
