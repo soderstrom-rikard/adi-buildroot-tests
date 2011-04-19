@@ -96,7 +96,7 @@ BUILD_POLICY=1
 
 n=100
 
-AUTO_TESTCASE=( [0]="ethernet" [1]="" [2]="sd" [3]="usb_storage" [$((n+1))]="serial" [$((n+2))]="ltp" )
+AUTO_TESTCASE=( [0]="ethernet" [1]="ethernet_usb" [2]="sd" [3]="usb_storage" [$((n+1))]="serial" [$((n+2))]="ltp" )
 
 AUTO_RUN_STATUS=( [0]="1" [1]="0" [2]="0" [3]="0" [$((n+1))]="1" [$((n+2))]="1" )
 
@@ -110,7 +110,7 @@ MANUAL_RUN_STATUS=( [0]="0" [$((n+1))]="0" )
 if [ $BOARD_CONFIG = "BEAGLE-STD" ] ; then
     BOARD_TYPE=beagle
 
-    AUTO_RUN_STATUS[2]="1"; AUTO_RUN_STATUS[3]="1";
+    AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[2]="1"; AUTO_RUN_STATUS[3]="1";
 
 fi
 
@@ -176,7 +176,7 @@ clean_src () {
 }
 
 # copy image and config files after each test
-copy_result () {
+copy_image_config () {
     if [ -n "$1" ] ; then
         post_fix=$1
     else
@@ -204,15 +204,15 @@ if [ $BUILD_POLICY -eq 1  ] ; then
     echo "./build_policy_kernel.exp $BOARD_TYPE $BINARY_FORMAT $XENOMAI >/dev/null  2>&1"
     ./build_policy_kernel.exp $BOARD_TYPE $BINARY_FORMAT $XENOMAI >/dev/null  2>&1
 
-    copy_result "policy"
-    mv $SRC_ROOT/linux/linux-2.6.x/defconfig $THIS_LOG/defconfig.policy
-    cp $TESTSUITES_DIR/policy/build_policy_kernel_log $THIS_LOG
-
     if [ ! -f $IMAGE_DIR/uImage ] ; then
         echo "Kernel image fails to generate. Terminate test!"
         tail -50 ./build_policy_kernel_log
         exit 3
     fi
+
+    copy_image_config "policy"
+    mv $SRC_ROOT/linux/linux-2.6.x/defconfig $THIS_LOG/defconfig.policy
+    mv $TESTSUITES_DIR/policy/build_policy_kernel_log $THIS_LOG
 
     # back up compiled stuff for future build
     cp $SRC_ROOT/.config $SRC_ROOT/config.user.policy
@@ -250,11 +250,21 @@ do
 
         echo  "Start testing ${AUTO_TESTCASE[$i]}..."
 
-        cd $TESTSUITES_DIR/${AUTO_TESTCASE[$i]}
+        # enter correct directory
+        if [ ${AUTO_TESTCASE[$i]} == "ethernet_usb" ] ; then
+            cd $TESTSUITES_DIR/ethernet
+        else
+            cd $TESTSUITES_DIR/${AUTO_TESTCASE[$i]}
+        fi
+
+        # build kernel image
         ./build_${AUTO_TESTCASE[$i]}_kernel.exp  $BOARD_TYPE >/dev/null 2>&1
 
-        copy_result "${AUTO_TESTCASE[$i]}"
+        if [ ${AUTO_TESTCASE[$i]} == "ethernet_usb" ] ; then
+            mv build_ethernet_kernel_log build_ethernet_usb_kernel_log
+        fi
 
+        # run test case when kernel is built successfully
         if [ ! -f $IMAGE_DIR/uImage ]
         then
             echo "$0:   Error, failed."
@@ -263,7 +273,13 @@ do
             ./${AUTO_TESTCASE[$i]}_test.exp  $BOARD_TYPE >/dev/null 2>&1
         fi
 
-        cp $TESTSUITES_DIR/${AUTO_TESTCASE[$i]}/*_log  $THIS_LOG
+        if [ ${AUTO_TESTCASE[$i]} == "ethernet_usb" ] ; then
+            mv ethernet_test_log ethernet_usb_test_log
+        fi
+
+        # backup all test results
+        copy_image_config "${AUTO_TESTCASE[$i]}"
+        mv $TESTSUITES_DIR/${AUTO_TESTCASE[$i]}/*_log  $THIS_LOG
 
         echo  "End testing ${AUTO_TESTCASE[$i]}..."
         sleep 10
@@ -296,8 +312,6 @@ if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
     cd $TESTSUITES_DIR/serial
     ./build_serial_kernel.exp $BOARD_TYPE >/dev/null 2>&1
 
-    copy_result "serial"
-
     # run this test only when two images exist
     if [ -f /tftpboot/uImage.serial.no_tty ] ; then
         cp /tftpboot/uImage.serial.no_tty $THIS_LOG
@@ -307,7 +321,8 @@ if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
         tail -50 ./build_serial_kernel_log
     fi
 
-    cp $TESTSUITES_DIR/serial/*_log  $THIS_LOG
+    copy_image_config "serial"
+    mv $TESTSUITES_DIR/serial/*_log  $THIS_LOG
 
     echo  "End testing serial..."
     sleep 10
@@ -344,7 +359,7 @@ if [ ${AUTO_RUN_STATUS[$((n+2))]} -eq 1 ] ; then
         echo "./build_ltp_kernel.exp $BOARD_TYPE ${ltp_args[i]}"
         ./build_ltp_kernel.exp $BOARD_TYPE ${ltp_args[i]}> /dev/null 2>&1
 
-        copy_result "ltp_${ltp_suf[i]}"
+        copy_image_config "ltp_${ltp_suf[i]}"
 
         if [ ! -f $IMAGE_DIR/uImage ]
         then
@@ -408,8 +423,6 @@ do
         cd $TESTSUITES_DIR/${MANUAL_TESTCASE[$i]}
         ./build_${MANUAL_TESTCASE[$i]}_kernel.exp  $BOARD_TYPE >/dev/null 2>&1
 
-        copy_result "${MANUAL_TESTCASE[$i]}"
-
         if [ ! -f $IMAGE_DIR/uImage ]
         then
             echo "$0:   Error, failed."
@@ -418,7 +431,8 @@ do
             ./${MANUAL_TESTCASE[$i]}_test.exp  $BOARD_TYPE >/dev/null 2>&1
         fi
 
-        cp $TESTSUITES_DIR/${MANUAL_TESTCASE[$i]}/*_log  $THIS_LOG
+        copy_image_config "${MANUAL_TESTCASE[$i]}"
+        mv $TESTSUITES_DIR/${MANUAL_TESTCASE[$i]}/*_log  $THIS_LOG
 
     fi
 
