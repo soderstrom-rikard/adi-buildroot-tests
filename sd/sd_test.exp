@@ -31,10 +31,10 @@ set EXT_PAR "/dev/mmcblk0p3"
 
 incr case_num
 set timeout 5
-send "dmesg|grep mmc\r"
+send "ls /dev/mmcblk0p*\r"
 while 1 {
     expect {
-        -re "mmcblk0: p1 p2 p3.*$kernel_prompt" {
+        -re "mmcblk0p2.*mmcblk0p3.*$kernel_prompt" {
             case_pass $case_num
             break
         }
