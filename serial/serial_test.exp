@@ -360,7 +360,7 @@ set timeout 20
 send "umount /mnt\r"
 while 1 {
     expect {
-        -re "cannot umount.*$kernel_prompt" {
+        -re "umount:.*$kernel_prompt" {
             send_user "Fail to umount memory card\n"
             case_fail $case_num
         }
@@ -523,7 +523,6 @@ spawn /bin/bash
 set telnet_id $spawn_id
 
 set timeout 3
-send "\r"
 expect -re $sh_prompt
 
 incr case_num
@@ -620,6 +619,8 @@ while 1 {
 }
 
 set spawn_id $host_id
+
+set timeout 3
 expect -re $sh_prompt
 
 incr case_num
@@ -762,8 +763,7 @@ while 1 {
 
 set spawn_id $host_id
 
-sleep 3
-send "ls\r"
+set timeout 3
 expect -re $sh_prompt
 
 incr case_num
@@ -790,7 +790,7 @@ set timeout 10
 send "cat $ttydev > $host_file\r"
 while 1 {
     expect {
-        -re "stty:.*$sh_prompt" {
+        -re "cat:.*$sh_prompt" {
             case_fail $case_num
         }
         -re $sh_prompt {
@@ -807,8 +807,7 @@ while 1 {
 
 set spawn_id $telnet_id
 
-sleep 3
-send "ls\r"
+set timeout 3
 expect -re $kernel_prompt
 
 incr case_num
@@ -932,7 +931,7 @@ set timeout 20
 send "umount /mnt\r"
 while 1 {
     expect {
-        -re "cannot umount.*$kernel_prompt" {
+        -re "umount:.*$kernel_prompt" {
             send_user "Fail to umount memory card\n"
             case_fail $case_num
         }
