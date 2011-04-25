@@ -6,6 +6,12 @@ set timeout 1200
 set bfin_make_status failure
 while 1 {
     expect {
+        -re "Which edition of Qt.*Type \'o\' if you want to use the Open Source Edition" {
+            send "o\r"
+        }
+        -re "Do you accept the terms of either license?" {
+            send "yes\r"
+        }
         "\\\(*) \\\[*]" {
             sleep .05
             send "\r"
