@@ -1,0 +1,58 @@
+#!/usr/bin/expect
+#
+# Test qt application
+#
+# Usage:
+#   ./qt_test.exp board_type
+#
+# Example:
+#   ./qt_test.exp beagle
+#
+
+source  ../common/kernel_config.exp
+log_file [log_file_name "$argv0"]
+send_user "Starting $argv0\n"
+set TITLE [title "$argv0"]
+
+step "Start kermit"
+source ../common/spawn_kermit.exp
+
+step "Update kernel image"
+source ../common/update_image.exp
+
+step "Start testing"
+
+incr case_num
+set timeout 30
+send "calendarwidget -qws\r"
+while 1 {
+    expect {
+        -re "\r\n\[a-zA-Z0-9]" {
+            case_fail $case_num
+        }
+        timeout {
+            case_pass $case_num
+            break
+        }
+    }
+}
+
+set timeout 10
+incr case_num
+send -s "\3"
+while 1 {
+    expect {
+         -re $kernel_prompt {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
+
+
+all_pass
+send_user "Ending $argv0\n"
+log_file
