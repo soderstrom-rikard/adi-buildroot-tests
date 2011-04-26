@@ -217,6 +217,7 @@ if [ $BUILD_POLICY -eq 1  ] ; then
 
     # back up compiled stuff for future build
     cp $SRC_ROOT/.config $SRC_ROOT/config.user.policy
+    rm -fr $IMAGE_DIR/*
     cp -fr $OUTPUT_DIR $OUTPUT_BAK_DIR
 
     sleep 30

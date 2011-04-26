@@ -27,6 +27,9 @@ set timeout 30
 send "calendarwidget -qws\r"
 while 1 {
     expect {
+        -re "calendarwidget:" {
+            case_fail $case_num
+        }
         -re "\r\n\[a-zA-Z0-9]" {
             case_fail $case_num
         }
