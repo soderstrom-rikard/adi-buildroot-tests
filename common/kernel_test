@@ -254,13 +254,14 @@ do
 
         # enter correct directory
         if [ ${AUTO_TESTCASE[$i]} == "ethernet_usb" ] ; then
-            cd $TESTSUITES_DIR/ethernet
+            case_folder="ethernet"
         else
-            cd $TESTSUITES_DIR/${AUTO_TESTCASE[$i]}
+            case_folder=${AUTO_TESTCASE[$i]}
         fi
+        cd $TESTSUITES_DIR/$case_folder
 
         # build kernel image
-        ./build_${AUTO_TESTCASE[$i]}_kernel.exp  $BOARD_TYPE >/dev/null 2>&1
+        ./build_${case_folder}_kernel.exp  $BOARD_TYPE >/dev/null 2>&1
 
         if [ ${AUTO_TESTCASE[$i]} == "ethernet_usb" ] ; then
             mv build_ethernet_kernel_log build_ethernet_usb_kernel_log
@@ -272,7 +273,7 @@ do
             echo "$0:   Error, failed."
             tail -50 ./build_${AUTO_TESTCASE[$i]}_kernel_log
         else
-            ./${AUTO_TESTCASE[$i]}_test.exp  $BOARD_TYPE >/dev/null 2>&1
+            ./${case_folder}_test.exp $BOARD_TYPE >/dev/null 2>&1
         fi
 
         if [ ${AUTO_TESTCASE[$i]} == "ethernet_usb" ] ; then
@@ -281,7 +282,7 @@ do
 
         # backup all test results
         copy_image_config "${AUTO_TESTCASE[$i]}"
-        mv $TESTSUITES_DIR/${AUTO_TESTCASE[$i]}/*_log  $THIS_LOG
+        mv $TESTSUITES_DIR/$case_folder/*_log  $THIS_LOG
 
         echo  "End testing ${AUTO_TESTCASE[$i]}..."
         sleep 10
