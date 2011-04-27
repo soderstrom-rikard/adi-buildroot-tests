@@ -23,8 +23,9 @@ source ../common/update_image.exp
 step "Start testing"
 
 set timeout 8
-send "export QWS_KEYBOARD=USB:/dev/input/event1\r"
-expect -re $kernel_prompt
+# Only in manual test, we enable keyboard in qt.
+#send "export QWS_KEYBOARD=USB:/dev/input/event1\r"
+#expect -re $kernel_prompt
 send "export QWS_MOUSE_PROTO=IntelliMouse:/dev/input/mouse0\r"
 expect -re $kernel_prompt
 
