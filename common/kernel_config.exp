@@ -118,7 +118,7 @@ proc case_fail { casenum } {
         send_user "\nLast passed test result is not found!!\n"
     } else {
         set pass_files [ eval exec grep -nrl {"$TITLE"} [glob $log_loc/\*/test_summary/pass_summary] ]
-        set last_pass_dir [exec echo $pass_files | awk -F/ {{print $9}} | sort -t_ +0n +1M | tail -n 1 ]
+        set last_pass_dir [exec echo $pass_files | awk -F/ {{print $9}} | sort -r | tail -n 1 ]
 
         if {[ catch { exec grep Revision $log_loc/$last_pass_dir/kernel_test_log } errmsg ]} {
             send_user "\nLast passed time: $last_pass_dir. Revision is not found!\n"
