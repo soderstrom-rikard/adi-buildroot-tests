@@ -96,9 +96,9 @@ BUILD_POLICY=1
 
 n=100
 
-AUTO_TESTCASE=( [0]="ethernet" [1]="ethernet_usb" [2]="sd" [3]="usb_storage" [4]="audio" [5]="qt" [$((n+1))]="serial" [$((n+2))]="ltp" )
+AUTO_TESTCASE=( [0]="ethernet" [1]="" [2]="sd" [3]="usb_storage" [4]="audio" [5]="qt" [$((n+1))]="serial" [$((n+2))]="ltp" [$((n+3))]="ethernet_usb" )
 
-AUTO_RUN_STATUS=( [0]="1" [1]="0" [2]="0" [3]="0" [4]="0" [5]="0" [$((n+1))]="1" [$((n+2))]="1" )
+AUTO_RUN_STATUS=( [0]="1" [1]="0" [2]="0" [3]="0" [4]="0" [5]="0" [$((n+1))]="1" [$((n+2))]="1" [$((n+3))]="1" )
 
 MANUAL_TESTCASE=( [0]="bluetooth" [$((n+1))]="" )
 
@@ -110,7 +110,7 @@ MANUAL_RUN_STATUS=( [0]="0" [$((n+1))]="0" )
 if [ $BOARD_CONFIG = "BEAGLE-STD" ] ; then
     BOARD_TYPE=beagle
 
-    AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[2]="1"; AUTO_RUN_STATUS[3]="1"; AUTO_RUN_STATUS[4]="1"; AUTO_RUN_STATUS[5]="1";
+    AUTO_RUN_STATUS[2]="1"; AUTO_RUN_STATUS[3]="1"; AUTO_RUN_STATUS[4]="1"; AUTO_RUN_STATUS[5]="1";
     MANUAL_RUN_STATUS[0]="1";
 
 fi
@@ -252,37 +252,21 @@ do
 
         echo  "Start testing ${AUTO_TESTCASE[$i]}..."
 
-        # enter correct directory
-        if [ ${AUTO_TESTCASE[$i]} == "ethernet_usb" ] ; then
-            case_folder="ethernet"
-        else
-            case_folder=${AUTO_TESTCASE[$i]}
-        fi
-        cd $TESTSUITES_DIR/$case_folder
+        cd $TESTSUITES_DIR/${AUTO_TESTCASE[$i]}
 
-        # build kernel image
-        ./build_${case_folder}_kernel.exp  $BOARD_TYPE >/dev/null 2>&1
+        ./build_${AUTO_TESTCASE[$i]}_kernel.exp $BOARD_TYPE >/dev/null 2>&1
 
-        if [ ${AUTO_TESTCASE[$i]} == "ethernet_usb" ] ; then
-            mv build_ethernet_kernel_log build_ethernet_usb_kernel_log
-        fi
-
-        # run test case when kernel is built successfully
         if [ ! -f $IMAGE_DIR/uImage ]
         then
             echo "$0:   Error, failed."
             tail -50 ./build_${AUTO_TESTCASE[$i]}_kernel_log
         else
-            ./${case_folder}_test.exp $BOARD_TYPE >/dev/null 2>&1
-        fi
-
-        if [ ${AUTO_TESTCASE[$i]} == "ethernet_usb" ] ; then
-            mv ethernet_test_log ethernet_usb_test_log
+            ./${AUTO_TESTCASE[$i]}_test.exp $BOARD_TYPE >/dev/null 2>&1
         fi
 
         # backup all test results
         copy_image_config "${AUTO_TESTCASE[$i]}"
-        mv $TESTSUITES_DIR/$case_folder/*_log  $THIS_LOG
+        mv $TESTSUITES_DIR/${AUTO_TESTCASE[$i]}/*_log  $THIS_LOG
 
         echo  "End testing ${AUTO_TESTCASE[$i]}..."
         sleep 10
@@ -328,6 +312,45 @@ if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
     mv $TESTSUITES_DIR/serial/*_log  $THIS_LOG
 
     echo  "End testing serial..."
+    sleep 10
+
+    if [ $RESET_BOARD -eq 1  ] ; then
+        cd $TESTSUITES_DIR/common
+        ./reset_board.exp  >/dev/null  2>&1
+        sleep 10
+    fi
+
+fi
+
+
+######################################### ETHERNET USB TEST #########################################
+
+if [ ${AUTO_RUN_STATUS[$((n+3))]} -eq 1 ] ; then
+    echo "Start testing ethernet_usb..."
+
+    # always clean source before build
+    clean_src
+
+    cp -a $OUTPUT_BAK_DIR $OUTPUT_DIR
+    cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
+    rm $KERNEL_CUSTOM_DIR/.stamp_compiled   # delete .stamp_compiled to trigger new build
+
+    cd $TESTSUITES_DIR/ethernet
+    ./build_ethernet_kernel.exp $BOARD_TYPE >/dev/null 2>&1
+    mv build_ethernet_kernel_log build_ethernet_usb_kernel_log
+
+    if [ ! -f $IMAGE_DIR/uImage ] ; then
+        echo "$0:   Error, failed."
+        tail -50 ./build_ethernet_usb_kernel_log
+    else
+        ./ethernet_test.exp $BOARD_TYPE usb >/dev/null 2>&1
+        mv ethernet_test_log ethernet_usb_test_log
+    fi
+
+    copy_image_config "ethernet_usb"
+    mv $TESTSUITES_DIR/ethernet/*_log  $THIS_LOG
+
+    echo  "End testing ethernet_usb..."
     sleep 10
 
     if [ $RESET_BOARD -eq 1  ] ; then

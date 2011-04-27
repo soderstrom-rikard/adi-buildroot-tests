@@ -6,11 +6,11 @@
 #   1. Test normal ethernet:
 #      ./ethernet_test.exp board_type
 #   2. Test through USB-ethernet converter:
-#      ./ethernet_test.exp board_type net
+#      ./ethernet_test.exp board_type usb
 #
 # Example:
 #   ./ethernet_test.exp beagle
-#   ./ethernet_test.exp beagle net
+#   ./ethernet_test.exp beagle usb
 #
 
 source  ../common/kernel_config.exp
@@ -24,7 +24,7 @@ source ../common/spawn_kermit.exp
 step "Update kernel image"
 source ../common/update_image.exp
 
-if { [lindex $argv 1] == "net" } {
+if { [lindex $argv 1] == "usb" } {
     set eth_dev eth0
     append TITLE " (USB)"
 }
