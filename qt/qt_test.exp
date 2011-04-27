@@ -22,9 +22,15 @@ source ../common/update_image.exp
 
 step "Start testing"
 
+set timeout 8
+send "export QWS_KEYBOARD=USB:/dev/input/event1\r"
+expect -re $kernel_prompt
+send "export QWS_MOUSE_PROTO=IntelliMouse:/dev/input/mouse0\r"
+expect -re $kernel_prompt
+
 incr case_num
 set timeout 30
-send "calendarwidget -qws\r"
+send "/usr/share/qt/examples/widgets/calendarwidget/calendarwidget -qws\r"
 while 1 {
     expect {
         -re "calendarwidget:" {
@@ -54,7 +60,6 @@ while 1 {
         }
     }
 }
-
 
 all_pass
 send_user "Ending $argv0\n"
