@@ -1,0 +1,7 @@
+#!/bin/bash
+
+BOARD_CONFIG=PANDA-STD
+BOARD_TYPE=panda
+ARCH_TYPE=arm
+BINARY_FORMAT=flat
+XENOMAI=off

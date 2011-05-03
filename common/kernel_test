@@ -12,8 +12,8 @@ THIS_LOG=$WORKSPACE_ROOT/log/$BOARD_CONFIG
 if [ $# -lt 1 ] ; then
     echo "Please input [ BOARD_CONFIG BOARD_TYPE ARCH_TYPE BINARY_FORMAT XENOMAI THIS_LOG ]:"
     echo
-    echo "BOARD_CONFIG :  BEAGLE-STD, etc"
-    echo "BOARD_TYPE :    beagle, etc"
+    echo "BOARD_CONFIG :  BEAGLE-STD, PANDA-STD etc"
+    echo "BOARD_TYPE :    beagle, panda, etc"
     echo "ARCH_TYPE :     arm, etc"
     echo "BINARY_FORMAT : flat, elf, shared-flat"
     echo "XENOMAI :       on, off"
@@ -112,7 +112,16 @@ if [ $BOARD_CONFIG = "BEAGLE-STD" ] ; then
 
     AUTO_RUN_STATUS[2]="1"; AUTO_RUN_STATUS[3]="1"; AUTO_RUN_STATUS[4]="1"; AUTO_RUN_STATUS[5]="1";
     MANUAL_RUN_STATUS[0]="1";
+fi
 
+if [ $BOARD_CONFIG = "PANDA-STD" ] ; then
+    BOARD_TYPE=panda
+
+    for i in `seq 0 $n`;
+    do
+        AUTO_RUN_STATUS[$i]=0
+        AUTO_RUN_STATUS[$((n+i))]="0"
+    done
 fi
 
 
