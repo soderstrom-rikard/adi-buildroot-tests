@@ -4,8 +4,7 @@ source  ../common/board_info.exp
 
 # directory and file locations
 set workspace_root /home/test/workspace
-set project beagle
-set src_root $workspace_root/$project
+set src_root $workspace_root/src
 set kernel_root $src_root/linux/linux-2.6.x
 set custom_kernel $src_root/output/build/linux-custom
 set kernel_config_dir $custom_kernel
@@ -27,6 +26,21 @@ if { $board_type == "beagle" } {
 
     set ipargs "10.100.4.50:10.100.4.174:10.100.4.174:255.255.255.0:beagle:usb0:off"
     set bootargs "setenv bootargs console=\$\{console\} mpurate=\$\{mpurate\} vram=\$\{vram\} omapfb.mode=dvi:\$\{dvimode\} omapfb.debug=y omapdss.def_disp=\$\{defaultdisplay\} root=\$\{mmcroot\} rootfstype=\$\{mmcrootfstype\}"
+} elseif { $board_type == "panda" } {
+    set arch "arm"
+    set cross_compile "arm-none-linux-gnueabi-"
+    set board_defconfig "pandaboard_defconfig"
+    set kernel_defconfig "omap4_pandaboard_defconfig"
+    set eth_dev "eth0"
+    set baud_rate "115200"
+    set def_uart_port ttyO2
+
+    set console_def "$def_uart_port,${baud_rate}n8"
+    set console_null "null"
+    set console_args $console_def
+
+    set ipargs "10.100.4.50:10.100.4.174:10.100.4.174:255.255.255.0:panda:eth0:off"
+    set bootargs "setenv bootargs console=\$\{console\} vram=\$\{vram\} root=\$\{mmcroot\} rootfstype=\$\{mmcrootfstype\}"
 } else {
     set baud_rate "57600"
     set eth_dev "eth0"
@@ -36,7 +50,7 @@ set ttydev /dev/ttyS0
 set ttyUSBdev /dev/ttyUSB0
 set kermit_ttydev $ttydev
 set sh_prompt "\[-@].*\[$>#]"
-set uboot_prompt "OMAP3 beagleboard.org #|bfin>"
+set uboot_prompt "Panda #|OMAP3 beagleboard.org #|bfin>"
 set kernel_prompt "\n# |root:\[^>].*>"
 
 set targetip 10.100.4.50
