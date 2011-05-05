@@ -117,11 +117,8 @@ fi
 if [ $BOARD_CONFIG = "PANDA-STD" ] ; then
     BOARD_TYPE=panda
 
-    for i in `seq 0 $n`;
-    do
-        AUTO_RUN_STATUS[$i]=0
-        AUTO_RUN_STATUS[$((n+i))]="0"
-    done
+    AUTO_RUN_STATUS[2]="1"; AUTO_RUN_STATUS[3]="1"; AUTO_RUN_STATUS[4]="1"; AUTO_RUN_STATUS[5]="1";
+    MANUAL_RUN_STATUS[0]="1";
 fi
 
 
