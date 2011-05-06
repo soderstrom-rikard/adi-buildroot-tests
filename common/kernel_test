@@ -224,9 +224,12 @@ if [ $BUILD_POLICY -eq 1  ] ; then
         exit 3
     fi
 
-    # back up compiled stuff for future build
     cp $SRC_ROOT/.config $SRC_ROOT/config.user.policy
-    rm -fr $IMAGE_DIR/* $KERNEL_CUSTOM_DIR
+
+    # back up compiled stuff for future build
+    cd $KERNEL_CUSTOM_DIR
+    make clean
+    rm -fr $KERNEL_CUSTOM_DIR/.stamp_* $IMAGE_DIR/*
     cp -fr $OUTPUT_DIR $OUTPUT_BAK_DIR
 
     sleep 30
