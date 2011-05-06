@@ -171,13 +171,13 @@ cp $TESTSUITES_DIR/common/reset_board $TESTSUITES_DIR/ltp
 # Don't use 'make clean' in base root as it may render mistakes of
 #+ patching and unpatching problem to kernel source.
 clean_src () {
+    cd $SRC_ROOT
+    make linux-unpatch
+
     # delete build files
     if [ -d $OUTPUT_DIR ] ; then
         rm -rf $OUTPUT_DIR
     fi
-
-    cd $SRC_ROOT
-    make linux-unpatch
 
     # clean kernel source
     cd $SRC_ROOT/linux/linux-2.6.x
