@@ -227,6 +227,8 @@ if [ $BUILD_POLICY -eq 1  ] ; then
     cp $SRC_ROOT/.config $SRC_ROOT/config.user.policy
 
     # back up compiled stuff for future build
+    cd $SRC_ROOT
+    make linux-unpatch
     cd $KERNEL_CUSTOM_DIR
     make clean
     rm -fr $KERNEL_CUSTOM_DIR/.stamp_* $IMAGE_DIR/*
