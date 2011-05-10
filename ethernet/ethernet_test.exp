@@ -24,7 +24,6 @@ source ../common/spawn_kermit.exp
 step "Update kernel image"
 source ../common/update_image.exp
 
-set usb_eth_dev eth0
 if { [lindex $argv 1] == "usb" } {
     append TITLE " (USB)"
     set test_dev     $usb_eth_dev

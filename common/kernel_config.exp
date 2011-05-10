@@ -17,6 +17,7 @@ if { $board_type == "beagle" } {
     set board_defconfig "beagleboard_defconfig"
     set kernel_defconfig "omap3_beagle_xm_defconfig"
     set eth_dev "usb0"
+    set usb_eth_dev "eth0"
     set baud_rate "115200"
     set def_uart_port ttyO2
 
@@ -32,6 +33,7 @@ if { $board_type == "beagle" } {
     set board_defconfig "pandaboard_defconfig"
     set kernel_defconfig "omap4_pandaboard_defconfig"
     set eth_dev "eth0"
+    set usb_eth_dev "eth1"
     set baud_rate "115200"
     set def_uart_port ttyO2
 
