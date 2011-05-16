@@ -100,7 +100,7 @@ while 1 {
     }
 }
 
-set timeout 10
+set timeout 20
 send "mount /dev/mmcblk0p1 /mnt/; sleep 2; ls /mnt\r"
 while 1 {
     expect {

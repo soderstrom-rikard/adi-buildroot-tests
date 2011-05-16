@@ -180,7 +180,7 @@ proc before_boot {} {
         }
     }
 
-    set timeout 5
+    set timeout 10
     send "mmcinfo\r"
     while 1 {
         expect {
