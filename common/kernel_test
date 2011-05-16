@@ -98,7 +98,7 @@ n=100
 
 AUTO_TESTCASE=( [0]="ethernet" [1]="" [2]="sd" [3]="usb_storage" [4]="audio" [5]="qt" [$((n+1))]="serial" [$((n+2))]="ltp" [$((n+3))]="ethernet_usb" )
 
-AUTO_RUN_STATUS=( [0]="1" [1]="0" [2]="0" [3]="0" [4]="0" [5]="0" [$((n+1))]="1" [$((n+2))]="1" [$((n+3))]="1" )
+AUTO_RUN_STATUS=( [0]="1" [1]="0" [2]="0" [3]="0" [4]="0" [5]="0" [$((n+1))]="1" [$((n+2))]="1" [$((n+3))]="0" )
 
 MANUAL_TESTCASE=( [0]="bluetooth" [$((n+1))]="" )
 
@@ -110,7 +110,7 @@ MANUAL_RUN_STATUS=( [0]="0" [$((n+1))]="0" )
 if [ $BOARD_CONFIG = "BEAGLE-STD" ] ; then
     BOARD_TYPE=beagle
 
-    AUTO_RUN_STATUS[2]="1"; AUTO_RUN_STATUS[3]="1"; AUTO_RUN_STATUS[4]="1"; AUTO_RUN_STATUS[5]="1";
+    AUTO_RUN_STATUS[2]="1"; AUTO_RUN_STATUS[3]="1"; AUTO_RUN_STATUS[4]="1"; AUTO_RUN_STATUS[5]="1"; AUTO_RUN_STATUS[$((n+3))]="1";
     MANUAL_RUN_STATUS[0]="1";
 fi
 

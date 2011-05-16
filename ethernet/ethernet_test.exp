@@ -67,6 +67,10 @@ set timeout 5
 send "ifconfig $non_test_dev down\r"
 while 1 {
     expect {
+        -re "No such device.*$kernel_prompt" {
+            case_pass $case_num
+            break
+        }
         -re "ifconfig:.*$kernel_prompt" {
             case_fail $case_num
         }
