@@ -172,7 +172,7 @@ cp $TESTSUITES_DIR/common/reset_board $TESTSUITES_DIR/ltp
 #+ patching and unpatching problem to kernel source.
 clean_src () {
     cd $SRC_ROOT
-    make linux-unpatch
+    make linux-unpatch >/dev/null 2>&1
 
     # delete build files
     if [ -d $OUTPUT_DIR ] ; then
