@@ -176,14 +176,31 @@ while 1 {
 
 incr case_num
 send_user "Evaluate performance result.\n"
+if { $board_type == "beagle" } {
+    set TRANSRATE_LIMIT  1900
+    set THROUGHPUT_LIMIT 50
+    set USB_TRANSRATE_LIMIT  1900
+    set USB_THROUGHPUT_LIMIT 4
+} elseif { $board_type == "panda" } {
+    set TRANSRATE_LIMIT  400
+    set THROUGHPUT_LIMIT 50
+    set USB_TRANSRATE_LIMIT  150
+    set USB_THROUGHPUT_LIMIT 1
+} else {
+    set TRANSRATE_LIMIT  1900
+    set THROUGHPUT_LIMIT 50
+    set USB_TRANSRATE_LIMIT  1900
+    set USB_THROUGHPUT_LIMIT 50
+}
+
 if { [lindex $argv 1] == "usb" } {
-    if { $TransRate > 1900 && $Throughput > 4 } {
+    if { $TransRate > $USB_TRANSRATE_LIMIT && $Throughput > $USB_THROUGHPUT_LIMIT } {
         case_pass $case_num
     } else {
         case_fail $case_num
     }
 } else {
-    if { $TransRate > 1900 && $Throughput > 50 } {
+    if { $TransRate > $TRANSRATE_LIMIT && $Throughput > $THROUGHPUT_LIMIT } {
         case_pass $case_num
     } else {
         case_fail $case_num
