@@ -100,9 +100,9 @@ AUTO_TESTCASE=( [0]="ethernet" [1]="" [2]="sd" [3]="usb_storage" [4]="audio" [5]
 
 AUTO_RUN_STATUS=( [0]="1" [1]="0" [2]="0" [3]="0" [4]="0" [5]="0" [$((n+1))]="1" [$((n+2))]="1" [$((n+3))]="0" )
 
-MANUAL_TESTCASE=( [0]="bluetooth" [1]="hdmi" [$((n+1))]="" )
+MANUAL_TESTCASE=( [0]="bluetooth" [1]="hdmi" [2]="sdio_wifi" [$((n+1))]="" )
 
-MANUAL_RUN_STATUS=( [0]="0" [1]="0" [$((n+1))]="0" )
+MANUAL_RUN_STATUS=( [0]="0" [1]="0" [2]="0" [$((n+1))]="0" )
 
 
 #################### Secific BOARD_CONFIG definition ####################
@@ -118,7 +118,7 @@ if [ $BOARD_CONFIG = "PANDA-STD" ] ; then
     BOARD_TYPE=panda
 
     AUTO_RUN_STATUS[2]="1"; AUTO_RUN_STATUS[3]="1"; AUTO_RUN_STATUS[4]="0"; AUTO_RUN_STATUS[5]="1";
-    MANUAL_RUN_STATUS[0]="1"; MANUAL_RUN_STATUS[1]="1";
+    MANUAL_RUN_STATUS[0]="1"; MANUAL_RUN_STATUS[1]="1"; MANUAL_RUN_STATUS[2]="1";
 fi
 
 
