@@ -185,6 +185,19 @@ clean_src () {
     git checkout .
 }
 
+use_output_bak () {
+    if [ -d $OUTPUT_DIR ] ; then
+        rm -rf $OUTPUT_DIR
+    fi
+
+    cp -a $OUTPUT_BAK_DIR $OUTPUT_DIR
+}
+
+clean_kernel_patch () {
+    cd $SRC_ROOT
+    make linux-unpatch >/dev/null 2>&1
+}
+
 # copy image and config files after each test
 copy_image_config () {
     if [ -n "$1" ] ; then
@@ -207,9 +220,6 @@ copy_image_config () {
 if [ $BUILD_POLICY -eq 1  ] ; then
     echo "Running build policy"
 
-    # always clean source before build
-    clean_src
-
     cd $TESTSUITES_DIR/policy
     echo "./build_policy_kernel.exp $BOARD_TYPE $BINARY_FORMAT $XENOMAI >/dev/null  2>&1"
     ./build_policy_kernel.exp $BOARD_TYPE $BINARY_FORMAT $XENOMAI >/dev/null  2>&1
@@ -227,11 +237,9 @@ if [ $BUILD_POLICY -eq 1  ] ; then
     cp $SRC_ROOT/.config $SRC_ROOT/config.user.policy
 
     # back up compiled stuff for future build
-    cd $SRC_ROOT
-    make linux-unpatch
     cd $KERNEL_CUSTOM_DIR
     make clean
-    rm -fr $KERNEL_CUSTOM_DIR/.stamp_* $IMAGE_DIR/*
+    rm -fr $IMAGE_DIR/uImage
     cp -fr $OUTPUT_DIR $OUTPUT_BAK_DIR
 
     sleep 30
@@ -257,10 +265,7 @@ do
 
     if [ ${AUTO_RUN_STATUS[$i]} -eq 1  ] ; then
 
-        # always clean source before build
-        clean_src
-
-        cp -a $OUTPUT_BAK_DIR $OUTPUT_DIR
+        use_output_bak 
         cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
 
         echo  "Start testing ${AUTO_TESTCASE[$i]}..."
@@ -308,10 +313,7 @@ if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
 
     rm -fr /tftpboot/uImage.serial*
 
-    # always clean source before build
-    clean_src
-
-    cp -a $OUTPUT_BAK_DIR $OUTPUT_DIR
+    use_output_bak 
     cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
 
     cd $TESTSUITES_DIR/serial
@@ -346,10 +348,7 @@ fi
 if [ ${AUTO_RUN_STATUS[$((n+3))]} -eq 1 ] ; then
     echo "Start testing ethernet_usb..."
 
-    # always clean source before build
-    clean_src
-
-    cp -a $OUTPUT_BAK_DIR $OUTPUT_DIR
+    use_output_bak
     cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
 
     cd $TESTSUITES_DIR/ethernet
@@ -390,10 +389,7 @@ if [ ${AUTO_RUN_STATUS[$((n+2))]} -eq 1 ] ; then
     for i in 0 1 2
     do
 
-        # always clean source before build
-        clean_src
-
-	cp -a $OUTPUT_BAK_DIR $OUTPUT_DIR
+        use_output_bak
 	cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
 
         echo "Test ltp with option ${ltp_suf[i]}"
@@ -453,10 +449,7 @@ do
 
     if [ ${MANUAL_RUN_STATUS[$i]} -eq 1  ] ; then
 
-        # always clean source before build
-        clean_src
-
-        cp -a $OUTPUT_BAK_DIR $OUTPUT_DIR
+        use_output_bak
         cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
 
         echo  "Start testing ${MANUAL_TESTCASE[$i]}..."
@@ -490,7 +483,7 @@ done
 
 # Clean kernel source after one regression cycle is finished
 # to avoid git problem in next cycle.
-clean_src
+clean_kernel_patch 
 
 echo "Testing Done."
 exit 0
