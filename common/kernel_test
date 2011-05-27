@@ -167,24 +167,6 @@ cp $TESTSUITES_DIR/common/reset_board $TESTSUITES_DIR/ltp
 
 ########################### Functions ###########################
 
-# manually clean all sources
-# Don't use 'make clean' in base root as it may render mistakes of
-#+ patching and unpatching problem to kernel source.
-clean_src () {
-    cd $SRC_ROOT
-    make linux-unpatch >/dev/null 2>&1
-
-    # delete build files
-    if [ -d $OUTPUT_DIR ] ; then
-        rm -rf $OUTPUT_DIR
-    fi
-
-    # clean kernel source
-    cd $SRC_ROOT/linux/linux-2.6.x
-    make ARCH=$ARCH_TYPE mrproper
-    git checkout .
-}
-
 use_output_bak () {
     if [ -d $OUTPUT_DIR ] ; then
         rm -rf $OUTPUT_DIR
@@ -193,9 +175,9 @@ use_output_bak () {
     cp -a $OUTPUT_BAK_DIR $OUTPUT_DIR
 }
 
-clean_kernel_patch () {
+make_clean () {
     cd $SRC_ROOT
-    make linux-unpatch >/dev/null 2>&1
+    make ARCH=$ARCH_TYPE clean
 }
 
 # copy image and config files after each test
@@ -482,8 +464,8 @@ do
 done
 
 # Clean kernel source after one regression cycle is finished
-# to avoid git problem in next cycle.
-clean_kernel_patch 
+# to avoid git problem in next cycle. Kernel patch will be deleted.
+make_clean
 
 echo "Testing Done."
 exit 0
