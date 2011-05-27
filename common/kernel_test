@@ -173,6 +173,12 @@ use_output_bak () {
     fi
 
     cp -a $OUTPUT_BAK_DIR $OUTPUT_DIR
+
+    # make sure kernel won't be patched again
+    touch $KERNEL_CUSTOM_DIR/.stamp_patched
+
+    # make sure kernel will be built again
+    touch $KERNEL_CUSTOM_DIR/.stamp_configured
 }
 
 make_clean () {
@@ -220,7 +226,7 @@ if [ $BUILD_POLICY -eq 1  ] ; then
 
     # back up compiled stuff for future build
     cd $KERNEL_CUSTOM_DIR
-    make clean
+    make ARCH=$ARCH_TYPE clean > /dev/null 2>&1
     rm -fr $IMAGE_DIR/uImage
     cp -fr $OUTPUT_DIR $OUTPUT_BAK_DIR
 
