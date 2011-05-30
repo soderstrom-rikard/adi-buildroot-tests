@@ -213,7 +213,6 @@ if [ $BUILD_POLICY -eq 1  ] ; then
     ./build_policy_kernel.exp $BOARD_TYPE $BINARY_FORMAT $XENOMAI >/dev/null  2>&1
 
     copy_image_config "policy"
-    mv $SRC_ROOT/linux/linux-2.6.x/defconfig $THIS_LOG/defconfig.policy
     mv $TESTSUITES_DIR/policy/build_policy_kernel_log $THIS_LOG
 
     if [ ! -f $IMAGE_DIR/uImage ] ; then

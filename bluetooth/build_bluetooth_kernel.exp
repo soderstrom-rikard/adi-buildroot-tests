@@ -1,12 +1,12 @@
 #!/usr/bin/expect
 #
-# Build script for SD/MMC driver test.
+# Build script for bluetooth test, include both keyboard and audio.
 #
 # Usage:
-#   ./build_sd_kernel.exp board_type
+#   ./build_bluetooth_kernel.exp board_type
 #
 # Example:
-#   ./build_sd_kernel.exp beagle
+#   ./build_bluetooth_kernel.exp beagle
 #
 
 source ../common/kernel_config.exp
@@ -21,9 +21,9 @@ cd $src_root/testsuites/common
 source cut_app.exp
 
 step "Make kernel config"
-cd $kernel_config_dir
+cd $src_root
 set timeout 300
-spawn make ARCH=$arch config
+spawn make ARCH=$arch linux-config
 while 1 {
     expect {
         -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
