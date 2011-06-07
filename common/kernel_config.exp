@@ -15,8 +15,8 @@ if { $board_type == "beagle" } {
     set cross_compile "arm-none-linux-gnueabi-"
     set board_defconfig "beagleboard_defconfig"
     set kernel_defconfig "omap3_beagle_xm_defconfig"
-    set eth_dev "usb0"
-    set usb_eth_dev "eth0"
+    set eth_dev "eth0"
+    set usb_eth_dev "eth1"
     set baud_rate "115200"
     set def_uart_port ttyO2
 
@@ -24,7 +24,7 @@ if { $board_type == "beagle" } {
     set console_null "null"
     set console_args $console_def
 
-    set ipargs "10.100.4.50:10.100.4.174:10.100.4.174:255.255.255.0:beagle:usb0:off"
+    set ipargs "10.100.4.50:10.100.4.174:10.100.4.174:255.255.255.0:beagle:eth0:off"
     set bootargs "setenv bootargs console=\$\{console\} mpurate=\$\{mpurate\} vram=\$\{vram\} omapfb.mode=dvi:\$\{dvimode\} omapfb.debug=y omapdss.def_disp=\$\{defaultdisplay\} root=\$\{mmcroot\} rootfstype=\$\{mmcrootfstype\}"
 } elseif { $board_type == "panda" } {
     set arch "arm"

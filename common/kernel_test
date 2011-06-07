@@ -175,9 +175,10 @@ use_output_bak () {
     cp -a $OUTPUT_BAK_DIR $OUTPUT_DIR
 
     # make sure kernel won't be patched again
-    touch $KERNEL_CUSTOM_DIR/.stamp_patched
-
     # make sure kernel will be built again
+    touch $KERNEL_CUSTOM_DIR/.stamp_downloaded
+    touch $KERNEL_CUSTOM_DIR/.stamp_extracted
+    touch $KERNEL_CUSTOM_DIR/.stamp_patched
     touch $KERNEL_CUSTOM_DIR/.stamp_configured
 }
 
