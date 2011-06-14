@@ -219,6 +219,7 @@ if [ $BUILD_POLICY -eq 1  ] ; then
     if [ ! -f $IMAGE_DIR/uImage ] ; then
         echo "Kernel image fails to generate. Terminate test!"
         tail -50 ./build_policy_kernel_log
+        make_clean
         exit 3
     fi
 
