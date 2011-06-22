@@ -1,7 +1,7 @@
 #!/usr/bin/expect
 
 cd $src_root
-spawn make ARCH=$arch clean
+spawn make clean
 set timeout 1200
 while 1 {
     expect {

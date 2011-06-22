@@ -1,9 +1,9 @@
 #!/usr/bin/expect
 
 cd $src_root
-spawn make ARCH=$arch CROSS_COMPILE=$cross_compile
+spawn make
 set timeout 1200
-set bfin_make_status failure
+set make_status failure
 while 1 {
     expect {
         -re "Which edition of Qt.*Type \'o\' if you want to use the Open Source Edition" {
@@ -16,13 +16,13 @@ while 1 {
             sleep .05
             send "\r"
         }
-        -re "rm.*\.fakeroot" { set bfin_make_status success }
-        "Error" {set bfin_make_status failure }
+        -re "rm.*\.fakeroot" { set make_status success }
+        "Error" {set make_status failure }
         eof { break }
     }
 }
 
-if { $bfin_make_status == "failure" } {
+if { $make_status == "failure" } {
     puts "ERROR: Error somewhere during make"
     exit
 }

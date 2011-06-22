@@ -12,9 +12,7 @@ set log_loc $workspace_root/logs
 # environment settings
 if { $board_type == "beagle" } {
     set arch "arm"
-    set cross_compile "arm-none-linux-gnueabi-"
     set board_defconfig "beagleboard_defconfig"
-    set kernel_defconfig "omap3_beagle_xm_defconfig"
     set eth_dev "eth0"
     set usb_eth_dev "eth1"
     set baud_rate "115200"
@@ -26,11 +24,11 @@ if { $board_type == "beagle" } {
 
     set ipargs "10.100.4.50:10.100.4.174:10.100.4.174:255.255.255.0:beagle:eth0:off"
     set bootargs "setenv bootargs console=\$\{console\} mpurate=\$\{mpurate\} vram=\$\{vram\} omapfb.mode=dvi:\$\{dvimode\} omapfb.debug=y omapdss.def_disp=\$\{defaultdisplay\} root=\$\{mmcroot\} rootfstype=\$\{mmcrootfstype\}"
+
+    set boot_image uImage
 } elseif { $board_type == "panda" } {
     set arch "arm"
-    set cross_compile "arm-none-linux-gnueabi-"
     set board_defconfig "pandaboard_defconfig"
-    set kernel_defconfig "omap4_pandaboard_defconfig"
     set eth_dev "eth0"
     set usb_eth_dev "eth1"
     set baud_rate "115200"
@@ -42,9 +40,28 @@ if { $board_type == "beagle" } {
 
     set ipargs "10.100.4.50:10.100.4.174:10.100.4.174:255.255.255.0:panda:eth0:off"
     set bootargs "setenv bootargs console=\$\{console\} vram=\$\{vram\} root=\$\{mmcroot\} rootfstype=\$\{mmcrootfstype\}"
+
+    set boot_image uImage
+} elseif { $board_type == "bf537-stamp" } {
+    set arch "blackfin"
+    set board_defconfig "bf537-stamp_defconfig"
+    set eth_dev "eth0"
+    set usb_eth_dev "eth1"
+    set baud_rate "57600"
+    set def_uart_port ttyBF0
+
+    set console_def "$def_uart_port,${baud_rate}n8"
+    set console_null "null"
+    set console_args $console_def
+
+    set ipargs "10.100.4.50:10.100.4.174:10.100.4.174:255.255.255.0:bf537-stamp:eth0:off"
+    set bootargs "setenv bootargs root=/dev/mtdblock0 rw ip=10.100.4.50 earlyprintk=serial,uart0,57600 console=ttyBF0,57600"
+
+    set boot_image vmImage
 } else {
     set baud_rate "57600"
     set eth_dev "eth0"
+    set boot_image uImage
 }
 
 set ttydev /dev/ttyS0
@@ -68,8 +85,6 @@ set STRDATA "abcdefghijklmnopqrstuvwxyz0123456789"
 set spi_board_type normal
 
 set compressed_kernel_only_image  vmImage
-
-set boot_image uImage
 set kernel_and_ext2_image   linux.ext2
 set kernel_and_cramfs_image linux.cramfs
 set kernel_and_romfs_image  uImage.romfs
