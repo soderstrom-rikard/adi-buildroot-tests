@@ -57,7 +57,7 @@ if { $board_type == "beagle" } {
     set ipargs "10.100.4.50:10.100.4.174:10.100.4.174:255.255.255.0:bf537-stamp:eth0:off"
     set bootargs "setenv bootargs root=/dev/mtdblock0 rw ip=10.100.4.50 earlyprintk=serial,uart0,57600 console=ttyBF0,57600"
 
-    set boot_image vmImage
+    set boot_image uImage
 } else {
     set baud_rate "57600"
     set eth_dev "eth0"
