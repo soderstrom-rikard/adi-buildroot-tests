@@ -23,9 +23,8 @@ set save_file ccc
 step "Start kermit"
 source ../common/spawn_kermit.exp
 
-step "Update kernel image"
-source ../common/update_image.exp
-
+step "Boot kernel"
+source ../common/kernel_boot.exp
 
 step "Send message from host tty device to target board"
 

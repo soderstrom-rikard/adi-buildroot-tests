@@ -21,8 +21,8 @@ set TITLE [title "$argv0"]
 step "Start kermit"
 source ../common/spawn_kermit.exp
 
-step "Update kernel image"
-source ../common/update_image.exp
+step "Boot kernel"
+source ../common/kernel_boot.exp
 
 step "Start testing"
 set FILE_SIZE 10
