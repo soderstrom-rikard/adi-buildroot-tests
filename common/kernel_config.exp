@@ -10,7 +10,7 @@ set custom_kernel $src_root/output/build/linux-custom
 set log_loc $workspace_root/logs
 
 # environment settings
-if { $board_type == "beagle" } {
+if { $board_type == "BEAGLE" } {
     set arch "arm"
     set board_defconfig "beagleboard_defconfig"
     set eth_dev "eth0"
@@ -26,7 +26,7 @@ if { $board_type == "beagle" } {
     set bootargs "setenv bootargs console=\$\{console\} mpurate=\$\{mpurate\} vram=\$\{vram\} omapfb.mode=dvi:\$\{dvimode\} omapfb.debug=y omapdss.def_disp=\$\{defaultdisplay\} root=\$\{mmcroot\} rootfstype=\$\{mmcrootfstype\}"
 
     set boot_image uImage
-} elseif { $board_type == "panda" } {
+} elseif { $board_type == "PANDA" } {
     set arch "arm"
     set board_defconfig "pandaboard_defconfig"
     set eth_dev "eth0"
@@ -42,7 +42,7 @@ if { $board_type == "beagle" } {
     set bootargs "setenv bootargs console=\$\{console\} vram=\$\{vram\} root=\$\{mmcroot\} rootfstype=\$\{mmcrootfstype\}"
 
     set boot_image uImage
-} elseif { $board_type == "bf537-stamp" } {
+} elseif { $board_type == "BF537-STAMP" } {
     set arch "blackfin"
     set board_defconfig "bf537-stamp_defconfig"
     set eth_dev "eth0"

@@ -6,7 +6,7 @@
 #   ./build_policy_kernel.exp board_type BINARY_FORMAT XENOMAI
 #
 # Example:
-#   ./build_policy_kernel.exp beagle flat off
+#   ./build_policy_kernel.exp BEAGLE flat off
 #
 
 source  ../common/kernel_config.exp

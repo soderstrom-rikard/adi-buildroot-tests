@@ -6,7 +6,7 @@
 #   ./build_usb_storage_kernel.exp board_type
 #
 # Example:
-#   ./build_usb_storage_kernel.exp beagle
+#   ./build_usb_storage_kernel.exp BEAGLE
 #
 
 source ../common/kernel_config.exp

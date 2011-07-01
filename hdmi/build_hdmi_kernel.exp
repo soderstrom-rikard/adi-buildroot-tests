@@ -6,7 +6,7 @@
 #   ./build_hdmi_kernel.exp board_type
 #
 # Example:
-#   ./build_hdmi_kernel.exp beagle
+#   ./build_hdmi_kernel.exp BEAGLE
 #
 
 source ../common/kernel_config.exp

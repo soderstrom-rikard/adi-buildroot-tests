@@ -3,7 +3,7 @@
 #################### Set up variables ####################
 WORKSPACE_ROOT=/home/test/workspace
 BOARD_CONFIG=BEAGLE-STD
-BOARD_TYPE=beagle
+BOARD_TYPE=BEAGLE
 ARCH_TYPE=arm
 BINARY_FORMAT=flat
 XENOMAI=off
@@ -13,7 +13,7 @@ if [ $# -lt 1 ] ; then
     echo "Please input [ BOARD_CONFIG BOARD_TYPE ARCH_TYPE BINARY_FORMAT XENOMAI THIS_LOG ]:"
     echo
     echo "BOARD_CONFIG :  BEAGLE-STD, PANDA-STD etc"
-    echo "BOARD_TYPE :    beagle, panda, etc"
+    echo "BOARD_TYPE :    BEAGLE, PANDA, etc"
     echo "ARCH_TYPE :     arm, blackfin, etc"
     echo "BINARY_FORMAT : flat, elf, shared-flat"
     echo "XENOMAI :       on, off"
@@ -108,17 +108,22 @@ MANUAL_RUN_STATUS=( [0]="0" [1]="0" [2]="0" [$((n+1))]="0" )
 #################### Secific BOARD_CONFIG definition ####################
 
 if [ $BOARD_CONFIG = "BEAGLE-STD" ] ; then
-    BOARD_TYPE=beagle
+    BOARD_TYPE=BEAGLE
 
     AUTO_RUN_STATUS[2]="1"; AUTO_RUN_STATUS[3]="1"; AUTO_RUN_STATUS[4]="1"; AUTO_RUN_STATUS[5]="1"; AUTO_RUN_STATUS[$((n+3))]="1";
     MANUAL_RUN_STATUS[0]="1"; MANUAL_RUN_STATUS[1]="1";
 fi
 
 if [ $BOARD_CONFIG = "PANDA-STD" ] ; then
-    BOARD_TYPE=panda
+    BOARD_TYPE=PANDA
 
     AUTO_RUN_STATUS[2]="1"; AUTO_RUN_STATUS[3]="1"; AUTO_RUN_STATUS[4]="0"; AUTO_RUN_STATUS[5]="0";
     MANUAL_RUN_STATUS[0]="1"; MANUAL_RUN_STATUS[1]="1"; MANUAL_RUN_STATUS[2]="1";
+fi
+
+if [ $BOARD_CONFIG = "BF537-STAMP-STD" ] ; then
+    BOARD_TYPE=BF537-STAMP
+
 fi
 
 

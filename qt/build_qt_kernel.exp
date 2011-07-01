@@ -7,7 +7,7 @@
 #   ./build_qt_kernel.exp board_type
 #
 # Example:
-#   ./build_qt_kernel.exp beagle
+#   ./build_qt_kernel.exp BEAGLE
 #
 
 source ../common/kernel_config.exp

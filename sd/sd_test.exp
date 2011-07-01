@@ -10,7 +10,7 @@
 #   ./sd_test.exp board_type
 #
 # Example:
-#   ./sd_test.exp beagle
+#   ./sd_test.exp BEAGLE
 #
 
 source ../common/kernel_config.exp

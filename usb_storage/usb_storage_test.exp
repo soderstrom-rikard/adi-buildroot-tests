@@ -9,7 +9,7 @@
 #   ./usb_storage_test.exp board_type
 #
 # Example:
-#   ./usb_storage_test.exp beagle
+#   ./usb_storage_test.exp BEAGLE
 #
 
 source  ../common/kernel_config.exp

@@ -9,8 +9,8 @@
 #      ./ethernet_test.exp board_type usb
 #
 # Example:
-#   ./ethernet_test.exp beagle
-#   ./ethernet_test.exp beagle usb
+#   ./ethernet_test.exp BEAGLE
+#   ./ethernet_test.exp BEAGLE usb
 #
 
 source  ../common/kernel_config.exp
@@ -176,12 +176,12 @@ while 1 {
 
 incr case_num
 send_user "Evaluate performance result.\n"
-if { $board_type == "beagle" } {
+if { $board_type == "BEAGLE" } {
     set TRANSRATE_LIMIT  1900
     set THROUGHPUT_LIMIT 50
     set USB_TRANSRATE_LIMIT  1900
     set USB_THROUGHPUT_LIMIT 4
-} elseif { $board_type == "panda" } {
+} elseif { $board_type == "PANDA" } {
     set TRANSRATE_LIMIT  400
     set THROUGHPUT_LIMIT 50
     set USB_TRANSRATE_LIMIT  150

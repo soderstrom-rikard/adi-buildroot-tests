@@ -6,7 +6,7 @@
 #   ./build_sd_kernel.exp board_type
 #
 # Example:
-#   ./build_sd_kernel.exp beagle
+#   ./build_sd_kernel.exp BEAGLE
 #
 
 source ../common/kernel_config.exp

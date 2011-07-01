@@ -6,7 +6,7 @@
 #   ./qt_test.exp board_type
 #
 # Example:
-#   ./qt_test.exp beagle
+#   ./qt_test.exp BEAGLE
 #
 
 source  ../common/kernel_config.exp

@@ -6,7 +6,7 @@
 #   ./serial_test.exp board_type
 #
 # Example:
-#   ./serial_test.exp beagle
+#   ./serial_test.exp BEAGLE
 #
 
 
