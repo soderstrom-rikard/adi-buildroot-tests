@@ -2379,8 +2379,8 @@ exec mkdir -p $LTP_LOG_DIR
 #}
 
 puts "\nStart to build ltp...\n"
-if [ catch {exec ./build_ltp.sh $cvs_server_addr > build_ltp_log} ] {
-    send_log "\nfail to build ltp source\n"
+if [ catch {exec ./build_ltp.sh $cvs_server_addr $arch > build_ltp_log} ] {
+    send_user "\nfail to build ltp source\n"
     send_user "$errorInfo\n"
     exit
 }
@@ -2486,7 +2486,7 @@ step "Start up kermit on port $ttydev"
 #  This just builds up a list of commands which are sent to kermit.
 #
 set kparams     [list "set line $ttydev\r"]
-lappend kparams "set speed $SERIAL_PORT_BAUD_RATE\r"
+lappend kparams "set speed $baud_rate\r"
 lappend kparams "set carrier-watch off\r"
 lappend kparams "set handshake none\r"
 lappend kparams "set flow-control none\r"
@@ -2581,6 +2581,10 @@ set data_cache_boot_flag "not found"
 # Even if we haven't selected to do the reboot test, we still
 # need to do one reboot.
 #
+
+step "Boot kernel with update image"
+source $LTP_SCRIPT_DIR/../common/kernel_boot.exp
+
 for {set i 0} {$i < 50} {incr i} {
    step "i=$i \n"
    if { $reboots == $PARAM_OFF} {
@@ -2624,7 +2628,7 @@ for {set i 0} {$i < 50} {incr i} {
          -re $kernel_prompt {
             report "successful boot attempt"
             incr successful_boots
-            if { $board_type == "beagle" } {
+            if { $board_type == "BEAGLE" } {
                 set timeout 10
                 send "ifconfig $eth_dev $ipaddr\r"
                 expect -nocase -re "up.*full"

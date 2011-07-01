@@ -6,7 +6,7 @@
 #   ./build_ltp_kernel.exp board_type allocator
 #
 # Example:
-#   ./build_ltp_kernel.exp beagle 1
+#   ./build_ltp_kernel.exp BEAGLE 1
 #   slab: 1; slub: 2; slob: 3.
 #
 
