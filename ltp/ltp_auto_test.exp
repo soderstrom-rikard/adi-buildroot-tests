@@ -2582,7 +2582,7 @@ set data_cache_boot_flag "not found"
 # need to do one reboot.
 #
 
-step "Boot kernel with update image"
+step "Boot kernel with updated image"
 source $LTP_SCRIPT_DIR/../common/kernel_boot.exp
 
 for {set i 0} {$i < 50} {incr i} {

@@ -34,10 +34,10 @@ while 1 {
 }
 
 if { $uboot_flag == 1 } {
-    send "reset\r"
+    send -s "reset\r"
     send_user "sending reset\n"
 } else {
-    send "reboot\r"
+    send -s "reboot\r"
     send_user "sending reboot\n"
 }
 
@@ -84,12 +84,11 @@ if { $ram_size <= 32 } {
 send -s "tftpboot $bootaddr $boot_image\r"
 while 1 {
     expect {
-        -re "Bytes transferred = \[0-9]+ \\\((\[0-9a-fA-F]+) hex\\\)" {
+        -re "Bytes transferred = \[0-9]+ \\\((\[0-9a-fA-F]+) hex\\\).*$uboot_prompt" {
             set image_size $expect_out(1,string)
             send_user "Image size is $image_size\n"
             break
         }
-
         timeout {
             send_user "Fail to tftp download linux image."
             #if tftpboot from high bootaddr failed, try to reload image from low bootaddr
@@ -98,13 +97,11 @@ while 1 {
     }
 }
 
-expect ">"
 send -s "run addip\r"
-expect ">"
-send -s "$bootcmd\r"
+expect -re $uboot_prompt
 
-send -s "run bootcmd\r"
 set timeout 180
+send -s "$bootcmd $bootaddr\r"
 while 1 {
     expect {
         -re "login:" {
@@ -138,7 +135,7 @@ while 1 {
 }
 
 set timeout 10
-send "ifconfig $eth_dev $targetip\r"
+send -s "ifconfig $eth_dev $targetip\r"
 while 1 {
     expect {
         -re "$eth_dev: link up" {
@@ -146,21 +143,22 @@ while 1 {
             break
         }
         timeout {
+            send_user "Ethernet may has been activated already!\n"
             break
         }
     }
 }
 
 set timeout 10
-send "cat /proc/version\r"
+send -s "cat /proc/version\r"
 while 1 {
     expect {
-        -re $kernel_prompt {
+        -re "Linux version.*$kernel_prompt" {
             sleep 2
             break
         }
         timeout {
-            send_user "Fail to read version info\n"
+            send_user "Fail to read version info!\n"
             break
         }
     }
