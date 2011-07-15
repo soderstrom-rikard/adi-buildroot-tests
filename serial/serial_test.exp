@@ -158,7 +158,7 @@ for { set i 0 } { $i < 30 } { incr i } {
     send "$STRDATA\r"
     while 1 {
         expect {
-            "$STRDATA" {
+            -re "$STRDATA.*No such" {
                 break
             }
             timeout {
@@ -177,7 +177,7 @@ set timeout 5
 send "ls /\n"
 while 1 {
     expect {
-        -re $kernel_prompt {
+        -re "etc.*$kernel_prompt" {
             case_pass $case_num
             break
         }
@@ -188,7 +188,7 @@ while 1 {
 }
 
 incr case_num
-set timeout 10
+set timeout 20
 send "dmesg\n"
 send "dmesg\n"
 send "dmesg\n"
@@ -206,7 +206,7 @@ while 1 {
 }
 
 incr case_num
-set timeout 5
+set timeout 10
 send "cat /proc/kallsyms\n"
 while 1 {
     expect {
@@ -327,7 +327,12 @@ while 1 {
     }
 }
 
-
+if { $board_type == "BF537-STAMP" } {
+    step "Reboot the kernel."
+    set boot_image uImage
+    set console_args $console_null
+    source ../common/reboot_kernel.exp
+} else {
 step "Update kernel with tty disabled in inittab"
 set console $console_null
 set boot_image uImage.serial.no_tty
@@ -480,6 +485,7 @@ while 1 {
             break
         }
     }
+}
 }
 
 

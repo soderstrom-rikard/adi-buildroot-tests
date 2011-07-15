@@ -9,6 +9,26 @@ set kernel_root $src_root/linux/linux-2.6.x
 set custom_kernel $src_root/output/build/linux-custom
 set log_loc $workspace_root/logs
 
+set ttydev /dev/ttyS0
+set ttyUSBdev /dev/ttyUSB0
+set kermit_ttydev $ttydev
+set sh_prompt "\[-@].*\[$>#]"
+set uboot_prompt "(Panda #|OMAP3 beagleboard.org #|bfin>)"
+set kernel_prompt "(\n# |root:\[^>].*>)"
+
+set targetip 10.100.4.50
+set serverip 10.100.4.174
+set count  30
+set PING_COUNT  1999
+set login_user "root"
+set password "blackfin"
+set send_slow {1 .1}
+set bootaddr_low 0x1000000
+set bootaddr_high 0x2000000
+set name test
+set STRDATA "abcdefghijklmnopqrstuvwxyz0123456789"
+set spi_board_type normal
+
 # environment settings
 if { $board_type == "BEAGLE" } {
     set arch "arm"
@@ -22,7 +42,7 @@ if { $board_type == "BEAGLE" } {
     set console_null "null"
     set console_args $console_def
 
-    set ipargs "10.100.4.50:10.100.4.174:10.100.4.174:255.255.255.0:beagle:eth0:off"
+    set ipargs "$targetip:$serverip:$serverip:255.255.255.0:beagle:eth0:off"
     set bootargs "setenv bootargs console=\$\{console\} mpurate=\$\{mpurate\} vram=\$\{vram\} omapfb.mode=dvi:\$\{dvimode\} omapfb.debug=y omapdss.def_disp=\$\{defaultdisplay\} root=\$\{mmcroot\} rootfstype=\$\{mmcrootfstype\}"
 
     set boot_image uImage
@@ -38,7 +58,7 @@ if { $board_type == "BEAGLE" } {
     set console_null "null"
     set console_args $console_def
 
-    set ipargs "10.100.4.50:10.100.4.174:10.100.4.174:255.255.255.0:panda:eth0:off"
+    set ipargs "$targetip:$serverip:$serverip:255.255.255.0:panda:eth0:off"
     set bootargs "setenv bootargs console=\$\{console\} vram=\$\{vram\} root=\$\{mmcroot\} rootfstype=\$\{mmcrootfstype\}"
 
     set boot_image uImage
@@ -50,12 +70,11 @@ if { $board_type == "BEAGLE" } {
     set baud_rate "57600"
     set def_uart_port ttyBF0
 
-    set console_def "$def_uart_port,${baud_rate}n8"
+    set console_def "$def_uart_port,$baud_rate"
     set console_null "null"
     set console_args $console_def
 
-    set ipargs "10.100.4.50:10.100.4.174:10.100.4.174:255.255.255.0:bf537-stamp:eth0:off"
-    set bootargs "setenv bootargs root=/dev/mtdblock0 rw ip=10.100.4.50 earlyprintk=serial,uart0,57600 console=ttyBF0,57600"
+    set bootargs "root=/dev/mtdblock0 rw ip=$targetip earlyprintk=serial,uart0,$baud_rate console=\$\{console\}"
 
     set boot_image uImage
 } else {
@@ -63,26 +82,6 @@ if { $board_type == "BEAGLE" } {
     set eth_dev "eth0"
     set boot_image uImage
 }
-
-set ttydev /dev/ttyS0
-set ttyUSBdev /dev/ttyUSB0
-set kermit_ttydev $ttydev
-set sh_prompt "\[-@].*\[$>#]"
-set uboot_prompt "Panda #|OMAP3 beagleboard.org #|bfin>"
-set kernel_prompt "\n# |root:\[^>].*>"
-
-set targetip 10.100.4.50
-set serverip 10.100.4.174
-set count  30
-set PING_COUNT  1999
-set login_user "root"
-set password "blackfin"
-set send_slow {1 .1}
-set bootaddr_low 0x1000000
-set bootaddr_high 0x2000000
-set name test
-set STRDATA "abcdefghijklmnopqrstuvwxyz0123456789"
-set spi_board_type normal
 
 set compressed_kernel_only_image  vmImage
 set kernel_and_ext2_image   linux.ext2

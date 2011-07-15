@@ -3,56 +3,45 @@
 # This file couldn't be indepently executed.
 # It is meant to be included into ***_test.exp scripts.
 
-send_user "Try to figure out if we are in u-boot or the kernel"
-set where_are_we 0
-send " \r"
-expect -re ">|#"
-send "version\r"
-set timeout 10
+set uboot_flag 0
+set timeout 8
+send "\r"
 while 1 {
     expect {
-        "U-Boot" {
-            expect -re $uboot_prompt
-            send_user "We are in u-boot\n"
-            set where_are_we "uboot"
-            break
+        -re "\[lL]ogin:" {
+            sleep .5
+            send "$login_user\r"
+            continue
         }
-
-        -re "not found|No such" {
+        -re "\[Pp]assword:" {
+            sleep .5
+            send "$password\r"
             expect -re $kernel_prompt
-            send_user "We are in the kernel\n"
-            set where_are_we "kernel"
             break
         }
-
+        -re $kernel_prompt {
+            break
+        }
+        -re $uboot_prompt {
+            set uboot_flag 1
+            break
+        }
         timeout {
-            send_user "Can't tell if we are in u-boot or the kernel\n"
-            #If the first version command doesn't work, run it once again.
-            send "version\r"
+            send_user "Fail: no kernel response" 
+            exit
         }
     }
 }
 
-if { $where_are_we == "uboot" } {
-    set timeout 50
-    send -s "reset\r"
+if { $uboot_flag == 1 } {
+    send "reset\r"
     send_user "sending reset\n"
 } else {
-    if { $where_are_we == "kernel" } {
-        set timeout 60
-        send -s "reboot\r"
-        send_user "sending reboot\n"
-    } else {
-# If we don't know where we are, hit control-C and enter
-        set timeout 10
-        expect "*"
-        send_user "sending control-C\n"
-        send "\3"
-        sleep 1
-        send "\r"
-    }
+    send "reboot\r"
+    send_user "sending reboot\n"
 }
 
+set timeout 60
 while 1 {
     expect {
         -re "RAM: +(\[0-9]+) Mi?B" {
@@ -70,6 +59,8 @@ while 1 {
     }
 }
 
+expect -re $uboot_prompt
+send -s "set console $console_args\r"
 expect -re $uboot_prompt
 send -s "set bootargs $bootargs\r"
 expect -re $uboot_prompt
@@ -155,7 +146,6 @@ while 1 {
             break
         }
         timeout {
-            send_user "Fail to enable ethernet\n"
             break
         }
     }
