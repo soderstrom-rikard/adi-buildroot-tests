@@ -3,18 +3,7 @@
 log_file reset_board_test_log
 send_user "Starting reset_board_test.exp\n"
 
-set ttydev /dev/ttyS0
-set baud_rate 115200
-set password "blackfin"
-
-proc step { message } {
-    global step_sequence_number
-
-    puts "\n*******************************************************************"
-    puts "STEP $step_sequence_number: $message\n\n"
-    send_log "\n************** STEP $step_sequence_number: $message\n\n"
-    incr step_sequence_number
-}
+source ./kernel_config.exp
 
 set step_sequence_number    1
 
@@ -152,9 +141,9 @@ while 1 {
 }
 
 set timeout 5
-expect -re ">|#"
+expect -re $uboot_prompt
 send "\r"
-expect -re ">|#"
+expect -re $uboot_prompt
 
 send_user "\nEnding reset_board_test.exp\n"
 log_file

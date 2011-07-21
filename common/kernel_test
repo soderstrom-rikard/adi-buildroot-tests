@@ -243,7 +243,7 @@ if [ $BUILD_POLICY -eq 1  ] ; then
 
     if [ $RESET_BOARD -eq 1  ] ; then
         cd $TESTSUITES_DIR/common
-        ./reset_board.exp >/dev/null  2>&1
+        ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
         sleep 10
     fi
 
@@ -278,7 +278,7 @@ do
         else
             if [ $RESET_BOARD -eq 1  ] ; then
                 cd $TESTSUITES_DIR/common
-                ./reset_board.exp  >/dev/null  2>&1
+                ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
                 sleep 10
             fi
             cd $TESTSUITES_DIR/${AUTO_TESTCASE[$i]}
@@ -294,7 +294,7 @@ do
 
         if [ $RESET_BOARD -eq 1  ] ; then
             cd $TESTSUITES_DIR/common
-            ./reset_board.exp  >/dev/null  2>&1
+            ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
             sleep 10
         fi
 
@@ -333,7 +333,7 @@ if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
 
     if [ $RESET_BOARD -eq 1  ] ; then
         cd $TESTSUITES_DIR/common
-        ./reset_board.exp  >/dev/null  2>&1
+        ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
         sleep 10
     fi
 
@@ -368,7 +368,7 @@ if [ ${AUTO_RUN_STATUS[$((n+3))]} -eq 1 ] ; then
 
     if [ $RESET_BOARD -eq 1  ] ; then
         cd $TESTSUITES_DIR/common
-        ./reset_board.exp  >/dev/null  2>&1
+        ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
         sleep 10
     fi
 
@@ -425,7 +425,7 @@ if [ ${AUTO_RUN_STATUS[$((n+2))]} -eq 1 ] ; then
 
             if [ $RESET_BOARD -eq 1  ] ; then
                 cd $TESTSUITES_DIR/common
-                ./reset_board.exp >/dev/null 2>&1
+                ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
                 sleep 10
             fi
             # end, do if build uclinux-dist succeed
@@ -472,7 +472,7 @@ do
 
     if [ $RESET_BOARD -eq 1  ] ; then
         cd $TESTSUITES_DIR/common
-        ./reset_board.exp  >/dev/null  2>&1
+        ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
         sleep 10
     fi
 
