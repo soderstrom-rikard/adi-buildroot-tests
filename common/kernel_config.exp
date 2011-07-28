@@ -4,7 +4,7 @@ source  ../common/board_info.exp
 
 # directory and file locations
 set workspace_root /home/test/workspace
-set src_root $workspace_root/src
+set src_root $workspace_root/src/kernel
 set kernel_root $src_root/linux/linux-2.6.x
 set custom_kernel $src_root/output/build/linux-custom
 set log_loc $workspace_root/logs
