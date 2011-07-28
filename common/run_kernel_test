@@ -13,7 +13,7 @@ TIMESTAMP=${BUILD_ID:-`date +%Y_%b_%d_%H_%M`}
 WORKSPACE_ROOT=/home/test/workspace
 
 # SRC_ROOT is location where source code is checked out.
-SRC_ROOT=$WORKSPACE_ROOT/src
+SRC_ROOT=$WORKSPACE_ROOT/src/kernel
 
 TESTSUITES_DIR=$SRC_ROOT/testsuites
 COMMON_TESTSCRIPTS=$TESTSUITES_DIR/common
