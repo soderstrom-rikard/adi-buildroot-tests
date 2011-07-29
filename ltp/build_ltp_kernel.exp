@@ -33,6 +33,10 @@ while 1 {
             continue
         }
 
+        -re "Platform Glue Layer \\\[M/y]" {
+            send "\r"
+        }
+
         -re "Choose SLAB allocator\r\n.*(\[0-9]+). SLAB.*SLUB.*SLOB.*\\\[.*]" {
             send "$allocator\r"
         }
