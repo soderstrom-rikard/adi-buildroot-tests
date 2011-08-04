@@ -69,6 +69,10 @@ while 1 {
 	    send "Y\r"
 	}
 
+        -re "Target ABI.*BFIN_FDPIC.*BFIN_FLAT.*BFIN_FLAT_SEP_DATA.*BFIN_SHARED_FLAT.*\\\[.*]" {
+            send "1\r"
+        }
+
         "\\\(*) \\\[*]" {
             sleep .01
             send "\r"

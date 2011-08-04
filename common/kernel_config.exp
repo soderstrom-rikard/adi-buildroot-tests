@@ -14,7 +14,7 @@ set ttyUSBdev /dev/ttyUSB0
 set kermit_ttydev $ttydev
 set sh_prompt "\[-@].*\[$>#]"
 set uboot_prompt "(Panda #|OMAP3 beagleboard.org #|bfin>)"
-set kernel_prompt "(\n# |root:\[^>].*>)"
+set kernel_prompt "(\r\n# |\r\nroot:\[^>].*>)"
 
 set targetip 10.100.4.50
 set serverip 10.100.4.174
