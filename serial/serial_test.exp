@@ -158,7 +158,7 @@ for { set i 0 } { $i < 30 } { incr i } {
     send "$STRDATA\r"
     while 1 {
         expect {
-            -re "$STRDATA.*No such" {
+            -re "$STRDATA.*(No such|not found)" {
                 break
             }
             timeout {
