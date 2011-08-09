@@ -30,11 +30,7 @@ while 1 {
             continue
         }
 
-        -re "USB Gadget Drivers \\\[.*]" {
-            send "\r"
-        }
-
-        -re "Platform Glue Layer \\\[M/y]" {
+        -re "(USB Gadget Drivers|Platform Glue Layer) \\\[\[^\]]*/\[^?]]" {
             send "\r"
         }
 
