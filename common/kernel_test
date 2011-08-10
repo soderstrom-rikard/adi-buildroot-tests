@@ -289,6 +289,12 @@ do
         copy_image_config "${AUTO_TESTCASE[$i]}"
         mv $TESTSUITES_DIR/${AUTO_TESTCASE[$i]}/*_log  $THIS_LOG
 
+        if [ $ARCH_TYPE == "blackfin" ] ; then
+            if [ ${AUTO_TESTCASE[$i]} == "ethernet" ] ; then
+                make_clean
+            fi
+        fi
+
         echo  "End testing ${AUTO_TESTCASE[$i]}..."
         sleep 10
 

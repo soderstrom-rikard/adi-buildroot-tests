@@ -13,6 +13,15 @@ source ../common/kernel_config.exp
 log_file [log_file_name "$argv0"]
 send_user "Starting $argv0\n"
 
+if { $arch == "blackfin" } {
+    cd $src_root/testsuites/common
+    step "Make clean to use FDPIC format"
+    if { [source make_clean.exp] != 0 } {
+        send_user "\n\nFail to make clean. Exit!\n\n"
+        exit
+    }
+}
+
 cd $src_root/testsuites/common
 step "Make default config"
 source make_default_config.exp
