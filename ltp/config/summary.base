@@ -1,11 +1,11 @@
 
-test started May-09-2011-09:52pm
+test started Aug-09-2011-09:06pm
 
 Test Results
 =====================================
   Total Tests        :  958
-  Passed Tests       :  771
-  Failed Tests       :  0
+  Passed Tests       :  769
+  Failed Tests       :  2
   Broken Tests       :  0
   Warning Tests      :  4
   Crashing Tests     :  0
@@ -14,6 +14,8 @@ Test Results
 
 Failed Tests List
 =====================================
+  -  readlink03
+  -  sockioctl01
 
 Broken Tests List
 =====================================
@@ -469,7 +471,6 @@ Passed Tests List
   -  readlink01
   -  readlink01A
   -  readlink02
-  -  readlink03
   -  readlink04
   -  readlinkat01
   -  readv01
@@ -694,7 +695,6 @@ Passed Tests List
   -  socketcall04
   -  socketpair01
   -  socketpair02
-  -  sockioctl01
   -  splice01
   -  splice02
   -  stat01
@@ -993,8 +993,8 @@ NA on uClinux Tests List(Tests Not Avaliable to run on uClinux)
 
 Measurement Tests
 =====================================
-  linux version            = 2.6.37.6-ADI-2011R1-pre-dirty (test@linux85-beagle) (gcc version
-  gcc version              = not found
+  linux version            = 3.0.0-ADI-2011R1-pre-00176-gf324b5e-dirty
+  gcc version              = 4.4.1
   BogoMips                 = not measured
   Dhrystones per second    = not measured
   system clock             = not measured
