@@ -1011,7 +1011,7 @@ proc run_LTP_test { filename command torun mode} {
    if { $filename == "setrlimit01" } {
        set timeout 5
        send "echo 0 > /proc/sys/kernel/printk\r"
-       expect $kernel_prompt
+       expect -re $ltp_test_prompt
    }
 
    step "get test case \[$filename\] from server"
@@ -1136,6 +1136,8 @@ proc run_LTP_test { filename command torun mode} {
          # Some testcases leave the current directory in root
           -re $kernel_prompt {
             report "---done"
+            send "cd /bin\r"
+            expect -re $ltp_test_prompt
             sleep .5
             break
          }
@@ -1165,7 +1167,7 @@ proc run_LTP_test { filename command torun mode} {
    if { $filename == "setrlimit01" } {
        set timeout 5
        send "echo $printk_level > /proc/sys/kernel/printk\r"
-       expect $kernel_prompt
+       expect -re $ltp_test_prompt
    }
 
    if {$result_flag == $LTP_CRASH} {
@@ -2749,6 +2751,8 @@ expect -re $ltp_test_prompt
 send "echo \$PATH\r"
 expect -re $ltp_test_prompt
 send -s "chmod 777 /tmp\r"
+expect -re $ltp_test_prompt
+send -s "cd /bin\r"
 expect -re $ltp_test_prompt
 #step "chmod /tmp done"
 
