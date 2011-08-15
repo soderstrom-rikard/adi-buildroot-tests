@@ -768,7 +768,9 @@ while 1 {
 
 set spawn_id $host_id
 
-set timeout 3
+set timeout 5
+expect -re $sh_prompt
+send "\r"
 expect -re $sh_prompt
 
 incr case_num
@@ -892,77 +894,79 @@ while 1 {
 }
 
 
-step "Clean image on card and reboot kernel to normal"
+if { $board_type == "BEAGLE" || $board_type == "PANDA" } {
+    step "Clean image on card and reboot kernel to normal"
 
-set spawn_id $telnet_id
+    set spawn_id $telnet_id
 
-incr case_num
-set timeout 10
-send "mount /dev/mmcblk0p1 /mnt/; sleep 2; ls /mnt\r"
-while 1 {
-    expect {
-        -re "u-boot.*$kernel_prompt" {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            send_user "Fail to mount memory card\n"
-            case_fail $case_num
+    incr case_num
+    set timeout 10
+    send "mount /dev/mmcblk0p1 /mnt/; sleep 2; ls /mnt\r"
+    while 1 {
+        expect {
+            -re "u-boot.*$kernel_prompt" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                send_user "Fail to mount memory card\n"
+                case_fail $case_num
+            }
         }
     }
-}
 
-incr case_num
-set timeout 10
-send "rm /mnt/uImage.serial*\r"
-while 1 {
-    expect {
-        -re "rm:.*$kernel_prompt" {
-            case_fail $case_num
-        }
-        -re $kernel_prompt {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            send_user "Fail to remove image on memory card\n"
-            case_fail $case_num
+    incr case_num
+    set timeout 10
+    send "rm /mnt/uImage.serial*\r"
+    while 1 {
+        expect {
+            -re "rm:.*$kernel_prompt" {
+                case_fail $case_num
+            }
+            -re $kernel_prompt {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                send_user "Fail to remove image on memory card\n"
+                case_fail $case_num
+            }
         }
     }
-}
 
-incr case_num
-set timeout 20
-send "umount /mnt\r"
-while 1 {
-    expect {
-        -re "umount:.*$kernel_prompt" {
-            send_user "Fail to umount memory card\n"
-            case_fail $case_num
-        }
-        -re $kernel_prompt {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            send_user "umount timeout\n"
-            case_fail $case_num
+    incr case_num
+    set timeout 20
+    send "umount /mnt\r"
+    while 1 {
+        expect {
+            -re "umount:.*$kernel_prompt" {
+                send_user "Fail to umount memory card\n"
+                case_fail $case_num
+            }
+            -re $kernel_prompt {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                send_user "umount timeout\n"
+                case_fail $case_num
+            }
         }
     }
-}
 
-incr case_num
-set timeout 20
-send "reboot\r"
-while 1 {
-    expect {
-        "Connection closed by foreign host" {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            send_user "Fail: reboot\n"
-            case_fail $case_num
+    incr case_num
+    set timeout 20
+    send "reboot\r"
+    while 1 {
+        expect {
+            "Connection closed by foreign host" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                send_user "Fail: reboot\n"
+                case_fail $case_num
+            }
         }
     }
 }
