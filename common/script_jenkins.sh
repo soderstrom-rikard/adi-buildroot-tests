@@ -1,8 +1,8 @@
 #!/bin/bash -x
 
-export BOARD_CONFIG=${JOB_NAME/\/label=*/}
-custom_workspace=${WORKSPACE/\/label\/*/}
-mkdir -p $custom_workspace/../../dl
+export BOARD_CONFIG=$NODE_NAME
+custom_workspace=$WORKSPACE
+mkdir -p $custom_workspace/../../../../dl
 
 # Set repository info
 MAIN_PROJ_REPO_NAME=buildroot
@@ -25,7 +25,7 @@ fi
 
 # Link to real directory for downloading
 cd $custom_workspace
-ln -sf ../../dl
+ln -sf ../../../../dl
 
 debug=1
 # check if use right source
