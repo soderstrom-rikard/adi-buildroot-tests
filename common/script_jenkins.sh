@@ -34,19 +34,20 @@ check_git_info ()
     echo "##########"
     if [ -d $custom_workspace ] ; then
         cd $custom_workspace
-        git branch -a
+        git branch
         git remote -v
     fi
 
+
     if [ -d $custom_workspace/testsuites ] ; then
         cd $custom_workspace/testsuites
-        git branch -a
+        git branch
         git remote -v
     fi
 
     if [ -d $custom_workspace/linux/linux-2.6.x ] ; then
         cd $custom_workspace/linux/linux-2.6.x
-        git branch -a
+        git branch
         git remote -v
     fi
     echo "##########"
@@ -63,42 +64,45 @@ if [ "`git branch | grep -c \"$MAIN_PROJ_INDEX\"`" -eq 0 ] ; then
 else
     git checkout $MAIN_PROJ_INDEX
 fi
-git pull
 
 # Handle submodules for master project.
 new_submodule=0
-if [ "`git stash list| grep -c WIP`" -eq 0 ] ; then
-    if [ -f $custom_workspace/.gitmodules ] ; then
-        if [ "`grep -c \"$TEST_FRAME_REPO_URL\" $custom_workspace/.gitmodules`" -eq 0 ] ; then
-            echo "Modify test frame repo URL."
-            sed -i "s/git.*testsuite.*$/${TEST_FRAME_REPO_URL////\/}/" $custom_workspace/.gitmodules
-            let new_submodule++
-        else
-            echo "Test frame repo URL is right."
-        fi
-
-        if [ "`grep -c \"$KERNEL_REPO_URL\" $custom_workspace/.gitmodules`" -eq 0 ] ; then
-            echo "Modify kernel repo URL."
-            sed -i "s/git.*kernel.*$/${KERNEL_REPO_URL////\/}/" $custom_workspace/.gitmodules
-            let new_submodule++
-        else
-            echo "Kernel repo URL is right."
-        fi
+if [ -f $custom_workspace/.gitmodules ] ; then
+    if [ "`grep -c \"$TEST_FRAME_REPO_URL\" $custom_workspace/.gitmodules`" -eq 0 ] ; then
+        echo "Modify test frame repo URL."
+        sed -i "s/git.*testsuite.*$/${TEST_FRAME_REPO_URL////\/}/" $custom_workspace/.gitmodules
+        let new_submodule++
     else
-        echo "Add submodules."
-        git submodule add $TEST_FRAME_REPO_URL $custom_workspace/testsuites
-        git submodule add $KERNEL_REPO_URL $custom_workspace/linux/linux-2.6.x
-        new_submodule=2
+
+        echo "Test frame repo URL is right."
     fi
-    git stash
+
+    if [ "`grep -c \"$KERNEL_REPO_URL\" $custom_workspace/.gitmodules`" -eq 0 ] ; then
+        echo "Modify kernel repo URL."
+        sed -i "s/git.*kernel.*$/${KERNEL_REPO_URL////\/}/" $custom_workspace/.gitmodules
+        let new_submodule++
+    else
+        echo "Kernel repo URL is right."
+    fi
+else
+    echo "Add submodules."
+    git submodule add $TEST_FRAME_REPO_URL $custom_workspace/testsuites
+    git submodule add $KERNEL_REPO_URL $custom_workspace/linux/linux-2.6.x
+    new_submodule=2
 fi
-git stash apply
+
+if [ "`git status|grep -c \"modified.*\.gitmodules\"`" -eq 1 ] ; then
+    git add .gitmodules
+    git commit -s --author=vivi.li@analog.com -m "buildroot: submodule: switch to local git mirror."
+fi
 
 if [ $new_submodule -gt 0 ] ; then
     git submodule update --init
 else
     git submodule update
 fi
+
+git pull $MAIN_PROJ_REPO_NAME $MAIN_PROJ_INDEX
 
 
 if [ $debug -eq 1 ] ; then
@@ -111,6 +115,7 @@ cd $custom_workspace/testsuites
 if [ "`git branch | grep -c \"$TEST_FRAME_INDEX\"`" -eq 0 ] ; then
     git checkout -b $TEST_FRAME_INDEX remotes/$TEST_FRAME_REPO_NAME/$TEST_FRAME_INDEX
 else
+
     git checkout $TEST_FRAME_INDEX
 fi
 
