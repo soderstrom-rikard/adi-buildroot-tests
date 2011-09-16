@@ -770,8 +770,6 @@ set spawn_id $host_id
 
 set timeout 5
 expect -re $sh_prompt
-send "\r"
-expect -re $sh_prompt
 
 incr case_num
 set timeout 10
