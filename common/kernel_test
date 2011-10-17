@@ -424,7 +424,9 @@ if [ ${AUTO_RUN_STATUS[$((n+2))]} -eq 1 ] ; then
 
             mv $TESTSUITES_DIR/ltp/build_ltp_kernel_log $THIS_LOG/build_ltp_kernel_log_${ltp_suf[i]}
             mv $TESTSUITES_DIR/ltp/test/logs/summary.new $THIS_LOG/ltp-summary_test_log_${ltp_suf[i]}
+            mv $TESTSUITES_DIR/ltp/test/logs/ltp_auto_test*summary-log $THIS_LOG/
             mv $TESTSUITES_DIR/ltp/test/logs/detailed.new $THIS_LOG/ltp-detailed_test_log_${ltp_suf[i]}
+            mv $TESTSUITES_DIR/ltp/test/logs/ltp_auto_test*detailed-log $THIS_LOG/
             mv $TESTSUITES_DIR/ltp/build_ltp_log $THIS_LOG/build_ltp_log_${ltp_suf[i]}
             mv $TESTSUITES_DIR/ltp/ltp_test_log $THIS_LOG/ltp_test_log_${ltp_suf[i]}
 
