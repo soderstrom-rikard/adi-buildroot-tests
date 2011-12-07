@@ -4,7 +4,11 @@ source  ../common/board_info.exp
 
 # directory and file locations
 set workspace_root /home/test/workspace
-set src_root $workspace_root/src/kernel/label/$env(BOARD_CONFIG)
+if { [info exists env(BOARD_CONFIG)] } {
+    set src_root $workspace_root/src/kernel/label/$env(BOARD_CONFIG)
+} else {
+    set src_root $workspace_root/src/kernel
+}
 set kernel_root $src_root/linux/linux-2.6.x
 set custom_kernel $src_root/output/build/linux-custom
 set log_loc $workspace_root/logs
@@ -77,6 +81,22 @@ if { $board_type == "BEAGLE" } {
     set bootargs "root=/dev/mtdblock0 rw ip=$targetip earlyprintk=serial,uart0,$baud_rate console=\$\{console\}"
 
     set boot_image uImage
+} elseif { $board_type == "BF609-EZKIT" } {
+    set arch "blackfin"
+    set board_defconfig "bf609-ezkit_defconfig"
+    set eth_dev "eth0"
+    set usb_eth_dev "eth1"
+    set baud_rate "57600"
+    set def_uart_port ttyBF0
+
+    set console_def "$def_uart_port,$baud_rate"
+    set console_null "null"
+    set console_args $console_def
+
+    set bootargs "root=/dev/mtdblock0 rw ip=$targetip earlyprintk=serial,uart0,$baud_rate console=\$\{console\}"
+
+    set boot_image uImage
+
 } else {
     set baud_rate "57600"
     set eth_dev "eth0"

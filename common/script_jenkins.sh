@@ -65,44 +65,9 @@ else
     git checkout $MAIN_PROJ_INDEX
 fi
 
-# Handle submodules for master project.
-new_submodule=0
-if [ -f $custom_workspace/.gitmodules ] ; then
-    if [ "`grep -c \"$TEST_FRAME_REPO_URL\" $custom_workspace/.gitmodules`" -eq 0 ] ; then
-        echo "Modify test frame repo URL."
-        sed -i "s/git.*testsuite.*$/${TEST_FRAME_REPO_URL////\/}/" $custom_workspace/.gitmodules
-        let new_submodule++
-    else
-
-        echo "Test frame repo URL is right."
-    fi
-
-    if [ "`grep -c \"$KERNEL_REPO_URL\" $custom_workspace/.gitmodules`" -eq 0 ] ; then
-        echo "Modify kernel repo URL."
-        sed -i "s/git.*kernel.*$/${KERNEL_REPO_URL////\/}/" $custom_workspace/.gitmodules
-        let new_submodule++
-    else
-        echo "Kernel repo URL is right."
-    fi
-else
-    echo "Add submodules."
-    git submodule add $TEST_FRAME_REPO_URL $custom_workspace/testsuites
-    git submodule add $KERNEL_REPO_URL $custom_workspace/linux/linux-2.6.x
-    new_submodule=2
-fi
-
-if [ "`git status|grep -c \"modified.*\.gitmodules\"`" -eq 1 ] ; then
-    git add .gitmodules
-    git commit -s --author=vivi.li@analog.com -m "buildroot: submodule: switch to local git mirror."
-fi
-
-if [ $new_submodule -gt 0 ] ; then
-    git submodule update --init
-else
-    git submodule update
-fi
-
 git pull $MAIN_PROJ_REPO_NAME $MAIN_PROJ_INDEX
+
+git submodule update --init
 
 
 if [ $debug -eq 1 ] ; then

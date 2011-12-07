@@ -46,22 +46,6 @@ while 1 {
             send "\r"
         }
 
-        -re "Toolchain has IPv6 support.*BR2_TOOLCHAIN_EXTERNAL_INET_IPV6.*\\\[.*]" {
-            if { $arch == "blackfin" } {
-                send "Y\r"
-            } else {
-                send "\r"
-            }
-        }
-
-        -re "Toolchain has WCHAR support.*BR2_TOOLCHAIN_EXTERNAL_WCHAR.*\\\[.*]" {
-            if { $arch == "blackfin" } {
-                send "Y\r"
-            } else {
-                send "\r"
-            }
-        }
-
         "\\\(*) \\\[*]" {
             sleep .05
             send "\r"
