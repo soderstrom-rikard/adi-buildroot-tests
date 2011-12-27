@@ -126,6 +126,11 @@ if [ $BOARD_CONFIG = "BF537-STAMP-STD" ] ; then
 
 fi
 
+if [ $BOARD_CONFIG = "BF609-EZKIT-STD" ] ; then
+    BOARD_TYPE=BF609-EZKIT
+
+fi
+
 
 #################### List the tests to be run on the machine ####################
 
