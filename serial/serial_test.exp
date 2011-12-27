@@ -327,7 +327,7 @@ while 1 {
     }
 }
 
-if { $board_type == "BF537-STAMP" } {
+if { $arch == "blackfin" } {
     step "Reboot the kernel."
     set boot_image uImage
     set console_args $console_null
