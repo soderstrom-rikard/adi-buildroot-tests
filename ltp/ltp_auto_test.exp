@@ -267,7 +267,7 @@ proc recover {} {
       }
 
       if { $state_variable == 4 } {
-        set timeout 30
+        set timeout 5
         expect -nocase -re "up.*full"
 
 	send "export PATH=\$PATH:/bin\r"
@@ -282,17 +282,16 @@ proc recover {} {
 	send -s "ifconfig $eth_dev $ipaddr up\r"
         expect -nocase -re "up.*full"
 
-        set timeout 4
+        set timeout 5
         send "ifconfig $eth_dev\r"
         while 1 {
             expect {
-               -re "$ipaddr.*$ltp_test_prompt" {
-                       report "!!!! kernel is prepared for ltp test"
-                       return 1
+               -re "addr:$ipaddr.*$ltp_test_prompt" {
+                  break
                }
                timeout {
                   report "!!!! Fail to prepare kernel for ltp test"
-                  break
+                  return -1
                }
             }
          }
@@ -316,6 +315,7 @@ proc recover {} {
             send_user "$errorInfo\n"
         }
 
+        return 0
       }
    }
    report "!!!! Not able to recover"
@@ -417,7 +417,7 @@ proc force_reboot {} {
         }
 
         if { $state_variable == 4 } {
-            set timeout 30
+            set timeout 5
             expect -nocase -re "up.*full"
 
             send "export PATH=\$PATH:/bin\r"
@@ -431,17 +431,16 @@ proc force_reboot {} {
             send -s "ifconfig $eth_dev $ipaddr up\r"
             expect -nocase -re "up.*full"
 
-            set timeout 4
+            set timeout 5
             send "ifconfig $eth_dev\r"
             while 1 {
                 expect {
-                    -re "$ipaddr.*$ltp_test_prompt" {
-                        report "!!!! kernel is prepared for ltp test"
-                        return 1
+                    -re "addr:$ipaddr.*$ltp_test_prompt" {
+                        break
                     }
                     timeout {
                         report "!!!! Fail to prepare kernel for ltp test"
-                        break
+                        return -1
                     }
                 }
             }
@@ -465,6 +464,7 @@ proc force_reboot {} {
                 send_user "$errorInfo\n"
             }
 
+            return 0
         }
     }
 
