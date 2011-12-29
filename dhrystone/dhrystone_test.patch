@@ -1,0 +1,68 @@
+diff --git a/package/Makefile.package.in b/package/Makefile.package.in
+index bf4e1b4..9edbe5e 100644
+--- a/package/Makefile.package.in
++++ b/package/Makefile.package.in
+@@ -287,7 +287,7 @@ $(BUILD_DIR)/%/.stamp_configured:
+ # Build
+ $(BUILD_DIR)/%/.stamp_built::
+ 	@$(call MESSAGE,"Building")
+-	$($(PKG)_BUILD_CMDS)
++	$($(PKG)_BUILD_CMDS) results
+ 	$(foreach hook,$($(PKG)_POST_BUILD_HOOKS),$(call $(hook))$(sep))
+ 	$(Q)touch $@
+ 
+diff --git a/package/dhrystone/Makefile b/package/dhrystone/Makefile
+index d628ddb..a979bb0 100644
+--- a/package/dhrystone/Makefile
++++ b/package/dhrystone/Makefile
+@@ -1,12 +1,47 @@
++SHELL:=/bin/bash
++EXEC = dhrystone
++
+ CPPFLAGS += -DNO_PROTOTYPES=1
+ LDLIBS += -lm
+ 
+-all: dhrystone
++ifndef IP
++IP=10.100.4.50
++endif
++
++ifndef ITT
++ITT=10000000
++endif
+ 
+-dhrystone: dhry_1.o dhry_2.o
++all: $(EXEC)
++
++$(EXEC): dhry_1.o dhry_2.o
+ 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+ 
++results:
++	cpu=`rsh -l root $(IP) 'grep "cpu MHz" /proc/cpuinfo' | awk -F ":" '{print $$2}' | awk -F "/" '{print $$1}' | sed 's/^[ \t]*//;s/[ \t]*$$//'` ;\
++	echo "testing on $$cpu MHz with $$CC" ;\
++	cflags=`echo $(CFLAGS) | sed -e 's:-O[0-3s]::g' -e 's/[[:space:]][[:space:]]*/ /g'`; \
++	echo "^ Flags ((standard ''CFLAGS'' include ''$${cflags}''))  ^  size (bytes)  ^  Loops  ^  Dhrystones per Second ((Based on $(CC))) ^  Dhrystone MIPS ((DMIPS is obtained when the Dhrystone score is divided by 1,757 (the number of Dhrystones per second obtained on the VAX 11/780, nominally a 1 MIPS machine))  ^  DMIPS/MHz  ^";\
++	( for level in -O{s,0,1,2,3}{" "," -fomit-frame-pointer"}{" "," -static"}{""," -ffast-math"}{""," -funroll-loops"}{""," -funsafe-loop-optimizations"} ; do \
++	    if [ -z "$${BR2_BFIN_FDPIC}" -a `echo $${level} | grep static | wc -l` -eq 1 ] ; then \
++		continue; \
++	    fi; \
++	    echo -n "| ''$${level}'' " | sed 's/ [ ]*/ /g' | sed "s/ '' /''/" ; \
++	    rm -f *.o $(EXEC); \
++	    $(MAKE) -s --no-print-directory all CFLAGS="$${cflags} $${level} -w" ;\
++	    if [ -n "$${BR2_BFIN_FDPIC}" ] ; then \
++		$(CROSS)strip $(EXEC); \
++	    fi;\
++	    find ./ -name $(EXEC) -printf " |  %s  |  " ;\
++	    tmp=`md5sum $(EXEC) | awk '{print $$1}'`;\
++	    printf " $$tmp |  $(ITT)  |  " ; \
++	    rcp $(EXEC) root@$(IP):/var/$(EXEC) ; \
++	    tmp=`rsh -l root $(IP) /var/$(EXEC) $(ITT)` ;\
++	    echo $$cpu $$tmp | awk '{print $$NF "  |  " $$NF/1757 "  |  " $$NF/(1757*$$1) "  |" }' ; \
++	  done; \
++	)
++
+ clean:
+-	rm -f *.o dhrystone
++	rm -f *.o $(EXEC)
+ 
+ .PHONY: all clean
