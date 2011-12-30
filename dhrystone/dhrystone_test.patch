@@ -12,14 +12,16 @@ index bf4e1b4..9edbe5e 100644
  	$(Q)touch $@
  
 diff --git a/package/dhrystone/Makefile b/package/dhrystone/Makefile
-index d628ddb..a979bb0 100644
+index d628ddb..0fb06ab 100644
 --- a/package/dhrystone/Makefile
 +++ b/package/dhrystone/Makefile
-@@ -1,12 +1,47 @@
+@@ -1,12 +1,48 @@
+-CPPFLAGS += -DNO_PROTOTYPES=1
 +SHELL:=/bin/bash
 +EXEC = dhrystone
++OBJS = dhry_1.o dhry_2.o
 +
- CPPFLAGS += -DNO_PROTOTYPES=1
++CFLAGS += -DNO_PROTOTYPES=1
  LDLIBS += -lm
  
 -all: dhrystone
@@ -34,7 +36,7 @@ index d628ddb..a979bb0 100644
 -dhrystone: dhry_1.o dhry_2.o
 +all: $(EXEC)
 +
-+$(EXEC): dhry_1.o dhry_2.o
++$(EXEC): $(OBJS)
  	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
  
 +results:
@@ -47,7 +49,7 @@ index d628ddb..a979bb0 100644
 +		continue; \
 +	    fi; \
 +	    echo -n "| ''$${level}'' " | sed 's/ [ ]*/ /g' | sed "s/ '' /''/" ; \
-+	    rm -f *.o $(EXEC); \
++	    rm -f *.elf *.gdb *.o $(EXEC); \
 +	    $(MAKE) -s --no-print-directory all CFLAGS="$${cflags} $${level} -w" ;\
 +	    if [ -n "$${BR2_BFIN_FDPIC}" ] ; then \
 +		$(CROSS)strip $(EXEC); \
@@ -63,6 +65,7 @@ index d628ddb..a979bb0 100644
 +
  clean:
 -	rm -f *.o dhrystone
-+	rm -f *.o $(EXEC)
++	-rm -f *.elf *.gdb *.o $(EXEC)
  
- .PHONY: all clean
+-.PHONY: all clean
++.PHONY: all clean results
