@@ -29,7 +29,7 @@ expect -re $sh_prompt
 
 set timeout 5
 incr case_num
-send "cd $uclinux_path\r"
+send "cd $src_root\r"
 while 1 {
     expect {
         -re $sh_prompt {
@@ -88,14 +88,14 @@ while 1 {
             set result_flag FAIL
             break
         }
-        -re $sh_prompt {
+        -re "real.*user.*sys.*$sh_prompt" {
             case_pass $case_num
             break
         }
         timeout {
-            set timeout 5
+	    set timeout 5
             send "\3"
-            expect -re $sh_prompt
+	    expect -re $sh_prompt
             set result_flag FAIL
             break
         }

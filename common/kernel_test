@@ -294,6 +294,12 @@ do
         copy_image_config "${AUTO_TESTCASE[$i]}"
         mv $TESTSUITES_DIR/${AUTO_TESTCASE[$i]}/*_log  $THIS_LOG
 
+        # If bellow test fails, patch is still cleaned here.
+        if [ ${AUTO_TESTCASE[$i]} == "dhrystone" ] ; then
+            cd $SRC_ROOT/package/
+            git checkout .
+        fi
+
         echo  "End testing ${AUTO_TESTCASE[$i]}..."
         sleep 10
 
