@@ -63,7 +63,7 @@ while 1 {
 
 set timeout 5
 incr case_num
-send "cp Makefile output/build/whetstone-$version/\r"
+send "cp testsuites/whetstone/Makefile output/build/whetstone-$version/\r"
 while 1 {
     expect {
         -nocase -re "(fail|cp:).*$sh_prompt" {
