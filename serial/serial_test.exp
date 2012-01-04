@@ -779,7 +779,7 @@ while 1 {
         -re "stty:.*$sh_prompt" {
             case_fail $case_num
         }
-        -re "time 0.*$sh_prompt" {
+        -re "ime 0.*$sh_prompt" {
             case_pass $case_num
             break
         }
