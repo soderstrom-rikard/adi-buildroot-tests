@@ -40,7 +40,7 @@ echo "$0:	Configure ..."
 if [ $arch_type == "arm" ] ; then
     ./configure --prefix=$CWD/$LTP_SUB_DIR/installation --host=arm-none-linux-gnueabi --build=i686-pc-linux-gnu > /dev/null 2>&1
 elif [ $arch_type == "blackfin" ] ; then
-    ./configure --prefix=$CWD/$LTP_SUB_DIR/installation --host=bfin-uclinux --build=i686-pc-linux-gnu > /dev/null 2>&1
+    ./configure --prefix=$CWD/$LTP_SUB_DIR/installation --host=bfin-uclinux --build=i686-pc-linux-gnu LDFLAGS="-elf2flt=-s65536" > /dev/null 2>&1
 fi
 if [ $? -ne 0 ]
 then
