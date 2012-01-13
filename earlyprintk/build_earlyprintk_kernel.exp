@@ -1,34 +1,41 @@
 #!/usr/bin/expect
 #
-# Build script for lmbench performance test.
+# Build Kernel for early printk test
 #
 # Usage:
-#   ./build_lmbench_kernel.exp board_type
+#   ./build_earlyprintk_kernel.exp board_type
 #
 # Example:
-#   ./build_lmbench_kernel.exp BF537-STAMP
+#   ./build_earlyprintk_kernel.exp BF537-STAMP
 #
 
 source ../common/kernel_config.exp
 log_file [log_file_name "$argv0"]
 send_user "Starting $argv0\n"
 
+step "Change main.c in linux-kernel/init/"
+cd $src_root
+set timeout 5
+set file $src_root/linux/linux-kernel/init/main.c
+if [ catch {exec sed -i "/setup_arch/ i panic(\"Test early printk\");" $file} ] {
+    send_user "\nFail to modify $file\n"
+    send_user "$errorInfo\n"
+    exit
+}
+
 cd $src_root/testsuites/common
 step "Make default config"
 source make_default_config.exp
 
-step "user space config"
+#tee "Begin the interactive process of configuration"
+step "Make kernel config"
 cd $src_root
 set timeout 300
-spawn make config
+spawn make ARCH=$arch linux-config
 while 1 {
     expect {
-        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
-            continue
-        }
-
-        -re "lmbench \\\(BR2_PACKAGE_LMBENCH\\\) \\\[.*]" {
-            send "Y\r"
+        -re "Early printk.*EARLY_PRINTK.*\\\[.*]" {
+            send "y\r"
         }
 
         "\\\(*) \\\[*]" {
@@ -59,6 +66,13 @@ source make_kernel.exp
 cd $src_root/testsuites/common
 step "Copy image"
 source copy_image.exp
+
+set timeout 5
+if [ catch {exec sed -i "/Test early printk/ d" $file} ] {
+    send_user "\nFail to restore file $file\n"
+    send_user "$errorInfo\n"
+    exit
+}
 
 send_user "Ending $argv0\n"
 log_file
