@@ -62,7 +62,7 @@ while 1 {
             continue
         }
 
-        -re "bfin dma test\\\(BR2_PACKAGE_BFIN_DMA\\\) \\\[.*]" {
+        -re "bfin dma test \\\(BR2_PACKAGE_BFIN_DMA\\\) \\\[.*]" {
             send "Y\r"
         }
 
