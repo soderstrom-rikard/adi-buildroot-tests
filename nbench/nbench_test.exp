@@ -27,7 +27,7 @@ expect -re $kernel_prompt
 
 set timeout 1500
 incr case_num
-send "time nbench\r"
+send "cd /tmp; time nbench\r"
 while 1 {
     expect {
         -re "NUMERIC SORT +: +(\[0-9]+\.\[0-9e+]+) " {
