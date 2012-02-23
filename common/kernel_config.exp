@@ -193,6 +193,35 @@ proc all_pass {} {
     send_log "\n$TITLE ............\[PASS\]\n"
 }
 
+proc decide_smp {} {
+    global smp_flag 
+    global smp_prog 
+    global kernel_prompt
+ 
+    send "uname -a\n"
+    while 1 {
+        expect {
+            -re "SMP.*$kernel_prompt" {
+                set smp_flag 1
+                set smp_prog taskset 
+                send_user "\nIt's a SMP kernel!\n"
+                break
+            }
+            -re $kernel_prompt {
+                set smp_flag ""
+                set smp_prog "" 
+                send_user "\nIt's not a SMP kernel.\n"
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+
+}
+
 proc before_boot {} {
     global def_uart_port
     global baud_rate
