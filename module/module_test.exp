@@ -131,6 +131,7 @@ while 1 {
         }
         timeout {
             case_pass $case_num
+            break
         }
     }
 }
