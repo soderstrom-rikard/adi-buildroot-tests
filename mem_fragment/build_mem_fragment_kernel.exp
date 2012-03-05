@@ -1,12 +1,12 @@
 #!/usr/bin/expect
 #
-# Build script for bluetooth test, include both keyboard and audio.
+# Build script for memory fragment test.
 #
 # Usage:
-#   ./build_bluetooth_kernel.exp board_type
+#   ./build_mem_fragment_kernel.exp board_type
 #
 # Example:
-#   ./build_bluetooth_kernel.exp BEAGLE
+#   ./build_mem_fragment_kernel.exp BF537-STAMP
 #
 
 source ../common/kernel_config.exp
@@ -16,9 +16,6 @@ send_user "Starting $argv0\n"
 cd $src_root/testsuites/common
 step "Make default config"
 source make_default_config.exp
-
-cd $src_root/testsuites/common
-source config_cut_app.exp
 
 step "Make kernel config"
 cd $src_root
@@ -34,39 +31,8 @@ while 1 {
             send "\r"
         }
 
-        "\\\(*) \\\[*]" {
-            sleep .01
-            send "\r"
-        }
-
-        -re "\[cC]hoice\\\[.*]:" {
-            send "\r"
-        }
-
-        eof {
-            puts "End of configuration"
-            break
-        }
-
-        timeout {
-            send_user "\n\nFATAL ERROR: config prompt timeout in make config"
-            exit
-        }
-    }
-}
-
-step "user space config"
-cd $src_root
-set timeout 300
-spawn make config
-while 1 {
-    expect {
-        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
-            continue
-        }
-
-        -re "bluez_utils \\\(BR2_PACKAGE_BLUEZ_UTILS\\\) \\\[.*]" {
-            send "Y\r"
+        -re "Choose SLAB allocator\r\n.*(\[0-9]+). SLAB \\\(SLAB\\\).*choice\\\[.*]" {
+            send "$expect_out(1,string)\r"
         }
 
         "\\\(*) \\\[*]" {
@@ -79,13 +45,13 @@ while 1 {
         }
 
         eof {
-            puts "End of configuration"
+            send_user "End of configuration"
             break
         }
 
         timeout {
             send_user "\n\nFATAL ERROR: config prompt timeout in make config"
-            exit
+            break
         }
     }
 }

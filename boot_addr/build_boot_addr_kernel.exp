@@ -20,10 +20,16 @@ set timeout 300
 spawn make ARCH=$arch linux-config
 while 1 {
     expect {
+        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+            continue
+        }
+
+        -re "($anomalous_option) \\\[\[^\]]+/.]" {
+            send "\r"
+        }
 
         -re "Kernel load address for booting.*BOOT_LOAD.*\\\[.*]" {
-
-             send -s "0x2000\r"
+            send -s "0x2000\r"
         }
 
         "\\\(*) \\\[*]" {
@@ -55,11 +61,9 @@ spawn make config
 #puts "Begin the interactive process of configuration"
 while 1 {
     expect {
-
         -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
         }
-
 
         "\\\(*) \\\[*]" {
             sleep .01
