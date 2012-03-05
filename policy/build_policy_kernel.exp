@@ -77,7 +77,7 @@ while 1 {
             continue
         }
 
-        -re "(USB Gadget Drivers|Platform Glue Layer) \\\[\[^\]]+/.]" {
+        -re "($anomalous_option) \\\[\[^\]]+/.]" {
             send "\r"
         }
 
