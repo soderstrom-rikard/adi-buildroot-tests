@@ -104,10 +104,7 @@ set timeout 180
 send -s "$bootcmd $bootaddr\r"
 while 1 {
     expect {
-        -re "login:" {
-            set timeout 15
-            send "root\r"
-            expect -re $kernel_prompt
+        -re $kernel_prompt {
             send_log "successful boot attempt"
             break
         }
