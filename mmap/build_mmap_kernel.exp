@@ -20,25 +20,13 @@ set timeout 300
 spawn make ARCH=$arch linux-config
 while 1 {
     expect {
+
         -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
         }
 
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
             send "\r"
-        }
-
-        -re "Install ELF shared libraries \\\(INSTALL_ELF_SHARED_LIBS\\\) \\\[\[^\r]*]" {
-            set timeout 5
-            expect {
-            -nocase -re  " (\[ym])\r\n" {
-                send_user "\n Item_value is selected  $expect_out(1,string).\n"
-            }
-            timeout {
-                send -s "Y\r"
-            }
-            }
-            set timeout 100
         }
 
         "\\\(*) \\\[*]" {
@@ -75,8 +63,8 @@ while 1 {
             continue
         }
 
-        -re "taskset.*USER_BUSYBOX_TASKSET.*\\\[.*]" {
-            send  "Y\r"
+        -re "mmap test.*BR2_PACKAGE_MMAP_TEST.*\\\[.*]" {
+            send -s "Y\r"
         }
 
         "\\\(*) \\\[*]" {

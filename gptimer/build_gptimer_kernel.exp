@@ -28,17 +28,16 @@ while 1 {
             send "\r"
         }
 
-        -re "Install ELF shared libraries \\\(INSTALL_ELF_SHARED_LIBS\\\) \\\[\[^\r]*]" {
-            set timeout 5
-            expect {
-            -nocase -re  " (\[ym])\r\n" {
-                send_user "\n Item_value is selected  $expect_out(1,string).\n"
-            }
-            timeout {
-                send -s "Y\r"
-            }
-            }
-            set timeout 100
+        -re "Generic input layer.*needed for keyboard, mouse.*INPUT.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Blackfin General Purpose Timers char device interface.*BFIN_SIMPLE_TIMER.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "CAN bus subsystem support.*CAN.*\\\[.*]" {
+            send "N\r"
         }
 
         "\\\(*) \\\[*]" {
@@ -75,8 +74,8 @@ while 1 {
             continue
         }
 
-        -re "taskset.*USER_BUSYBOX_TASKSET.*\\\[.*]" {
-            send  "Y\r"
+        -re "bfin gptimer test.*BR2_PACKAGE_BFIN_GPTIMER.*\\\[.*]" {
+            send "Y\r"
         }
 
         "\\\(*) \\\[*]" {
