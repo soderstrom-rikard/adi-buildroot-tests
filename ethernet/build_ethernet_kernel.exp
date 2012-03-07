@@ -10,8 +10,24 @@
 #
 
 source ../common/kernel_config.exp
-log_file [log_file_name "$argv0"]
+
+set extra_config "normal"
+
+if { $argc >= 2} {
+set extra_config [lindex $argv 1]
+}
+
+log_file [log_file_name $argv0.$extra_config ]
+
+source  ../common/board_info.exp
 send_user "Starting $argv0\n"
+
+if { $extra_config == "in_buffer" || $extra_config == "normal" } {
+send_log "\n#### Extra config is $extra_config.\n"
+} else {
+send_log "\n#### This config $extra_config is not supported. Sorry.\n"
+exit
+}
 
 if { $arch == "blackfin" } {
     cd $src_root/testsuites/common
@@ -21,6 +37,8 @@ if { $arch == "blackfin" } {
         exit
     }
 }
+
+#source ../common/ifconfig_ethaddr.exp
 
 cd $src_root/testsuites/common
 step "Make default config"
@@ -39,9 +57,34 @@ while 1 {
             continue
         }
 
-        -re "($anomalous_option) \\\[\[^\]]+/.]" {
+        -re "(USB Gadget Drivers|Platform Glue Layer) \\\[\[^\]]+/.]" {
             send "\r"
         }
+
+        -re "Use L1 memory for rx/tx packets.*BFIN_MAC_USE_L1.*\\\[.*]" {
+            if { $extra_config == "in_buffer" } {
+                send -s "N\r"
+            } else {
+                send "\r"
+            }
+        }
+
+        -re "Number of transmit buffer packets.*BFIN_TX_DESC_NUM.*\\\[.*]" {
+            if { $extra_config == "in_buffer" } {
+                send -s "100\r"
+            } else {
+                send "\r"
+            }
+        }
+
+        -re "Number of receive buffer packets.*BFIN_RX_DESC_NUM.*\\\[.*]" {
+            if { $extra_config == "in_buffer" } {
+                send -s "500\r"
+            } else {
+                send "\r"
+            }
+        }
+
 
         "\\\(*) \\\[*]" {
             sleep .01
