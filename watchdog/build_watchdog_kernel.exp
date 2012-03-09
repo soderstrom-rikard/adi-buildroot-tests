@@ -154,7 +154,7 @@ expect eof
 
 step "Make images again."
 
-cd $uclinux_path
+cd $src_root/testsuites/common
 spawn make 
 set timeout 1200
 set bfin_make_status failure
