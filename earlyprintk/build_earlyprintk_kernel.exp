@@ -17,7 +17,7 @@ step "Change main.c in linux-kernel/init/"
 cd $src_root
 set timeout 5
 set file $src_root/linux/linux-kernel/init/main.c
-if [ catch {exec sed -i "/setup_arch/ i panic(\"Test early printk\");" $file} ] {
+if [ catch {exec sed -i "/setup_arch/ a panic(\"Test early printk\");" $file} ] {
     send_user "\nFail to modify $file\n"
     send_user "$errorInfo\n"
     exit
