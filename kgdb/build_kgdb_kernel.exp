@@ -45,6 +45,14 @@ if { $debug_port == "ethernet" } {
     #puts "Begin the interactive process of configuration"
     while 1 {
         expect {
+	
+        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+            continue
+        }
+	
+        -re "($anomalous_option) \\\[\[^\]]+/.]" {
+            send "\r"
+        }
 
             -re "Symmetric multi-processing support.*SMP.*\\\[.*]" {
                 if { $core_config == "SMP" } {

@@ -20,6 +20,13 @@ set timeout 300
 spawn make ARCH=$arch linux-config
 while 1 {
     expect {
+        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+            continue
+        }
+
+        -re "($anomalous_option) \\\[\[^\]]+/.]" {
+            send "\r"
+        }
 
         "\\\(*) \\\[*]" {
             sleep .01
