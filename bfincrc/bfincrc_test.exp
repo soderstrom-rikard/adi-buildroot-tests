@@ -20,12 +20,50 @@ source ../common/spawn_kermit.exp
 step "Boot kernel"
 source ../common/kernel_boot.exp
 
-step "Start testing"
+step "Start testing crc0"
 set case_num 0
+
+set timeout 5
+incr case_num
+send "bfin_crc_test -m 1 /dev/bfin-crc0\r"
+while 1 {
+    expect {
+        -nocase -re "(error|No such).*$kernel_prompt" {
+            case_fail $case_num
+            break
+        }
+
+        -re "End compare CRC.*fail.*$kernel_prompt" {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            case_fail $case_num
+            break
+        }
+    }
+}
+
+set timeout 5
+incr case_num
+send "bfin_crc_test -m 1 /dev/bfin-crc0\r"
+while 1 {
+    expect {
+        -re "crc=(0x\[0-9]+)\r\n.*End compare.*$kernel_prompt" {
+            set crc_val $expect_out(1,string)
+            case_pass $case_num
+            break
+        }
+        timeout {
+            case_fail $case_num
+            break
+        }
+    }
+}
 
 set timeout 10
 incr case_num
-send "bfin_crc_test -m 0 /dev/bfin-crc0\r"
+send "bfin_crc_test -m 0 -c $crc_val /dev/bfin-crc0\r"
 while 1 {
     expect {
         -nocase -re "(error|fail|No such).*$kernel_prompt" {
@@ -43,9 +81,49 @@ while 1 {
     }
 }
 
+step "Start testing crc1"
+
+set timeout 5
+incr case_num
+send "bfin_crc_test -m 1 /dev/bfin-crc1\r"
+while 1 {
+    expect {
+        -nocase -re "(error|No such).*$kernel_prompt" {
+            case_fail $case_num
+            break
+        }
+
+        -re "End compare CRC.*fail.*$kernel_prompt" {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            case_fail $case_num
+            break
+        }
+    }
+}
+
+set timeout 5
+incr case_num
+send "bfin_crc_test -m 1 /dev/bfin-crc1\r"
+while 1 {
+    expect {
+        -re "crc=(0x\[0-9]+)\r\n.*End compare.*$kernel_prompt" {
+            set crc_val $expect_out(1,string)
+            case_pass $case_num
+            break
+        }
+        timeout {
+            case_fail $case_num
+            break
+        }
+    }
+}
+
 set timeout 10
 incr case_num
-send "bfin_crc_test -m 0 /dev/bfin-crc1\r"
+send "bfin_crc_test -m 0 -c $crc_val /dev/bfin-crc1\r"
 while 1 {
     expect {
         -nocase -re "(error|fail|No such).*$kernel_prompt" {
