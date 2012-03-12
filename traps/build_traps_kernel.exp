@@ -1,7 +1,7 @@
 #!/usr/bin/expect
 
 source ../common/kernel_config.exp
-source  ../common/board_info.exp
+source ../common/board_info.exp
 log_file [log_file_name "$argv0"]
 send_user "Starting $argv0\n"
 
@@ -12,6 +12,42 @@ step "Make config."
 source  make_default_config.exp
 
 # Following make specific configuration for this case.
+
+#tee "Begin the interactive process of configuration"
+step "Make kernel config"
+cd $src_root
+set timeout 300
+spawn make ARCH=$arch linux-config
+while 1 {
+    expect {
+        -re "($anomalous_option) \\\[\[^\]]+/.]" {
+            send "\r"
+        }
+
+        -re "Generate Blackfin MMR tree.*DEBUG_MMRS.*\\\[.*]" {
+            send -s "Y\r"
+        }
+
+        "\\\(*) \\\[*]" {
+            sleep .01
+            send "\r"
+        }
+
+        -re "\[cC]hoice\\\[.*]:" {
+            send "\r"
+        }
+
+        eof {
+            send_user "End of configuration"
+            break
+        }
+
+        timeout {
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config"
+            break
+        }
+    }
+}
 
 cd $src_root
 set timeout 300
@@ -24,10 +60,6 @@ while 1 {
 
         -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
-        }
-
-        -re "Generate Blackfin MMR tree.*DEBUG_MMRS.*\\\[.*]" {
-            send -s "Y\r"
         }
 
         -re "traps tests.*BR2_PACKAGE_TRAPS_TEST.*\\\[.*]" {
