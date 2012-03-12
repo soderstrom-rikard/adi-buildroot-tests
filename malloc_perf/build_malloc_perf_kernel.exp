@@ -32,6 +32,10 @@ while 1 {
             send "Y\r"
         }
 
+        -re "Core timer.*TICKSOURCE_CORETMR.*\\\[.*]" {
+            send "Y\r"
+        }
+
         -re "GPTimer0.*GPTMR0_CLOCKSOURCE.*\\\[.*]" {
             send "Y\r"
         }
@@ -70,7 +74,7 @@ while 1 {
             continue
         }
 
-        -re "malloc performance test.*BR2_PACKAGE_MALLOC_PERF_TEST.*\\\[.*]" {
+        -re "malloc perf test.*BR2_PACKAGE_MALLOC_PERF_TEST.*\\\[.*]" {
             send -s "Y\r"
         }
 
