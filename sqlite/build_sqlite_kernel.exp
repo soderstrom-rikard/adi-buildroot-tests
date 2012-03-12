@@ -71,6 +71,10 @@ while 1 {
             send -s "Y\r"
         }
 
+        -re "sqlite test.*BR2_PACKAGE_SQLITE_TEST.*\\\[.*]" {
+            send -s "Y\r"
+        }
+
         -re "taskset.*BR2_PACKAGE_BUSYBOX_TASKSET.*\\\[.*]" {
             send  "Y\r"
         }

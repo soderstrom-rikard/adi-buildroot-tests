@@ -20,10 +20,10 @@ decide_smp
 
 incr case_num
 set timeout 5
-send "taskset 1 sqlite3 wishlist.db < /usr/wishlist.sql\r"
+send "$smp_prog $smp_flag sqlite3 wishlist.db < /usr/wishlist.sql\r"
 expect -re $kernel_prompt
 
-send "taskset 1 sqlite3 wishlist.db \".dump\"\r"
+send "$smp_prog $smp_flag sqlite3 wishlist.db \".dump\"\r"
 while 1 {
     expect {
         -re $kernel_prompt {
