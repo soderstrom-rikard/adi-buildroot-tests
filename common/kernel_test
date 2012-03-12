@@ -96,7 +96,7 @@ BUILD_POLICY=1
 
 n=100
 
-AUTO_TESTCASE=( [0]="ethernet" [1]="bfindma" [2]="sd" [3]="usb_storage" [4]="audio" [5]="qt" [6]="lmbench" [7]="nbench" [8]="dhrystone" [9]="whetstone" [10]="edn" [11]="dmacopy" [12]="earlyprintk" [13]="l1_module" [14]="l1_app" [15]="erestart" [16]="pthread" [17]="traps" [18]="module" [19]="boot_addr" [20]="strace" [21]="ramfs" [22]="stress" [23]="kgdb" [24]="sdiommc" [25]="null_point" [26]="watchdog" [27]="malloc_perf" [28]="fixed_code" [29]="l2_app" [30]="l2_module" [31]="sqlite" [32]="g729" [33]="mem_fragment" [34]="bfincrc" [35]="ethernet_in_buffer" [36]="" [37]="mmap" [38]="gptimer" [$((n+1))]="serial" [$((n+2))]="ltp" [$((n+3))]="ethernet_usb" [$((n+4))]="timer" )
+AUTO_TESTCASE=( [0]="ethernet" [1]="bfindma" [2]="sd" [3]="usb_storage" [4]="audio" [5]="qt" [6]="lmbench" [7]="nbench" [8]="dhrystone" [9]="whetstone" [10]="edn" [11]="dmacopy" [12]="earlyprintk" [13]="l1_module" [14]="l1_app" [15]="erestart" [16]="pthread" [17]="traps" [18]="module" [19]="boot_addr" [20]="strace" [21]="ramfs" [22]="stress" [23]="kgdb" [24]="sdiommc" [25]="null_point" [26]="watchdog" [27]="malloc_perf" [28]="fixed_code" [29]="l2_app" [30]="l2_module" [31]="sqlite" [32]="g729" [33]="mem_fragment" [34]="bfincrc" [35]="ethernet_in_buffer" [36]="reserve_mem" [37]="mmap" [38]="gptimer" [$((n+1))]="serial" [$((n+2))]="ltp" [$((n+3))]="ethernet_usb" [$((n+4))]="timer" )
 
 AUTO_RUN_STATUS=( [0]="1" [1]="0" [2]="0" [3]="0" [4]="0" [5]="0" [6]="1" [7]="1" [8]="1" [9]="1" [10]="1" [11]="0" [12]="0"  [13]="1" [14]="1" [15]="1" [16]="1" [17]="1" [18]="1" [19]="1" [20]="1" [21]="1" [22]="1" [23]="1" [24]="0" [25]="1" [26]="1" [27]="1" [28]="1" [29]="0" [30]="0" [31]="1" [32]="1" [33]="1" [34]="0" [35]="1" [36]="1" [37]="1" [38]="0" [$((n+1))]="1" [$((n+2))]="1" [$((n+3))]="0" [$((n+4))]="0" )
 
@@ -110,14 +110,14 @@ MANUAL_RUN_STATUS=( [0]="0" [1]="0" [2]="0" [$((n+1))]="0" )
 if [ $BOARD_CONFIG = "BEAGLE-STD" ] ; then
     BOARD_TYPE=BEAGLE
 
-    AUTO_RUN_STATUS[2]="1"; AUTO_RUN_STATUS[3]="1"; AUTO_RUN_STATUS[4]="1"; AUTO_RUN_STATUS[5]="1"; AUTO_RUN_STATUS[$((n+3))]="1";
+    AUTO_RUN_STATUS[2]="1"; AUTO_RUN_STATUS[3]="1"; AUTO_RUN_STATUS[4]="1"; AUTO_RUN_STATUS[5]="1"; AUTO_RUN_STATUS[$((n+3))]="1"; AUTO_RUN_STATUS[36]="0";
     MANUAL_RUN_STATUS[0]="1"; MANUAL_RUN_STATUS[1]="1";
 fi
 
 if [ $BOARD_CONFIG = "PANDA-STD" ] ; then
     BOARD_TYPE=PANDA
 
-    AUTO_RUN_STATUS[2]="1"; AUTO_RUN_STATUS[3]="1"; AUTO_RUN_STATUS[4]="0"; AUTO_RUN_STATUS[5]="0";
+    AUTO_RUN_STATUS[2]="1"; AUTO_RUN_STATUS[3]="1"; AUTO_RUN_STATUS[4]="0"; AUTO_RUN_STATUS[5]="0"; AUTO_RUN_STATUS[36]="0";
     MANUAL_RUN_STATUS[0]="1"; MANUAL_RUN_STATUS[1]="1"; MANUAL_RUN_STATUS[2]="1";
 fi
 
