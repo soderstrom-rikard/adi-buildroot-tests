@@ -79,6 +79,10 @@ if { $board_type == "BEAGLE" } {
     set baud_rate "57600"
     set def_uart_port ttyBF0
 
+    set max_mem 64
+    set res_mem 32
+    set res_mem_addr 0x02000000
+
     set console_def "$def_uart_port,$baud_rate"
     set console_null "null"
     set console_args $console_def
@@ -94,6 +98,10 @@ if { $board_type == "BEAGLE" } {
     set baud_rate "57600"
     set def_uart_port ttyBF0
 
+    set max_mem 128
+    set res_mem 64
+    set res_mem_addr 0x04000000
+
     set console_def "$def_uart_port,$baud_rate"
     set console_null "null"
     set console_args $console_def
@@ -107,6 +115,8 @@ if { $board_type == "BEAGLE" } {
     set eth_dev "eth0"
     set boot_image uImage
 }
+
+set bootargs_param1 "root=/dev/mtdblock0 rw mem=${res_mem}M max_mem=${max_mem}M console=\$\{console\}"
 
 set compressed_kernel_only_image  vmImage
 set kernel_and_ext2_image   linux.ext2
