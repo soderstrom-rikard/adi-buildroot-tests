@@ -316,6 +316,11 @@ do
             git checkout .
         fi
 
+        if [ ${AUTO_TESTCASE[$i]} == "shared_flat" ] ; then
+            make_clean 
+        fi
+
+
         echo  "End testing ${AUTO_TESTCASE[$i]}..."
         sleep 10
 
