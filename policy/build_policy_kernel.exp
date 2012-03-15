@@ -47,11 +47,11 @@ while 1 {
         }
 
         -re "Toolchain has IPv6 support.*BR2_TOOLCHAIN_EXTERNAL_INET_IPV6.*\\\[.*]" {
-            send "\r"
+            send "Y\r"
         }
 
         -re "Toolchain has WCHAR support.*BR2_TOOLCHAIN_EXTERNAL_WCHAR.*\\\[.*]" {
-            send "\r"
+            send "Y\r"
         }
 
         "\\\(*) \\\[*]" {
