@@ -30,6 +30,80 @@ while 1 {
             continue
         }
 
+# Bluetooth driver
+        -re "Bluetooth subsystem support.*BT.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "L2CAP protocol support.*BT_L2CAP.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "SCO links support.*BT_SCO.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "RFCOMM protocol support.*BT_RFCOMM.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "RFCOMM TTY support.*BT_RFCOMM_TTY.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "BNEP protocol support.*BT_BNEP.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Multicast filter support.*BT_BNEP_MC_FILTER.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Protocol filter support.*BT_BNEP_PROTO_FILTER.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "HIDP protocol support.*BT_HIDP.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "HCI USB driver.*BT_HCIBTUSB.*\\\[.*]" {
+            send "Y\r"
+        }
+
+# USB support
+        -re "USB support.*USB_SUPPORT.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Support for Host-side USB.*USB.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "USB device class-devices.*USB_DEVICE_CLASS.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Disable external hubs.*USB_OTG_BLACKLIST_HUB.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Inventra Highspeed Dual Role Controller.*USB_MUSB_HDRC.*\\\[./././.]" {
+            send "Y\r"
+        }
+
+        -re "Platform Glue Layer \\\[.*]" {
+            send "Y\r"
+        }
+
+        -re " (\[0-9]+). Blackfin.*USB_MUSB_BLACKFIN.*\[cC]hoice.*\\\[.*]" {
+            send "$expect_out(1,string)\r"
+        }
+
+        -re "Disable DMA \\\(always use PIO\\\).*MUSB_PIO_ONLY.*\\\[.*]" {
+            send "\r"
+        }
+
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
             send "\r"
         }
@@ -44,7 +118,7 @@ while 1 {
         }
 
         eof {
-            puts "End of configuration"
+            send_user "\nEnd of configuration\n"
             break
         }
 
@@ -79,7 +153,7 @@ while 1 {
         }
 
         eof {
-            puts "End of configuration"
+            send_user "\nEnd of configuration\n"
             break
         }
 
