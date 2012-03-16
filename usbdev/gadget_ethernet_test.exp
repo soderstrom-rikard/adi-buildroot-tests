@@ -4,25 +4,26 @@
 # USB device driver test for Ethernet over USB with Linux host
 #
 # Usage:
-#   ./gadget_ethernet_test.exp board_type
+#   ./gadget_ethernet_test.exp board_type musb_mode
 #
 # Example:
-#   ./gadget_ethernet_test.exp BF609-EZKIT
+#   ./gadget_ethernet_test.exp BF609-EZKIT dma
 #
 
 source ../common/kernel_config.exp
-log_file [log_file_name "$argv0"]
-send_user "Starting $argv0\n"
-set TITLE [title "$argv0"]
 
-set musb_mode [lindex $argv 1]
-send_user "\n#### musb_mode is $musb_mode\n"
-
-if { $argc < 1} {
-    puts "Please input: musb_mode(PIO or DMA)"
+if { $argc < 2} {
+    puts "Please input: board_type, musb_mode(PIO or DMA)"
     exit
 }
+set musb_mode [lindex $argv 1]
+set TITLE [title "$argv0"]
 append TITLE " ($musb_mode)"
+set log_name gadget_ethernet_${musb_mode}_test_log
+
+log_file $log_name
+send_user "Starting $argv0\n"
+send_user "\n#### musb_mode is $musb_mode. ####\n"
 
 
 step "Start kermit"
