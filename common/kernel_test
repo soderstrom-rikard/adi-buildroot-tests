@@ -281,11 +281,11 @@ do
            cd $TESTSUITES_DIR/${AUTO_TESTCASE[$i]}
         fi
 
-       	if [ ${AUTO_TESTCASE[$i]} == "ethernet_in_buffer" ] ; then
-        ./build_${AUTO_TESTCASE[$i]}_kernel.exp $BOARD_TYPE in_buffer >/dev/null 2>&1
-	else
-        ./build_${AUTO_TESTCASE[$i]}_kernel.exp $BOARD_TYPE >/dev/null 2>&1
-	fi
+        if [ ${AUTO_TESTCASE[$i]} == "ethernet_in_buffer" ] ; then
+            ./build_${AUTO_TESTCASE[$i]}_kernel.exp $BOARD_TYPE in_buffer >/dev/null 2>&1
+        else
+            ./build_${AUTO_TESTCASE[$i]}_kernel.exp $BOARD_TYPE >/dev/null 2>&1
+        fi
 
         if [ ! -f $IMAGE_DIR/uImage ]
         then
@@ -297,13 +297,13 @@ do
                 ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
                 sleep 10
             fi
-       	if [ ${AUTO_TESTCASE[$i]} == "ethernet_in_buffer" ] ; then
-            ./${AUTO_TESTCASE[$i]}_test.exp $BOARD_TYPE in_buffer >/dev/null 2>&1
-	else
-            cd $TESTSUITES_DIR/${AUTO_TESTCASE[$i]}
-            ./${AUTO_TESTCASE[$i]}_test.exp $BOARD_TYPE >/dev/null 2>&1
 
-	fi
+            if [ ${AUTO_TESTCASE[$i]} == "ethernet_in_buffer" ] ; then
+                ./${AUTO_TESTCASE[$i]}_test.exp $BOARD_TYPE in_buffer >/dev/null 2>&1
+            else
+                cd $TESTSUITES_DIR/${AUTO_TESTCASE[$i]}
+                ./${AUTO_TESTCASE[$i]}_test.exp $BOARD_TYPE >/dev/null 2>&1
+            fi
         fi
 
         # backup all test results

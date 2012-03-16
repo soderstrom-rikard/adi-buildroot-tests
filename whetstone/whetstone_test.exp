@@ -80,7 +80,7 @@ while 1 {
 }
 
 set result_flag NA
-set timeout 12000
+set timeout 7000
 incr case_num
 send "make whetstone-clean; time make whetstone\r"
 while 1 {
