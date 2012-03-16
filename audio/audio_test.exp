@@ -3,16 +3,26 @@
 #Test audio driver on target board;
 #
 # Usage:
-#   ./audio_test.exp board_type
+#   ./audio_test.exp board_type audio_dev
 #
 # Example:
-#   ./audio_test.exp BEAGLE
+#   ./audio_test.exp BF609-EZKIT audio_adau1761
 #
 
 source ../common/kernel_config.exp
-log_file [log_file_name "$argv0"]
+
+if { $argc < 2} {
+    puts "Please input: board_type, audio_dev"
+    puts "Refer to build_audio_kernel.exp for audio_dev."
+    exit
+}
+set audio_dev [lindex $argv 1]
+set title ${audio_dev}_test_log
+log_file $title
 send_user "Starting $argv0\n"
 set TITLE [title "$argv0"]
+append TITLE " ($audio_dev)"
+
 
 step "Start kermit"
 source ../common/spawn_kermit.exp
@@ -126,108 +136,6 @@ proc alsa_rec2play {format channel rate file_type} {
     }
 }
 
-proc oss_rec_play {format channel rate file_type} {
-    global case_num
-    global kernel_prompt
-    global count_under_run
-
-    if { $channel == "Mono" } {
-        set channel_type ""
-    } else {
-        set channel_type "-S"
-    }
-
-    incr case_num
-    set timeout 10
-    send -s "vrec -w $channel_type -b $format -s $rate -t 5 $file_type\n"
-    while 1 {
-        expect {
-            -re "TUV|UVF|TU|UV|VF|(Hardware Trace:)|dma" {
-                incr count_under_run
-                expect {
-                    -re $kernel_prompt {
-                        case_pass $case_num
-                        break
-                    }
-                    timeout {
-                        case_fail $case_num
-                    }
-                }
-            }
-            -re "$channel \.\.\..*$kernel_prompt" {
-                case_pass $case_num
-                break
-            }
-            timeout {
-                case_fail $case_num
-            }
-        }
-    }
-
-    send -s "vplay $file_type\n"
-    while 1 {
-        expect {
-            -re "TUV|UVF|TU|UV|VF|(Hardware Trace:)|dma" {
-                incr count_under_run
-                expect {
-                    -re $kernel_prompt {
-                        case_pass $case_num
-                        break
-                    }
-                    timeout {
-                        case_fail $case_num
-                    }
-                }
-            }
-            -re "$channel \.\.\..*$kernel_prompt" {
-                case_pass $case_num
-                break
-            }
-            timeout {
-                case_fail $case_num
-            }
-        }
-    }
-}
-
-proc oss_rec2play {format channel rate file_type} {
-    global case_num
-    global kernel_prompt
-    global count_under_run
-
-    if { $channel == "Mono" } {
-        set channel_type ""
-    } else {
-        set channel_type "-S"
-    }
-
-    incr case_num
-    set timeout 10
-    send -s "vrec -w $channel_type -b $format -s $rate -t 5 |vplay\n"
-    while 1 {
-        expect {
-            -re "TUV|UVF|TU|UV|VF|(Hardware Trace:)|dma" {
-                incr count_under_run
-                expect {
-                    -re $kernel_prompt {
-                        case_pass $case_num
-                        break
-                    }
-                    timeout {
-                        case_fail $case_num
-                    }
-                }
-            }
-            -re "$channel \.\.\..*$kernel_prompt" {
-                case_pass $case_num
-                break
-            }
-            timeout {
-                case_fail $case_num
-            }
-        }
-    }
-}
 
 spawn mpg123 -Z ./audiotest.mp3
 set plaympeg_id $spawn_id
@@ -366,131 +274,6 @@ while 1 {
 	}
         timeout {
             send_user "ALSA lib test finish\n"
-            case_pass $case_num
-            break
-        }
-    }
-}
-
-while 0 {
-    oss_rec_play 16 Stereo 44100 wav
-    oss_rec_play 16 Stereo 22000 wav
-    oss_rec_play 16 Stereo 11000 wav
-    oss_rec_play 16 Stereo 8000 wav
-
-    oss_rec_play 8 Stereo 44100 wav
-    oss_rec_play 8 Stereo 8000 wav
-
-    oss_rec_play 16 Mono 44100 wav
-    oss_rec_play 16 Mono 11000 wav
-
-    oss_rec_play 8 Mono 22000 wav
-
-    send_log "play and record audio concurrently...\n"
-    sleep 1
-    set timeout 4
-    send -s "\n"
-    expect "> "
-
-    oss_rec2play 16 Stereo 8000 wav
-    sleep 1
-    oss_rec2play 16 Stereo 48000 wav
-    sleep 1
-    oss_rec2play 16 Mono 8000 wav
-    sleep 1
-    oss_rec2play 16 Mono 48000 wav
-    sleep 1
-    oss_rec2play 8 Mono 8000 wav
-    sleep 1
-    oss_rec2play 8 Mono 48000 wav
-
-    send_log "record while play...\n"
-    sleep 1
-    incr case_num
-    set timeout 15
-    send -s "vrec -w -b 16 -s 11000 -t 8 aaa\n"
-    while 1 {
-        expect {
-            -re "TUV|UVF|TU|UV|VF|(Hardware Trace:)|dma" {
-                incr count_under_run
-                expect {
-                    -re $kernel_prompt {
-                        break
-                    }
-                    timeout {
-                        case_fail $case_num
-                    }
-                }
-            }
-            -re "\.\..*$kernel_prompt" {
-                break
-            }
-            timeout {
-                case_fail $case_num
-            }
-        }
-    }
-
-    send -s "vplay aaa &\n"
-    while 1 {
-        expect {
-            -re "TUV|UVF|TU|UV|VF|(Hardware Trace:)|dma" {
-                incr count_under_run
-                expect {
-                    -re $kernel_prompt {
-                        break
-                    }
-                    timeout {
-                        case_fail $case_num
-                    }
-                }
-            }
-            -re "Playing WAVE" {
-                break
-            }
-            timeout {
-                case_fail $case_num
-            }
-        }
-    }
-    send -s "\n"
-    expect {
-        ">" {}
-        timeout {
-            case_fail $case_num
-        }
-    }
-
-    send -s "vrec -w -b 16 -s 11000 -t 4 bbb\n"
-    while 1 {
-        expect {
-            -re "TUV|UVF|TU|UV|VF|(Hardware Trace:)|dma" {
-                incr count_under_run
-                expect {
-                    -re $kernel_prompt {
-                        break
-                    }
-                    timeout {
-                        case_fail $case_num
-                    }
-                }
-            }
-            -re "\.\..*$kernel_prompt" {
-                break
-            }
-            timeout {
-                case_fail $case_num
-            }
-        }
-    }
-
-    sleep 5
-    expect {
-        "Input/output error" {
-            case_fail $case_num
-	}
-        timeout {
-            send_user "OSS lib test finish\n"
             case_pass $case_num
             break
         }
