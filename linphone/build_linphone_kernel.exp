@@ -17,12 +17,12 @@ if { $argc < 2} {
 }
 
 set audio_dev [lindex $argv 1]
-set title build_$audio_dev
+set title build_linphone_$audio_dev
 append title "_kernel_log"
 log_file $title
 
 send_user "Starting $argv0\n"
-send_user "\n#### build kernel for $audio_dev\n"
+send_user "\n#### build linphone kernel for $audio_dev\n"
 
 if { $audio_dev == "audio_adau1361" } {
     set board_file $kernel_root/arch/blackfin/mach-bf537/boards/stamp.c
@@ -250,6 +250,10 @@ while 1 {
         }
 
         -re "speaker-test \\\(BR2_PACKAGE_ALSA_UTILS_SPEAKER_TEST\\\) \\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "linphone \\\(BR2_PACKAGE_LINPHONE\\\) \\\[.*]" {
             send "Y\r"
         }
 
