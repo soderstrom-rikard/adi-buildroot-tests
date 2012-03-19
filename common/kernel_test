@@ -312,7 +312,7 @@ do
         mv $TESTSUITES_DIR/${AUTO_TESTCASE[$i]}/*_log  $THIS_LOG
 
         # If bellow test fails, patch is still cleaned here.
-        if [ ${AUTO_TESTCASE[$i]} == "dhrystone" || ${AUTO_TESTCASE[$i]} == "whetstone" ] ; then
+        if [ ${AUTO_TESTCASE[$i]} == "dhrystone" ] || [ ${AUTO_TESTCASE[$i]} == "whetstone" ] ; then
             cd $SRC_ROOT/package/
             git checkout .
         fi
