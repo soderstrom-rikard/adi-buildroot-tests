@@ -53,14 +53,14 @@ while 1 {
 }
 
 incr case_num
-set timeout 10
+set timeout 30
 send "time mkdosfs -F 32 /dev/$mmc_dev\r"
 while 1 {
     expect {
         -re "No such .*$kernel_prompt" {
             case_fail $case_num
         }
-        -re "mkdosfs \[0-9]\.\[0-9]+.*$kernel_prompt" {
+        -re "$kernel_prompt" {
             send_user "mkdosfs done, test pass\n"
             case_pass $case_num
             break
@@ -325,14 +325,14 @@ while 1 {
 }
 
 incr case_num
-set timeout 10
+set timeout 30
 send "time mkdosfs -F 32 /dev/$mmc_dev2\r"
 while 1 {
     expect {
         -re "No such .*$kernel_prompt" {
             case_fail $case_num
         }
-        -re "mkdosfs.*$kernel_prompt" {
+        -re "$kernel_prompt" {
             send_user "mkdosfs done, test pass\n"
             case_pass $case_num
             break
