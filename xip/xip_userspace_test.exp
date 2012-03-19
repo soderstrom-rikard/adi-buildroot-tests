@@ -47,8 +47,8 @@ set romfs_image     img.romfs
 set case_num 0
 
 incr case_num
-send_user "$src_root/output/build/genromfs-0.5.2/genromfs -f $src_root/output/target/img.romfs -d $src_root/output/build/xip_test-HEAD/xip_test\n"
-if [ catch {exec $src_root/output/build/genromfs-0.5.2/genromfs -f $src_root/output/target/img.romfs -d $src_root/output/build/xip_test-HEAD/xip_test} ] {
+send_user "genromfs -f $src_root/output/target/img.romfs -d $src_root/output/build/xip_test-HEAD/xip_test\n"
+if [ catch {exec genromfs -f $src_root/output/target/img.romfs -d $src_root/output/build/xip_test-HEAD} ] {
     send_user "FAIL: generate romfs\n"
     send_user "$errorInfo\n"
     case_fail $case_num
