@@ -3,10 +3,10 @@
 # Build script for network performance test.
 #
 # Usage:
-#   ./build_ethernet_kernel.exp board_type
+#   ./build_ethernet_kernel.exp board_type extra_config
 #
 # Example:
-#   ./build_ethernet_kernel.exp BEAGLE
+#   ./build_ethernet_kernel.exp BEAGLE normal
 #
 
 source ../common/kernel_config.exp
@@ -14,19 +14,22 @@ source ../common/kernel_config.exp
 set extra_config "normal"
 
 if { $argc >= 2} {
-set extra_config [lindex $argv 1]
+    set extra_config [lindex $argv 1]
+}
+if { $extra_config == "normal" } {
+    log_file [log_file_name $argv0]
+} else {
+    log_file build_ethernet_${extra_config}_kernel_log
 }
 
-log_file [log_file_name $argv0.$extra_config ]
-
-source  ../common/board_info.exp
+source ../common/board_info.exp
 send_user "Starting $argv0\n"
 
 if { $extra_config == "in_buffer" || $extra_config == "normal" } {
-send_log "\n#### Extra config is $extra_config.\n"
+    send_log "\n#### Extra config is $extra_config.\n"
 } else {
-send_log "\n#### This config $extra_config is not supported. Sorry.\n"
-exit
+    send_log "\n#### This config $extra_config is not supported. Sorry.\n"
+    exit
 }
 
 if { $arch == "blackfin" } {
