@@ -141,15 +141,19 @@ while 1 {
 expect -re "$kernel_prompt"
 
 set timeout 10
-send -s "cat /proc/version\r"
+send -s "version\r"
 while 1 {
     expect {
-        -re "Linux version (\[^\(]+) \\\(" {
+        -re "Linux release (\[^\,]+)," {
             set linux_version $expect_out(1,string)
         }
 
-        -re "gcc version (.*\\\(.*\\\)) \\\)" {
+        -re "gcc version (.*)\r\n" {
             set gcc_version $expect_out(1,string)
+        }
+
+        -re "user-dist: release (\[^\,]+)," {
+            set user-dist_version $expect_out(1,string)
         }
 
         -re "$kernel_prompt" {
@@ -166,3 +170,4 @@ while 1 {
 
 send_user "\nLinux version: $linux_version\n"
 send_user "GCC version: $gcc_version\n"
+send_user "user-dist version: ${user-dist_version}\n"
