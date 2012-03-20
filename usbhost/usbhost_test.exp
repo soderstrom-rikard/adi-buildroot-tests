@@ -4,25 +4,26 @@
 # USB host test with a usb memory card
 #
 # Usage:
-#   ./usbhost_test.exp board_type
+#   ./usbhost_test.exp board_type musb_mode
 #
 # Example:
-#   ./usbhost_test.exp BF609-EZKIT
+#   ./usbhost_test.exp BF609-EZKIT dma
 #
 
 source ../common/kernel_config.exp
-log_file [log_file_name "$argv0"]
-send_user "Starting $argv0\n"
-set TITLE [title "$argv0"]
-
-set musb_mode [lindex $argv 1]
-send_user "\n#### musb_mode is $musb_mode\n"
 
 if { $argc < 2} {
-    puts "Please input:board_type, musb_mode(PIO or DMA)"
+    puts "Please input: board_type, musb_mode(pio or dma)"
     exit
 }
+set musb_mode [lindex $argv 1]
+set TITLE [title "$argv0"]
 append TITLE " ($musb_mode)"
+set log_name usbhost_${musb_mode}_test_log
+
+log_file $log_name
+send_user "Starting $argv0\n"
+send_user "\n#### musb_mode is $musb_mode. ####\n"
 
 
 step "Start kermit"
@@ -42,15 +43,11 @@ expect "Attached SCSI removable disk"
 send "\r"
 expect -re $kernel_prompt
 
-if { [string match "BF527-EZKIT*" $board_type] } {
+if { [string match "BF527-EZKIT*" $board_type] || $board_type == "BF609-EZKIT" } {
     set usb_dev sda
     set usb_dev1 sda1
     set usb_dev2 sda2
 } elseif { $board_type == "BF548-EZKIT" } {
-    set usb_dev sdb
-    set usb_dev1 sdb1
-    set usb_dev2 sdb2
-} elseif { $board_type == "BF609-EZKIT" } {
     set usb_dev sdb
     set usb_dev1 sdb1
     set usb_dev2 sdb2
@@ -80,7 +77,10 @@ set timeout 120
 send "mke2fs /dev/$usb_dev1\r"
 while 1 {
     expect {
-        -re "done.*done.*$kernel_prompt" {
+        -nocase -re "(mke2fs:|fail|error).*$kernel_prompt" {
+            case_fail $case_num
+        }
+        -re $kernel_prompt {
             case_pass $case_num
             break
         }
@@ -229,7 +229,10 @@ set timeout 60
 send "mkdosfs -F 32 /dev/$usb_dev2\r"
 while 1 {
     expect {
-        -re "mkdosfs \[0-9]+\\\.\[0-9]+.*$kernel_prompt" {
+        -nocase -re "(mkdosfs:|fail|error).*$kernel_prompt" {
+            case_fail $case_num
+        }
+        -re $kernel_prompt {
             case_pass $case_num
             break
         }
@@ -381,7 +384,10 @@ set timeout 60
 send "mke2fs /dev/$usb_dev1\r"
 while 1 {
     expect {
-        -re "done.*done.*$kernel_prompt" {
+        -nocase -re "(mke2fs:|fail|error).*$kernel_prompt" {
+            case_fail $case_num
+        }
+        -re $kernel_prompt {
             case_pass $case_num
             break
         }
@@ -411,7 +417,7 @@ while 1 {
 
 set timeout 3600
 incr case_num
-send "time bonnie++ -u root -d /mnt\r"
+send "time bonnie++ -u root -d /mnt -s 200M\r"
 while 1 {
     expect {
         -re "Hardware Trace" {

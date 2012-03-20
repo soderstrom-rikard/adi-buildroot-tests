@@ -4,25 +4,28 @@
 # Build Kernel for USB host test
 #
 # Usage:
-#   ./build_usbhost_kernel.exp board_type
+#   ./build_usbhost_kernel.exp board_type musb_mode
 #
 # Example:
-#   ./build_usbhost_kernel.exp BF609-EZKIT
+#   ./build_usbhost_kernel.exp BF609-EZKIT dma
 #
 
 source ../common/kernel_config.exp
-log_file [log_file_name "$argv0"]
-send_user "Starting $argv0\n"
-
-set env(EXT2_BLOCKS) "16384"
-
-set musb_mode [lindex $argv 1]
-send_log "\n#### musb_mode is $musb_mode\n"
 
 if { $argc < 2} {
     puts "Please input: board_type, musb_mode(pio or dma)"
     exit
 }
+set musb_mode [lindex $argv 1]
+set TITLE [title "$argv0"]
+append TITLE " ($musb_mode)"
+set log_name build_usbhost_${musb_mode}_kernel_log
+
+log_file $log_name
+send_user "Starting $argv0\n"
+send_user "\n#### Build kernel in $musb_mode mode. ####\n"
+
+set env(EXT2_BLOCKS) "16384"
 
 cd $src_root/testsuites/common
 step "Make default config"
@@ -152,18 +155,6 @@ while 1 {
     expect {
         -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
-        }
-
-        -re "fdisk \\\(FDISK\\\) \\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "e2fsprogs \\\(BR2_PACKAGE_E2FSPROGS\\\) \\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "e2fsprogs utilities.*BR2_PACKAGE_E2FSPROGS_UTILS.*\\\[.*]" {
-            send "Y\r"
         }
 
         -re "bonnie\\\+\\\+.*BR2_PACKAGE_BONNIE.*\\\[.*]" {
