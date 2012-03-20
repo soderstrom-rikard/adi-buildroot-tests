@@ -18,6 +18,12 @@ step "Make config."
 
 source  make_default_config.exp
 
+cd $src_root/testsuites/common
+
+step "Make config to remove some needless items."
+
+source  make_cut_fs_config.exp
+
 # Following make specific configuration for this case.
 
 #tee "Begin the interactive process of configuration"
