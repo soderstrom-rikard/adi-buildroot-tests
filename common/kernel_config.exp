@@ -114,6 +114,8 @@ if { $board_type == "BEAGLE" } {
 } else {
     set baud_rate "57600"
     set eth_dev "eth0"
+    set res_mem 32
+    set max_mem 64
     set boot_image uImage
 }
 
