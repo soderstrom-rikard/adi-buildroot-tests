@@ -90,12 +90,12 @@ expect "#"
 send "lsmod |grep usbtest\r"
 while 1 {
     expect {
-        -re "\r\nusbtest.*#" {
+        -re "\r\n.*usbtest.*#" {
             case_pass $case_num
             break
         }
         -re "#" {
-            send "sudo insmod ./configs/usbtest.ko\r"
+            send "sudo modprobe usbtest\r"
             while 1 {
                 expect {
                     -re "insmod:|\[eE]rror|\[fF]ail" {
@@ -127,7 +127,7 @@ set timeout 10
 send "lsmod |grep usbtest\r"
 while 1 {
     expect {
-        -re "\r\nusbtest.*#" {
+        -re "\r\n.*usbtest.*#" {
             case_pass $case_num
             break
         }
@@ -213,6 +213,7 @@ while 1 {
         }
     }
 }
+
 
 set spawn_id $host_spawn_id
 

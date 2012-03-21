@@ -69,7 +69,7 @@ if [ catch {exec make clean -f Makefile.usb -C src} ] {
 }
 
 if [ catch {exec make -f Makefile.usb -C src} ] {
-    send_user "FAIL: Build testusb\n"
+    send_user "FAIL: Build usb\n"
     send_user "$errorInfo\n"
     case_fail $case_num
 } else {
@@ -117,12 +117,12 @@ expect "#"
 send "lsmod |grep usbtest\r"
 while 1 {
     expect {
-        -re "\r\nusbtest.*#" {
+        -re "\r\n.*usbtest.*#" {
             case_pass $case_num
             break
         }
         -re "#" {
-            send "sudo insmod ./configs/usbtest.ko\r"
+            send "sudo modprobe usbtest\r"
             while 1 {
                 expect {
                     -re "insmod:|\[eE]rror|\[fF]ail" {
@@ -154,7 +154,7 @@ set timeout 10
 send "lsmod |grep usbtest\r"
 while 1 {
     expect {
-        -re "\r\nusbtest.*#" {
+        -re "\r\n.*usbtest.*#" {
             case_pass $case_num
             break
         }
