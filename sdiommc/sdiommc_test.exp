@@ -652,7 +652,7 @@ while 1 {
 }
 
 incr case_num
-set timeout 20
+set timeout 600
 send "umount /mnt/rootfs\r"
 while 1 {
     expect {
@@ -768,7 +768,7 @@ step "Start bonnie++ test"
 source ../common/reboot_kernel.exp
 sleep 10
 
-set timeout 10
+set timeout 100
 send "fdisk /dev/$mmc_dev\r"
 expect -re "Command.*:"
 send "p\r"
@@ -791,7 +791,7 @@ while 1 {
     }
 }
 
-set timeout 10
+set timeout 100
 send "fdisk /dev/$mmc_dev\r"
 expect -re "Command.*:"
 send "n\r"
@@ -818,7 +818,7 @@ send_user "Whole card is created as ext2\n"
 
 sleep 5
 incr case_num
-set timeout 5
+set timeout 50
 send "ls /dev/$mmc_dev*\r"
 while 1 {
     expect {
@@ -853,7 +853,7 @@ while 1 {
 }
 
 incr case_num
-set timeout 5
+set timeout 50
 send "mount -t ext2 /dev/$mmc_dev1 /mnt\r"
 while 1 {
     expect {

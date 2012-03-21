@@ -96,9 +96,9 @@ BUILD_POLICY=1
 
 n=100
 
-AUTO_TESTCASE=( [0]="ethernet" [1]="bfindma" [2]="sd" [3]="usb_storage" [4]="audio" [5]="qt" [6]="lmbench" [7]="nbench" [8]="dhrystone" [9]="whetstone" [10]="edn" [11]="dmacopy" [12]="earlyprintk" [13]="l1_module" [14]="l1_app" [15]="erestart" [16]="pthread" [17]="traps" [18]="module" [19]="boot_addr" [20]="strace" [21]="ramfs" [22]="stress" [23]="kgdb" [24]="sdiommc" [25]="null_point" [26]="watchdog" [27]="malloc_perf" [28]="fixed_code" [29]="l2_app" [30]="l2_module" [31]="sqlite" [32]="g729" [33]="mem_fragment" [34]="bfincrc" [35]="ethernet_in_buffer" [36]="reserve_mem" [37]="mmap" [38]="gptimer" [39]="nfs" [40]="smbfs" [41]="shared_flat"  [42]="string" [43]="usb_camera" [44]="usbhost" [45]="pound" [46]="dll" [$((n+1))]="serial" [$((n+2))]="ltp" [$((n+3))]="ethernet_usb" [$((n+4))]="timer" [$((n+5))]="usbdev" )
+AUTO_TESTCASE=( [0]="ethernet" [1]="bfindma" [2]="sd" [3]="usb_storage" [4]="audio" [5]="qt" [6]="lmbench" [7]="nbench" [8]="dhrystone" [9]="whetstone" [10]="edn" [11]="dmacopy" [12]="earlyprintk" [13]="l1_module" [14]="l1_app" [15]="erestart" [16]="pthread" [17]="traps" [18]="module" [19]="boot_addr" [20]="strace" [21]="ramfs" [22]="stress" [23]="kgdb" [24]="sdiommc" [25]="null_point" [26]="watchdog" [27]="malloc_perf" [28]="fixed_code" [29]="l2_app" [30]="l2_module" [31]="sqlite" [32]="g729" [33]="mem_fragment" [34]="bfincrc" [35]="ethernet_in_buffer" [36]="reserve_mem" [37]="mmap" [38]="gptimer" [39]="nfs" [40]="smbfs" [41]="shared_flat"  [42]="string" [43]="usb_camera" [44]="usbhost" [45]="pound" [46]="dll" [$((n+1))]="serial" [$((n+2))]="ltp" [$((n+3))]="ethernet_usb" [$((n+4))]="timer" [$((n+5))]="usbdev" [$((n+6))]="snormtd" )
 
-AUTO_RUN_STATUS=( [0]="1" [1]="0" [2]="0" [3]="0" [4]="0" [5]="0" [6]="1" [7]="1" [8]="1" [9]="1" [10]="1" [11]="0" [12]="0"  [13]="1" [14]="1" [15]="1" [16]="1" [17]="1" [18]="1" [19]="1" [20]="1" [21]="1" [22]="1" [23]="1" [24]="0" [25]="1" [26]="1" [27]="1" [28]="1" [29]="0" [30]="0" [31]="1" [32]="1" [33]="1" [34]="0" [35]="1" [36]="1" [37]="1" [38]="0" [39]="1" [40]="1" [41]="1" [42]="1" [43]="0" [44]="0" [45]="0" [46]="1" [$((n+1))]="1" [$((n+2))]="1" [$((n+3))]="0" [$((n+4))]="0" [$((n+5))]="0" )
+AUTO_RUN_STATUS=( [0]="1" [1]="0" [2]="0" [3]="0" [4]="0" [5]="0" [6]="1" [7]="1" [8]="1" [9]="1" [10]="1" [11]="0" [12]="0"  [13]="1" [14]="1" [15]="1" [16]="1" [17]="1" [18]="1" [19]="1" [20]="1" [21]="1" [22]="1" [23]="1" [24]="0" [25]="1" [26]="1" [27]="1" [28]="1" [29]="0" [30]="0" [31]="1" [32]="1" [33]="1" [34]="0" [35]="1" [36]="1" [37]="1" [38]="0" [39]="1" [40]="1" [41]="1" [42]="1" [43]="0" [44]="0" [45]="0" [46]="1" [$((n+1))]="1" [$((n+2))]="1" [$((n+3))]="0" [$((n+4))]="0" [$((n+5))]="0" [$((n+6))]="0" )
 
 MANUAL_TESTCASE=( [0]="bluetooth" [1]="hdmi" [2]="sdio_wifi" [$((n+1))]="" )
 
@@ -537,6 +537,45 @@ if [ ${AUTO_RUN_STATUS[$((n+5))]} -eq 1 ] ; then
     done
 fi
 
+
+################# TEST BOOT UCLINUX_DIST AND MOUNT JFFS2 FS FROM SPI FLASH ########################
+
+if [ ${AUTO_RUN_STATUS[$((n+6))]} -eq 1  ] ; then
+  echo  "Testing boot uclinux-dist and mount jffs2 file system from SPI flash ..."
+ # Please set the chip selection to the 3rd one on bf533 and the 2rd on bf537 board.
+
+  rm -fr /tftpboot/uImage.snormtd*
+
+  use_output_bak 
+  cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
+
+  cd $TESTSUITES_DIR/${AUTO_TESTCASE[$((n+6))]}
+
+  ./build_${AUTO_TESTCASE[$((n+6))]}_kernel.exp $BOARD_TYPE   >/dev/null  2>&1
+  sleep 30
+  ./${AUTO_TESTCASE[$((n+6))]}_test.exp $BOARD_TYPE >/dev/null  2>&1
+  sleep 30
+  ./spi_flash_images.exp $BOARD_TYPE >/dev/null  2>&1
+  if [ $? == 0 ] ; then
+  sleep 30
+  ./snormtd_reboot_test.exp $BOARD_TYPE >/dev/null  2>&1
+  fi
+  sleep 30
+  copy_image_config "snormtd"
+  cp $IMAGE_DIR/images/vmImage $THIS_LOG/vmImage.snormtd
+  cp $IMAGE_DIR/images/rootfs.jffs2 $THIS_LOG/rootfs.jffs2.snormtd
+  mv $TESTSUITES_DIR/${AUTO_TESTCASE[$((n+6))]}/*_log  $THIS_LOG
+
+    echo  "End testing snormtd..."
+    sleep 10
+
+    if [ $RESET_BOARD -eq 1  ] ; then
+        cd $TESTSUITES_DIR/common
+        ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
+        sleep 10
+    fi
+
+  fi
 
 ######################################### TEST LTP #########################################
 

@@ -110,14 +110,6 @@ while 1 {
             continue
         }
 
-        -re "samba .*BR2_PACKAGE_SAMBA.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "cifs.*BR2_PACKAGE_SAMBA_CIFS.*\\\[.*]" {
-            send "Y\r"
-        }
-
         -re "usbmount.*BR2_PACKAGE_USBMOUNT.*\\\[.*]" {
             send "N\r"
         }

@@ -10,37 +10,6 @@ if { $argc < 1} {
     exit
 }
 
-if { $board_type == "BF537-STAMP" } {
-    set uboot_size 0x40000
-    set kernel_size 0x180000
-    set rootfs_size 0x230000
-    set spi_kernel_start_addr 0x40000
-    set spi_kernel_size 0x180000
-    set spi_rootfs_start_addr 0x1c0000
-    set spi_rootfs_size 0x63ffff
-    set spi_size 0x800000
-    set pnor_rootfs_num 2
-    set spi_rootfs_num 2
-    set nand_rootfs_num 1
-} elseif { $board_type == "BF609-EZKIT" } {
-    set uboot_size 0x40000
-    set kernel_size 0x1c0000
-    set rootfs_size 0x200000
-    set spi_rootfs_start_addr 0x40000
-    set spi_rootfs_size 0x1bffff
-    set pnor_rootfs_num 2
-    set spi_rootfs_num 1
-    set nand_rootfs_num 4
-}
-
-if { $board_type == "BF537-STAMP" || $board_type == "BF609-EZKIT" } {
-    set mtd_base_addr 0x20000000
-    set kernel_start_addr [format "%08x" [expr $mtd_base_addr + $uboot_size]]
-    set kernel_end_addr [format "%08x" [expr $mtd_base_addr + $uboot_size + $kernel_size - 1]]
-    set rootfs_start_addr [format "%08x" [expr $mtd_base_addr +$uboot_size + $kernel_size]]
-    set rootfs_end_addr [format "%08x" [expr $mtd_base_addr + $uboot_size + $kernel_size + $rootfs_size - 1]]
-}
-
 if { $argv0 == "./build_policy_kernel.exp" } {
     puts "File name is $argv0.\n"
 
@@ -56,3 +25,28 @@ if { $argv0 == "./build_policy_kernel.exp" } {
         send_log "\n#### XENOMAI is $xenomai\n"
     }
 }
+
+if { $board_type == "BF609-EZKIT" } {
+
+set uboot_size 0x80000
+set kernel_size 0x180000
+set rootfs_size 0x200000
+set spi_kernel_start_addr 0x80000
+set spi_kernel_size 0x180000
+set spi_rootfs_start_addr 0x200000
+set spi_rootfs_size 0x200000
+set spi_erase_offset 0x80000
+set spi_erase_size 0x380000
+set pnor_rootfs_num 2
+set spi_rootfs_num 5
+set nand_rootfs_num 4
+}
+
+if { $board_type == "BF609-EZKIT" } {
+set mtd_base_addr 0x20000000
+set kernel_start_addr [format "%08x" [expr $mtd_base_addr + $uboot_size]]
+set kernel_end_addr [format "%08x" [expr $mtd_base_addr + $uboot_size + $kernel_size - 1]]
+set rootfs_start_addr [format "%08x" [expr $mtd_base_addr +$uboot_size + $kernel_size]]
+set rootfs_end_addr [format "%08x" [expr $mtd_base_addr + $uboot_size + $kernel_size + $rootfs_size - 1]]
+}
+
