@@ -14,7 +14,7 @@ source ../common/kernel_config.exp
 source configs/config.exp
 
 if { $argc < 2} {
-    puts "Please input: board_type, musb_mode(PIO or DMA)"
+    puts "Please input: board_type, musb_mode(pio or dma)"
     exit
 }
 set musb_mode [lindex $argv 1]
