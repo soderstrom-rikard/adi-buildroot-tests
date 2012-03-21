@@ -147,6 +147,7 @@ set HAVE_ROMFS_IMAGE     0
 
 set linux_version "not found"
 set gcc_version "not found"
+set user-dist_version "not found"
 set map_text "not found"
 set map_data "not found"
 set map_bss "not found"
