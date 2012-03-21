@@ -69,6 +69,15 @@ while 1 {
     }
 }
 
+
+if [ catch {exec rcp root@$targetip:/usb_camera.mp4 ./} ] {
+    send_user "FAIL: rcp usb_camera.mp4 to host PC\n"
+    send_user "$errorInfo\n"
+    case_fail $case_num
+} else {
+    send_user "PASS: rcp usb_camera.mp4 to host PC\n"
+}
+
 while 0 {
 send "export SDL_NOMOUSE=1\n"
 expect -re $kernel_prompt
