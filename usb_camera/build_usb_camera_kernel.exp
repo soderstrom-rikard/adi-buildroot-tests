@@ -68,7 +68,7 @@ while 1 {
         }
 
         -re "Disable external hubs.*USB_OTG_BLACKLIST_HUB.*\\\[.*]" {
-            send "Y\r"
+            send "\r"
         }
 
         -re "Inventra Highspeed Dual Role Controller.*USB_MUSB_HDRC.*\\\[./././.]" {
