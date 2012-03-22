@@ -62,6 +62,14 @@ while 1 {
             send "Y\r"
         }
 
+        -re "USB device filesystem.*USB_DEVICEFS.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "USB device class-devices.*USB_DEVICE_CLASS.*\\\[.*]" {
+            send "Y\r"
+        }
+
         -re "Inventra Highspeed Dual Role Controller.*USB_MUSB_HDRC.*\\\[.*]" {
             send "Y\r"
         }
@@ -74,14 +82,38 @@ while 1 {
             send "$expect_out(1,string)\r"
         }
 
-        -re "Disable DMA \\\(always use PIO\\\).*MUSB_PIO_ONLY.*\\\[.*]" {
+        -re "Disable DMA.*always use PIO.*MUSB_PIO_ONLY.*\\\[.*]" {
             if { $musb_mode == "pio" } {
                 send "Y\r"
-            } elseif { $musb_mode == "dma" }  {
+            } elseif { $musb_mode == "dma" } {
                 send "N\r"
             } else {
                 send "\r"
             }
+        }
+
+        -re "USB testing driver.*USB_TEST.*\\\[.*]" {
+            send "M\r"
+        }
+
+        -re "USB Gadget Support.*USB_GADGET.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "USB Peripheral Controller \\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "USB Peripheral Controller.*(\[0-9]+). Inventra HDRC USB Peripheral.*USB_GADGET_MUSB_HDRC.*\[cC]hoice\\\[.*]" {
+            send "$expect_out(1,string)\r"
+        }
+
+        -re "USB Gadget Drivers \\\[.*]" {
+            send "M\r"
+        }
+
+        -re "Gadget Zero.*USB_ZERO.*\\\[.*]" {
+            send "M\r"
         }
 
         -re "USB Mass Storage support.*USB_STORAGE.*\\\[.*]" {
@@ -127,7 +159,7 @@ while 1 {
         }
 
         "\\\(*) \\\[*]" {
-            sleep .05
+            sleep .01
             send "\r"
         }
 
