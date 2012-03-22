@@ -1,17 +1,26 @@
 #!/usr/bin/expect
 
-source ../kernel_config.exp
-source ../board_info.exp
+source ../common/kernel_config.exp
+source ../common/board_info.exp
 log_file [log_file_name "$argv0"]
 send_user "Starting $argv0\n"
 set TITLE [title "$argv0"]
 
 step "Start kermit."
-source ../spawn_kermit.exp
+source ../common/spawn_kermit.exp
 
 step "Reboot the kernel."
-set bootargs  $bootargs_param11
-source ../reboot_kernel.exp
+source ../common/reboot_kernel.exp
+
+if { $board_type == "BF609-EZKIT" } {
+    set board_num 609
+    set timer_in 1
+    set timer_out 3
+} elseif { $board_type == "BF537-STAMP" } {
+    set board_num 537
+    set timer_in 0
+    set timer_out 1
+}
 
 step "Starting test"
 set timeout 8
@@ -34,7 +43,7 @@ while 1 {
 }
 
 expect "root:/bin>"
-send -s "./simple_timer_test -m 5 -b 609\r"
+send -s "./simple_timer_test -m 5 -b $board_num\r"
 while 1 {
    expect {
      -re "root:/bin" {
@@ -62,14 +71,14 @@ expect {
                 send_log "\nSCLK is $SCLK !\n"
        }
 
-       -re  "timer  0 isr count: (\[0-9]+)\r\n" {
-                set ISR0 $expect_out(1,string)
-                send_log "\nISR0 is $ISR0 !\n"
+       -re  "timer  $timer_in isr count: (\[0-9]+)\r\n" {
+                set ISR_in $expect_out(1,string)
+                send_log "\nISR_in is $ISR_in !\n"
        }
 
-       -re  "timer  1 isr count: (\[0-9]+)\r\n" {
-                set ISR1 $expect_out(1,string)
-                send_log "\nISR1 is $ISR1 !\n"
+       -re  "timer  $timer_out isr count: (\[0-9]+)\r\n" {
+                set ISR_out $expect_out(1,string)
+                send_log "\nISR_out is $ISR_out !\n"
        }
 
         -re "root:/bin" {
@@ -82,7 +91,7 @@ expect {
        }
 }
 }
-if { [ expr $SCLK/10000000.0*5 - $ISR0 ] >= 0 &&  [ expr $SCLK/10000000.0*5 - $ISR0 ] < 10 } {
+if { [ expr $SCLK/10000000.0*5 - $ISR_in ] >= 0 &&  [ expr $SCLK/10000000.0*5 - $ISR_out ] < 10 } {
     send_user "\n"
     send_user "\n$TITLE ............\[PASS\]\n"
 } else {
