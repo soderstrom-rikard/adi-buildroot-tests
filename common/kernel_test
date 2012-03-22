@@ -311,6 +311,10 @@ do
         copy_image_config "${AUTO_TESTCASE[$i]}"
         mv $TESTSUITES_DIR/${AUTO_TESTCASE[$i]}/*_log  $THIS_LOG
 
+        if [ ${AUTO_TESTCASE[$i]} == "sdiommc" ] ; then
+            cp $IMAGE_DIR/vmImage $THIS_LOG/vmImage.${AUTO_TESTCASE[$i]}
+        fi
+
         # If bellow test fails, patch is still cleaned here.
         if [ ${AUTO_TESTCASE[$i]} == "dhrystone" ] || [ ${AUTO_TESTCASE[$i]} == "whetstone" ] ; then
             cd $SRC_ROOT/package/
