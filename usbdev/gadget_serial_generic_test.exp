@@ -144,10 +144,10 @@ while 1 {
 sleep 2
 incr case_num
 set timeout 5
-send "cat /proc/bus/usb/devices|grep -i gadget\r"
+send "cat /proc/bus/usb/devices\r"
 while 1 {
     expect {
-        -re "Product=Gadget Serial.* #" {
+        -re "Product=Gadget Serial.*$sh_prompt" {
             case_pass $case_num
             break
         }
@@ -183,7 +183,7 @@ while 1 {
         -nocase -re "lsmod:|error|fail" {
             case_fail $case_num
         }
-        -re "\r\nusbserial.*#" {
+        -re "\r\n.*usbserial.*#" {
             case_pass $case_num
             break
         }
@@ -235,32 +235,12 @@ send "connect\r"
 while 1 {
     expect {
         -re "login:" {
+            send "root\r"
             case_pass $case_num
             break
         }
         timeout {
             case_fail $case_num
-        }
-    }
-}
-
-send "root\r"
-expect root
-
-set spawn_id $kermit_spawn_id
-expect "Password:"
-
-incr case_num
-set timeout 5
-send "uClinux\r"
-while 1 {
-    expect {
-        -re $kernel_prompt {
-            case_fail $case_num
-        }
-        timeout {
-            case_pass $case_num
-            break
         }
     }
 }
@@ -354,10 +334,10 @@ set timeout 5
 send "diff -q file_in_target.rcp file_in_target\r"
 while 1 {
     expect {
-        -nocase -re "(diff:|fail|error|no such|differ).* #" {
+        -nocase -re "(diff:|fail|error|no such|differ).*$sh_prompt" {
             case_fail $case_num
         }
-         -re " #" {
+         -re $sh_prompt {
             case_pass $case_num
             break
         }
@@ -388,7 +368,7 @@ while 1 {
 }
 
 incr case_num
-set timeout 5
+set timeout 60
 send "send file_in_target.rcp\r"
 while 1 {
     expect {
@@ -465,10 +445,10 @@ set timeout 5
 send "rm file_in_target*\r"
 while 1 {
     expect {
-        -nocase -re "(rm:|fail|error|no such).* #" {
+        -nocase -re "(rm:|fail|error|no such).*$sh_prompt" {
             case_fail $case_num
         }
-         -re " #" {
+         -re $sh_prompt {
             case_pass $case_num
             break
         }
@@ -534,10 +514,10 @@ while 1 {
 
 incr case_num
 set timeout 5
-send "lsmod|grep usb\r"
+send "lsmod|grep usbserial\r"
 while 1 {
     expect {
-        -re "usbserial.*#" {
+        -re "\r\n.*usbserial.*#" {
             case_fail $case_num
         }
         -re "#" {

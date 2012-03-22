@@ -144,10 +144,10 @@ while 1 {
 sleep 2
 incr case_num
 set timeout 5
-send "cat /proc/bus/usb/devices|grep -i gadget\r"
+send "cat /proc/bus/usb/devices\r"
 while 1 {
     expect {
-        -re "Product=Gadget Serial.* #" {
+        -re "Product=Gadget Serial.*$sh_prompt" {
             case_pass $case_num
             break
         }
@@ -205,23 +205,6 @@ while 1 {
         }
         timeout {
             case_fail $case_num
-        }
-    }
-}
-
-set spawn_id $kermit_spawn_id
-expect "Password:"
-incr case_num
-set timeout 5
-send "uClinux\r"
-while 1 {
-    expect {
-        -re $kernel_prompt {
-            case_fail $case_num
-        }
-        timeout {
-            case_pass $case_num
-            break
         }
     }
 }
@@ -315,10 +298,10 @@ set timeout 5
 send "diff -q file_in_target.rcp file_in_target\r"
 while 1 {
     expect {
-        -nocase -re "(diff:|fail|error|no such|differ).* #" {
+        -nocase -re "(diff:|fail|error|no such|differ).*$sh_prompt" {
             case_fail $case_num
         }
-         -re " #" {
+         -re $sh_prompt {
             case_pass $case_num
             break
         }
@@ -426,10 +409,10 @@ set timeout 5
 send "rm file_in_target*\r"
 while 1 {
     expect {
-        -nocase -re "(rm:|fail|error|no such).* #" {
+        -nocase -re "(rm:|fail|error|no such).*$sh_prompt" {
             case_fail $case_num
         }
-         -re " #" {
+         -re $sh_prompt {
             case_pass $case_num
             break
         }
