@@ -1,0 +1,170 @@
+#!/usr/bin/expect
+
+source ../common/kernel_config.exp
+source ../common/board_info.exp
+log_file [log_file_name "$argv0"]
+send_user "Starting $argv0\n"
+
+cd $src_root/testsuites/common
+
+step "Make config."
+
+source  make_default_config.exp
+
+# Following make specific configuration for this case.
+
+#tee "Begin the interactive process of configuration"
+step "Make kernel config"
+cd $src_root
+set timeout 300
+spawn make ARCH=$arch linux-config
+while 1 {
+    expect {
+        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+            continue
+        }
+
+        -re "($anomalous_option) \\\[\[^\]]+/.]" {
+            send "\r"
+        }
+
+        -re "CAN bus subsystem support.*CAN.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Raw CAN Protocol.*CAN_RAW.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Broadcast Manager CAN Protocol.*CAN_BCM.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Platform CAN drivers with Netlink support.*CAN_DEV.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "CAN bit-timing calculation.*CAN_CALC_BITTIMING.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Analog Devices Blackfin on-chip CAN.*CAN_BFIN.*\\\[.*]" {
+            send "M\r"
+        }
+
+
+        "\\\(*) \\\[*]" {
+            sleep .01
+            send "\r"
+        }
+
+        -re "\[cC]hoice\\\[.*]:" {
+            send "\r"
+        }
+
+        eof {
+            send_user "End of configuration"
+            break
+        }
+
+        timeout {
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config"
+            break
+        }
+    }
+}
+
+step "Make busybox config"
+cd $src_root
+set timeout 300
+spawn make ARCH=$arch busybox-config
+while 1 {
+    expect {
+
+        -re "ip \\\(IP\\\) \\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "ip link.*FEATURE_IP_LINK.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        "\\\(*) \\\[*]" {
+            sleep .01
+            send "\r"
+        }
+
+        -re "\[cC]hoice\\\[.*]:" {
+            send "\r"
+        }
+
+        eof {
+            send_user "End of configuration"
+            break
+        }
+
+        timeout {
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config"
+            break
+        }
+    }
+}
+cd $src_root
+set timeout 300
+set baud_rate_done_flag 0
+spawn make config
+
+#puts "Begin the interactive process of configuration"
+while 1 {
+    expect {
+
+        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+            continue
+        }
+
+        -re "can-utils.*BR2_PACKAGE_CAN_UTILS.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "iproute2.*BR2_PACKAGE_IPROUTE2.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "ip.*USER_IPROUTE2_IP_IP.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        "\\\(*) \\\[*]" {
+            sleep .01
+            send "\r"
+        }
+
+        -re "\[cC]hoice\\\[.*]:" {
+            send "\r"
+        }
+
+        eof {
+            puts "End of configuration"
+            break
+        }
+
+        timeout {
+            puts "\n\nFATAL ERROR: config prompt timeout in make config"
+        }
+    }
+}
+
+cd $src_root/testsuites/common
+
+step "Make"
+
+source  make_kernel.exp
+
+cd $src_root/testsuites/common
+
+step "Copy linux"
+
+source   copy_image.exp
+
+send_user "Ending $argv0\n"
+log_file
