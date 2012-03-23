@@ -81,14 +81,6 @@ spawn make ARCH=$arch busybox-config
 while 1 {
     expect {
 
-        -re "ip \\\(IP\\\) \\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "ip link.*FEATURE_IP_LINK.*\\\[.*]" {
-            send "Y\r"
-        }
-
         "\\\(*) \\\[*]" {
             sleep .01
             send "\r"
@@ -127,10 +119,6 @@ while 1 {
         }
 
         -re "iproute2.*BR2_PACKAGE_IPROUTE2.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "ip.*USER_IPROUTE2_IP_IP.*\\\[.*]" {
             send "Y\r"
         }
 

@@ -66,6 +66,10 @@ while 1 {
             send "Y\r"
         }
 
+        -re "Show packages that are also provided by busybox.*BR2_PACKAGE_BUSYBOX_SHOW_OTHERS.*\\\[.*]" {
+            send "Y\r"
+        }
+
         -re "openssl.*BR2_PACKAGE_OPENSSL.*\\\[.*]" {
             send "Y\r"
         }
