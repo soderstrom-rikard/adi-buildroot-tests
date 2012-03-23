@@ -3,10 +3,10 @@
 # File-backed Storage Gadget driver test with Linux host, using real storage device as backing storage.
 #
 # Usage:
-#   ./gadget_storage_ram_test.exp board_type
+#   ./gadget_storage_hd_test.exp board_type
 #
 # Example:
-#   ./gadget_storage_ram_test.exp BF609-EZKIT
+#   ./gadget_storage_hd_test.exp BF609-EZKIT
 #
 
 source ../common/kernel_config.exp
@@ -266,6 +266,20 @@ while 1 {
 }
 
 incr case_num
+send "time cat $mnt_point/10m.bin > /dev/null\r"
+while 1 {
+   expect {
+     -re "real.*user.*sys.*#" {
+         case_pass $case_num
+         break
+     }
+     timeout {
+         case_fail $case_num
+      }
+   }
+}
+
+incr case_num
 set timeout 5
 send "ls -l $mnt_point\r"
 while 1 {
@@ -342,8 +356,8 @@ send "\n"
 expect -re $kernel_prompt
 
 incr case_num
-set timeout 5
-send "modprobe -r g_file_storage\r"
+set timeout 80
+send "time modprobe -r g_file_storage\r"
 while 1 {
     expect {
         -re "(modprobe:|\[eE]rror|\[fF]ail).*$kernel_prompt" {
