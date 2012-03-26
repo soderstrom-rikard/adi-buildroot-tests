@@ -232,6 +232,10 @@ set timeout 5
 send "mount -t gadgetfs gadgetfs /dev/gadget\r"
 while 1 {
     expect {
+        -re "nop musb-hdrc: " {
+            case_pass $case_num
+            break
+        }
         -re "mount:|\[eE]rror|\[fF]ail" {
             case_fail $case_num
         }

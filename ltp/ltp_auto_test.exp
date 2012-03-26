@@ -846,7 +846,7 @@ proc run_LTP_test { filename command torun mode} {
    }
 
 #don't run case shmget03 on bf533-ezkit because of insufficient memory
-   if { $filename == "semget03" } {
+   if { $filename == "semget03" || $filename == "munlock01" } {
        if { $board_type == "BF533-EZKIT" } {
            set result_flag $LTP_NA
            step "Test NA on uClinux"
@@ -854,12 +854,51 @@ proc run_LTP_test { filename command torun mode} {
        }
    }
 
-   if { $filename == "munlock01" || $filename == "semget05"} {
+   if { $filename == "write05" } {
+       set timeout 5
+       send "dmesg|grep -c NOMPU\r"
+       while 1 {
+           expect {
+               -re "\r\n\[1-9].*$kernel_prompt" {
+                   set result_flag $LTP_NA
+                   step "Test NA on non MPU kernel"
+                   return $result_flag
+               }
+               timeout {
+                   break
+               }
+           }
+       }
+   }
+
+   if { $filename == "mmap03" } {
+       set timeout 5
+       send "dmesg|grep -c \"^MPU\"\r"
+       while 1 {
+           expect {
+               -re "\r\n\[1-9].*$kernel_prompt" {
+                   set result_flag $LTP_NA
+                   step "Test NA on MPU kernel"
+                   return $result_flag
+               }
+               timeout {
+                   break
+               }
+           }
+       }
+   }
+
+   if { $board_type != "BF533-EZKIT" && $filename == "munlock01" } {
+       force_reboot
+   }
+
+   if { $filename == "semget05" } {
        force_reboot
    }
 
    set old_timeout $timeout
    set result_flag $LTP_NOT_RUN
+   set timeout 10
    if [ catch {exec rcp $LTP_TESTCASES_DIR/$filename root@$ipaddr:/bin} ] {
        send_user "rcp test file fail\n"
        send_user "$errorInfo\n"
