@@ -10,7 +10,7 @@ step "Change config file in /vender folder."
 cd $src_root
 sleep 3
  set timeout 2
-      spawn ex testsuites/webserver/testcase/simple/Simple.conf
+      spawn ex testsuites/pound/webserver/testcase/simple/Simple.conf
       expect {
          "Entering Ex mode*Normal mode." { }
 
@@ -156,7 +156,7 @@ while 1 {
 
 set timeout 3000
 
-cd $src_root/testsuites/webserver/testcase/simple/
+cd $src_root/testsuites/pound/webserver/testcase/simple/
 
 spawn fl-run-test test_Simple.py 
 

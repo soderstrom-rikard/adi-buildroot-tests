@@ -28,19 +28,31 @@ while 1 {
             send "\r"
         }
 
+        -re "Networking support.*NET.*\\\[.*]" {
+            send -s "Y\r"
+        }
+
+        -re "Packet socket.*PACKET.*\\\[.*]" {
+            send -s "Y\r"
+        }
+
+        -re "Network packet filtering framework.*NETFILTER.*\\\[.*]" {
+            send -s "Y\r"
+        }
+
         -re "Network device support.*NETDEVICES.*\\\[.*]" {
             send -s "Y\r"
         }
 
-         -re "Ethernet .*10 or 100Mbit.*NET_ETHERNET.*\\\[.*]" {
+         -re "STMicroelectronics devices.*NET_VENDOR_STMICRO.*\\\[.*]" {
             send -s "Y\r"
         }
 
-         -re "Blackfin on-chip MAC support.*BFIN_MAC.*\\\[.*]" {
+         -re "STMicroelectronics 10/100/1000 Ethernet driver.*STMMAC_ETH.*\\\[.*]" {
             send -s "Y\r"
         }
 
-        -re "Use IEEE 1588 hwstamp.*BFIN_MAC_USE_HWSTAMP.*\\\[.*]" {
+        -re "STMMAC ieee1588 hw timestamp support.*STMMAC_IEEE1588.*\\\[.*]" {
              send -s "Y\r"
         }
 
@@ -73,7 +85,7 @@ spawn make ARCH=$arch busybox-config
 while 1 {
     expect {
 
-        -re "udhcp server.*udhcpd.*\\\[.*]" {
+        -re "udhcp client.*UDHCPC.*\\\[.*]" {
             send "Y\r"
         }
 
