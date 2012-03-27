@@ -16,10 +16,9 @@ if { $argc < 2} {
     exit
 }
 
-set audio_dev [lindex $argv 1]
-set title build_linphone_$audio_dev
-append title "_kernel_log"
-log_file $title
+set audio [string trimleft [string trimleft [lindex $argv 1] audio] _]
+set log_name build_linphone_${audio}_kernel_log
+log_file $log_name
 
 send_user "Starting $argv0\n"
 send_user "\n#### build linphone kernel for $audio_dev\n"

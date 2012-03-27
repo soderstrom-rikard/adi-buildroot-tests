@@ -16,13 +16,11 @@ if { $argc < 2} {
     puts "Refer to build_linphone_kernel.exp for audio_dev"
     exit
 }
-set audio_dev [lindex $argv 1]
-set title linphone_${audio_dev}_test_log
-log_file $title
+set audio [string trimleft [string trimleft [lindex $argv 1] audio] _]
+set log_name linphone_${audio}_test_log
+set TITLE [title "linphone_${audio}_test"]
+log_file $log_name
 send_user "Starting $argv0\n"
-set TITLE [title "$argv0"]
-append TITLE " ($audio_dev)"
-
 
 step "Start kermit"
 source ../common/spawn_kermit.exp
