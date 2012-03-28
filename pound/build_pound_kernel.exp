@@ -74,6 +74,10 @@ while 1 {
             send "Y\r"
         }
 
+        -re "boa.*BR2_PACKAGE_BOA.*\\\[.*]" {
+            send "Y\r"
+        }
+
         -re "pound.*BR2_PACKAGE_POUND.*\\\[.*]" {
             send "Y\r"
         }
