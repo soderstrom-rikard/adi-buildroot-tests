@@ -286,14 +286,15 @@ do
         echo  "Start testing ${AUTO_TESTCASE[$i]}..."
 
         if [ ${AUTO_TESTCASE[$i]} == "ethernet_in_buffer" ] ; then
-            cd $TESTSUITES_DIR/ethernet
+            TESTCASE_DIR=ethernet
         elif [ `echo ${AUTO_TESTCASE[$i]}|grep linphone` ] ; then
-            cd $TESTSUITES_DIR/linphone
+            TESTCASE_DIR=linphone
         elif [ `echo ${AUTO_TESTCASE[$i]}|grep audio` ] ; then
-            cd $TESTSUITES_DIR/audio
+            TESTCASE_DIR=audio
         else
-            cd $TESTSUITES_DIR/${AUTO_TESTCASE[$i]}
+            TESTCASE_DIR=${AUTO_TESTCASE[$i]}
         fi
+        cd $TESTSUITES_DIR/$TESTCASE_DIR
 
         if [ ${AUTO_TESTCASE[$i]} == "ethernet_in_buffer" ] ; then
             ./build_${AUTO_TESTCASE[$i]}_kernel.exp $BOARD_TYPE in_buffer >/dev/null 2>&1
@@ -316,6 +317,7 @@ do
                 sleep 10
             fi
 
+            cd $TESTSUITES_DIR/$TESTCASE_DIR
             if [ ${AUTO_TESTCASE[$i]} == "ethernet_in_buffer" ] ; then
                 ./${AUTO_TESTCASE[$i]}_test.exp $BOARD_TYPE in_buffer >/dev/null 2>&1
             elif [ ${AUTO_TESTCASE[$i]} == "linphone_adau1761" ] ; then
@@ -323,14 +325,13 @@ do
             elif [ `echo ${AUTO_TESTCASE[$i]}|grep audio` ] ; then
                 ./audio_test.exp $BOARD_TYPE ${AUTO_TESTCASE[$i]} >/dev/null 2>&1
             else
-                cd $TESTSUITES_DIR/${AUTO_TESTCASE[$i]}
                 ./${AUTO_TESTCASE[$i]}_test.exp $BOARD_TYPE >/dev/null 2>&1
             fi
         fi
 
         # backup all test results
         copy_image_config "${AUTO_TESTCASE[$i]}"
-        mv $TESTSUITES_DIR/${AUTO_TESTCASE[$i]}/*_log  $THIS_LOG
+        mv $TESTSUITES_DIR/$TESTCASE_DIR/*_log  $THIS_LOG
 
         if [ ${AUTO_TESTCASE[$i]} == "sdiommc" ] ; then
             cp $IMAGE_DIR/vmImage $THIS_LOG/vmImage.${AUTO_TESTCASE[$i]}
