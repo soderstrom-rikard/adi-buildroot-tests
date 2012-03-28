@@ -17,8 +17,8 @@ if { $argc < 2} {
     exit
 }
 set audio_dev [lindex $argv 1]
-set title ${audio_dev}_test_log
-log_file $title
+set log_name ${audio_dev}_test_log
+log_file $log_name
 send_user "Starting $argv0\n"
 set TITLE [title "$argv0"]
 append TITLE " ($audio_dev)"
