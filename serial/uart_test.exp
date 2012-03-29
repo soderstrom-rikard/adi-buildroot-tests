@@ -91,7 +91,7 @@ while 1 {
     expect {
         -re "login" {
             send -s "root\r"
-            expect -re "Connected to.*$kernel_prompt" 
+            expect -re "$kernel_prompt" 
             send -s "cd /\r"
             expect -re "$kernel_prompt" 
             break

@@ -229,6 +229,8 @@ copy_image_config () {
     cp $SRC_ROOT/.config $THIS_LOG/config.user.$post_fix
 }
 
+# Delete some internel packages to make sure it's latest version to be downloaded.
+rm $SRC_ROOT/dl/*HEAD*
 
 #################### BUILD POLICY ####################
 
