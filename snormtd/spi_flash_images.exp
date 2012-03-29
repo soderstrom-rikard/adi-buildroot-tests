@@ -25,7 +25,7 @@ set TEST_FAIL fail
 
 if { $board_type == "BF537-STAMP" || $board_type == "BF533-STAMP" || $board_type == "BF609-EZKIT"} {
 
-set bootargs 		 $bootargs_param1
+set bootargs 		 $bootargs_param3
 
 }  elseif { $board_type == "BF548-EZKIT" || [string match "BF527-EZKIT*" $board_type] || $board_type == "BF518F-EZBRD" || $board_type == "BF526-EZBRD" } {
 #set bootargs 		 $bootargs_param3
