@@ -185,7 +185,7 @@ while 1 {
         }
 
         -re "EVAL-ADAU1X61 board on Blackfin.*SND_SOC_BFIN_EVAL_ADAU1X61.*\\\[.*]" {
-            if { $audio_dev == "audio_adau1761" || $audio_dev == "audio_adau1361" } {
+            if { [string match "audio_adau1*61" $audio_dev] } {
                 send "Y\r"
             } else {
                 send "N\r"
