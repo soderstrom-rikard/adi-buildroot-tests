@@ -61,6 +61,9 @@ proc alsa_rec_play {format channel rate file_type} {
                     }
                 }
             }
+            -re "Input/output error.*$kernel_prompt" {
+                case_fail $case_num
+            }
             -re "$channel.*$kernel_prompt" {
                 case_pass $case_num
                 break
@@ -85,6 +88,9 @@ proc alsa_rec_play {format channel rate file_type} {
                         case_fail $case_num
                     }
                 }
+            }
+            -re "Input/output error.*$kernel_prompt" {
+                case_fail $case_num
             }
             -re "$channel.*$kernel_prompt" {
                 case_pass $case_num
@@ -124,6 +130,9 @@ proc alsa_rec2play {format channel rate file_type} {
                         case_fail $case_num
                     }
                 }
+            }
+            -re "Input/output error.*$kernel_prompt" {
+                case_fail $case_num
             }
             -re "$channel.*$kernel_prompt" {
                 case_pass $case_num
@@ -239,6 +248,9 @@ while 1 {
                     }
                 }
             }
+            -re "Input/output error.*$kernel_prompt" {
+                case_fail $case_num
+            }
             -re "Stereo.*$kernel_prompt" {
                 break
             }
@@ -261,6 +273,9 @@ while 1 {
                         case_fail $case_num
                     }
                 }
+            }
+            -re "Input/output error.*$kernel_prompt" {
+                case_fail $case_num
             }
             -re "Playing WAVE" {
                 break
