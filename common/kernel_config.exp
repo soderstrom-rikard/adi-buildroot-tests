@@ -196,7 +196,7 @@ proc case_fail { casenum } {
         send_user "\nLast passed test result is not found!!\n"
     } else {
         set pass_files [ eval exec grep -nrl {"$TITLE"} [glob $log_loc/\*/test_summary/pass_summary] ]
-        set last_pass_dir [exec echo $pass_files | awk -F/ {{print $6}} | sort -r | tail -n 1 ]
+        set last_pass_dir [exec echo $pass_files | awk -F/ {{print $6}} | sort | tail -n 1 ]
         send_user "\nLast passed time: $last_pass_dir\n"
 
         if {[ catch { exec grep "User-dist commit" $log_loc/$last_pass_dir/kernel_test_log } errmsg ]} {
