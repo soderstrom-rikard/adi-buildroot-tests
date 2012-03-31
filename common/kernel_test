@@ -299,7 +299,7 @@ do
         cd $TESTSUITES_DIR/$TESTCASE_DIR
 
         if [ ${AUTO_TESTCASE[$i]} == "ethernet_in_buffer" ] ; then
-            ./build_${AUTO_TESTCASE[$i]}_kernel.exp $BOARD_TYPE in_buffer >/dev/null 2>&1
+            ./build_ethernet_kernel.exp $BOARD_TYPE in_buffer >/dev/null 2>&1
         elif [ ${AUTO_TESTCASE[$i]} == "linphone_adau1761" ] ; then
             ./build_linphone_kernel.exp $BOARD_TYPE audio_adau1761 >/dev/null 2>&1
         elif [ `echo ${AUTO_TESTCASE[$i]}|grep audio` ] ; then
