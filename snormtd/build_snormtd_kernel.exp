@@ -33,7 +33,7 @@ if { $mode == "dma" } {
 if { $board_type == "BF609-EZKIT" } {
     set board_file $src_root/linux/linux-kernel/arch/blackfin/mach-bf609/boards/ezkit.c
 
-   if { $spi_board_type == "extended_spi" } {
+   if { $spi_board_type == "ext" } {
        if [ catch {exec sed -i sed -e '/bfin_spi_board_info/,/chip_select/s/chip_select[ =0-9]*/chip_select = 2/' $board_file} ] {
            send_user "\nfail to modify board file\n"
            send_user "$errorInfo\n"
