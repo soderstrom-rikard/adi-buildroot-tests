@@ -129,7 +129,7 @@ if { [ catch { set def_uart_port_num [  exec grep  CONFIG_SERIAL_BFIN_UART.*=y $
 
 set bootargs_param1 "root=/dev/mtdblock0 rw mem=${res_mem}M max_mem=${max_mem}M console=\$\{console\}"
 set bootargs_param2 "root=/dev/nfs rw nfsroot=$serverip:/tftpboot/romfs,tcp,nfsvers=3 rootdelay=1 earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=\$\{console\}"
-set bootargs_param3 "root=/dev/mtdblock2 rw rootfstype=jffs2 earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=\$\{console\}"
+set bootargs_param3 "root=/dev/mtdblock5 rw rootfstype=jffs2 earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=\$\{console\}"
 
 set compressed_kernel_only_image  vmImage
 set kernel_and_ext2_image   linux.ext2
