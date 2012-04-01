@@ -279,6 +279,10 @@ while 1 {
 		expect {
 			"(gdb) " {
 			}
+		        "to quit---" {
+			send "\r"
+			exp_continue
+		        }
 		}
 		}
 		timeout {
