@@ -72,7 +72,7 @@ cat <<EOF
 ************ Tested linux kernel git info ***********
 `cd $SRC_ROOT/linux/linux-kernel; echo -n "Kernel "; git log -1`
 ************ Testsuites git info ********************
-`cd $SRC_ROOT/testsuites; echo -n "Testsuites "; git log -1`
+`cd $TESTSUITES_DIR; echo -n "Testsuites "; git log -1`
 *****************************************************
 EOF
 
@@ -801,6 +801,14 @@ done
 # Clean kernel source after one regression cycle is finished
 # to avoid git problem in next cycle. Kernel patch will be deleted.
 make_clean
+
+# Clean all modifications to source code after all these tests.
+cd $SRC_ROOT
+git checkout .
+cd $SRC_ROOT/linux/linux-kernel
+git checkout .
+cd $TESTSUITES_DIR
+git checkout .
 
 echo "Testing Done."
 exit 0
