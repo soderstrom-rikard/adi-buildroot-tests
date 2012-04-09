@@ -48,10 +48,6 @@ while 1 {
             send "N\r"
         }
 
-        -re "inetutils.*BR2_PACKAGE_INETUTILS.*\\\[.*]" {
-            send "N\r"
-        }
-
         -re "usbutils.*BR2_PACKAGE_USBUTILS.*\\\[.*]" {
             send "N\r"
         }
