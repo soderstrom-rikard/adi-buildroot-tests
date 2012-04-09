@@ -76,7 +76,7 @@ expect {
 	}
 }
 }
-send -s "sf erase $spi_erase_offset $spi_erase_size\r"
+send -s "sf erase $spi_erase_offset +$spi_erase_size\r"
 
 while 1 {
 	set timeout 500
@@ -119,6 +119,8 @@ expect {
 	}
 }
 }
+
+if { [ expr 0x$image_size ] < $spi_kernel_size } {
 
 send -s "sf write 0x1000000 $spi_kernel_start_addr 0x$image_size\r"
 
@@ -177,48 +179,59 @@ while 1 {
 	}
     }
 
+} else {
+    send_user "Kernel image size is bigger than flash partition size $spi_kernel_size $image_size\n  "
+    case_fail $case_num
+}
 ################################################################################################################
 
-set timeout 120
-
-send -s "tftp 0x1000000 $jffs2_rootfs_image\r"
-while 1 {
-expect {
-
-         -re "Bytes transferred = \[0-9]+ \\\((\[0-9a-fA-F]+) hex\\\)" {
-                set image_size $expect_out(1,string)
-                send_user "Image size is $image_size\n"
-                expect -re $uboot_prompt
-                break
-        }
-	
-	timeout {
-	send_user "ERROR: Uboot locked up during tftp\n"
-	
-	break
-	}
-}
-}
-
-send -s "sf write 0x1000000 $spi_rootfs_start_addr 0x$image_size\r"
-
-while 1 {
-	set timeout 500
-	expect {
-
-	  -re  $uboot_prompt {
-		set write_sf_flag $TEST_PASS
-		break
-	    }
-
-	    timeout {
-		send_user "ERROR: write sf error\n"
-		set temp_status_flag $TEST_FAIL
-		break
-	    }
-	}
-    }
-
+#set timeout 120
+#
+#send -s "tftp 0x1000000 $jffs2_rootfs_image\r"
+#while 1 {
+#expect {
+#
+#         -re "Bytes transferred = \[0-9]+ \\\((\[0-9a-fA-F]+) hex\\\)" {
+#                set image_size $expect_out(1,string)
+#                send_user "Image size is $image_size\n"
+#                expect -re $uboot_prompt
+#                break
+#        }
+#	
+#	timeout {
+#	send_user "ERROR: Uboot locked up during tftp\n"
+#	
+#	break
+#	}
+#}
+#}
+#
+#if { $image_size < $spi_root_size } {
+#
+#send -s "sf write 0x1000000 $spi_rootfs_start_addr 0x$image_size\r"
+#
+#while 1 {
+#	set timeout 500
+#	expect {
+#
+#	  -re  $uboot_prompt {
+#		set write_sf_flag $TEST_PASS
+#		break
+#	    }
+#
+#	    timeout {
+#		send_user "ERROR: write sf error\n"
+#		set temp_status_flag $TEST_FAIL
+#		break
+#	    }
+#	}
+#    }
+#
+#} else {
+#    send_user "Root image size is bigger than flash partition size\n"
+#    case_fail $case_num
+#}
+#
 send -s "bootm 0x2000000\r"
 while 1 {
 	set timeout 35
