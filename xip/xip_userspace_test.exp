@@ -11,37 +11,29 @@
 #   ./xip_userspace_test.exp BF537-STAMP fdpic
 #
 
-source  ../common/kernel_config.exp
-log_file [log_file_name "$argv0"]
-send_user "Starting $argv0\n"
-set TITLE [title "$argv0"]
-
-set format [lindex $argv 1]
-send_user "\n#### binary format is $format\n"
+source ../common/kernel_config.exp
 
 if { $argc < 2} {
-    puts "Please input:board_type, binary format (FDPIC or SHARED-FLAT)"
+    puts "Please input:board_type, binary format (fdpic or shared-flat)"
     exit
 }
+set format [lindex $argv 1]
+set TITLE [title "$argv0"]
 append TITLE " ($format)"
+set log_name xip_userspace_${format}_test_log
+
+log_file $log_name
+send_user "Starting $argv0\n"
+send_user "\n#### binary format is $format\n"
+
 
 step "Start kermit"
 source ../common/spawn_kermit.exp
 
 step "Start testing."
 
-if { $board_type == "BF548-EZKIT" } {
-    set max_image_size  0x5FFFF
-} else {
-    set max_image_size  0x4FFFF
-}
-
-if { $board_type == "BF533-EZKIT" } {
-    set start_addr      0x20100000
-} else {
-    set start_addr      0x$rootfs_start_addr
-}
-
+set max_image_size  0x50000
+set start_addr      0x$rootfs_start_addr
 set end_addr 0x[format "%08x" [expr $start_addr + $max_image_size]]
 set romfs_image     img.romfs
 set case_num 0
@@ -149,7 +141,7 @@ while 1 {
 
 incr case_num
 set timeout 80
-send -s "protect off $start_addr $end_addr\r"
+send -s "protect off $start_addr +$max_image_size\r"
 while 1 {
     expect {
         -re "Un-Protected.*$uboot_prompt" {
@@ -165,7 +157,7 @@ while 1 {
 
 incr case_num
 set timeout 240	
-send -s "erase $start_addr $end_addr\r"
+send -s "erase $start_addr +$max_image_size\r"
 while 1 {
     expect {
         -re "Erased.*$uboot_prompt" {
