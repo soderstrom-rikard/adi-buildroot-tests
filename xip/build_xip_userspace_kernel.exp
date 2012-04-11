@@ -13,16 +13,18 @@
 #
 
 source ../common/kernel_config.exp
-log_file [log_file_name "$argv0"]
-send_user "Starting $argv0\n"
-
-set format [lindex $argv 1]
-send_log "\n#### binary_format is $format\n"
 
 if { $argc < 2} {
     puts "Please input: board_type, binary_format(fdpic or shared-flat)"
     exit
 }
+set format [lindex $argv 1]
+set log_name build_xip_userspace_${format}_kernel_log
+
+log_file $log_name
+send_user "Starting $argv0\n"
+send_log "\n#### Build kernel with binary_format $format. ####\n"
+
 
 cd $src_root/testsuites/common
 step "Make clean"
@@ -49,11 +51,11 @@ while 1 {
             send "Y\r"
         }
 
-        -re "Detect flash chips by Common Flash Interface.*MTD_CFI.*\\\[.*]" {
-            send "N\r"
+        -re "Caching block device access to MTD devices.*MTD_BLOCK.*\\\[.*]" {
+            send "Y\r"
         }
 
-        -re "Support for AMD.*flash chips.*MTD_CFI_AMDSTD.*\\\[.*]" {
+        -re "Detect flash chips by Common Flash Interface.*MTD_CFI.*\\\[.*]" {
             send "N\r"
         }
 
@@ -65,7 +67,7 @@ while 1 {
             send "Y\r"
         }
 
-        -re "Miscellaneous filesystems \\\(MISC_FILESYSTEMS.*\\\[.*]" {
+        -re "Miscellaneous filesystems \\\(MISC_FILESYSTEMS\\\) \\\[.*]" {
             send "Y\r"
         }
 
@@ -77,7 +79,7 @@ while 1 {
             send "$expect_out(1,string)\r"
         }
 
-        -re "Enable shared FLAT support \\\(BINFMT_SHARED_FLAT\\\).*\\\[././.]" {
+        -re "Enable shared FLAT support \\\(BINFMT_SHARED_FLAT\\\) \\\[.*]" {
             send "Y\r"
         }
 
@@ -101,7 +103,7 @@ while 1 {
 
         timeout {
             send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
-            break
+            exit
         }
     }
 }
@@ -146,7 +148,7 @@ while 1 {
 
         timeout {
             send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
-            break
+            exit
         }
     }
 }

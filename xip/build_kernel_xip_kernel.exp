@@ -12,16 +12,18 @@
 #
 
 source ../common/kernel_config.exp
-log_file [log_file_name "$argv0"]
-send_user "Starting $argv0\n"
-
-set format [lindex $argv 1]
-send_log "\n#### binary_format is $format\n"
 
 if { $argc < 2} {
     puts "Please input: board_type, binary_format(fdpic or shared-flat)"
     exit
 }
+set format [lindex $argv 1]
+set log_name build_kernel_xip_${format}_kernel_log
+
+log_file $log_name
+send_user "Starting $argv0\n"
+send_log "\n#### Build kernel with binary_format $format. ####\n"
+
 
 set HAVE_KERNEL_ONLY_IMAGE 1
 
@@ -49,14 +51,6 @@ while 1 {
             continue
         }
 
-        -re "Kernel ROM Base \\\(ROM_BASE\\\) \\\[.*]" {
-            if { $board_type == "BF548-EZKIT" } {
-                send "0x20080040\r"
-            } else {
-                send "\r"
-            }
-        }
-
         -re "Kernel executes from.*(\[0-9]). ROM.*choice.*\\\[.*]" {
             send "$expect_out(1,string)\r"
         }
@@ -69,16 +63,12 @@ while 1 {
             send "N\r"
         }
 
-        -re "Support for AMD.*flash chips.*MTD_CFI_AMDSTD.*\\\[.*]" {
-            send "N\r"
+        -re "Support for ROM chips in bus mapping.*MTD_ROM.*\\\[.*]" {
+            send "Y\r"
         }
 
         -re "Flash device in physical memory map.*MTD_PHYSMAP.*\\\[.*]" {
             send "N\r"
-        }
-
-        -re "Support for ROM chips in bus mapping.*MTD_ROM.*\\\[.*]" {
-            send "Y\r"
         }
 
         -re "Network File Systems \\\(NETWORK_FILESYSTEMS\\\).*\\\[.*]" {
@@ -98,35 +88,15 @@ while 1 {
         }
 
         -re "Kernel support for FDPIC ELF binaries.*BINFMT_ELF_FDPIC.*\\\[.*]" {
-            if { $format == "fdpic" } {
-                send "Y\r"
-            } else {
-                send "N\r"
-            }
+            send "Y\r"
         }
 
         -re "Kernel support for flat binaries.*BINFMT_FLAT.*\\\[.*]" {
-            if { $format == "shared-flat" } {
-                send "Y\r"
-            } else {
-                send "N\r"
-            }
+            send "Y\r"
         }
 
-        -re "Enable shared FLAT support.*BINFMT_SHARED_FLAT.*\\\[.*]" {
-            if { $format == "shared-flat" } {
-                send "Y\r"
-            } else {
-                send "N\r"
-            }
-        }
-
-        -re "Install ELF shared libraries.*INSTALL_ELF_SHARED_LIBS.*\\\[.*]" {
-            if { $format == "shared-flat" } {
-                send "N\r"
-            } else {
-                send "Y\r"
-            }
+        -re "Enable shared FLAT support \\\(BINFMT_SHARED_FLAT\\\) \\\[.*]" {
+            send "Y\r"
         }
 
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
@@ -149,7 +119,7 @@ while 1 {
 
         timeout {
             send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
-            break
+            exit
         }
     }
 }
@@ -190,7 +160,7 @@ while 1 {
 
         timeout {
             send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
-            break
+            exit
         }
     }
 }

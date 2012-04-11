@@ -12,18 +12,20 @@
 #
 
 source  ../common/kernel_config.exp
-log_file [log_file_name "$argv0"]
-send_user "Starting $argv0\n"
-set TITLE [title "$argv0"]
-
-set format [lindex $argv 1]
-send_user "\n#### binary format is $format\n"
 
 if { $argc < 2} {
-    puts "Please input:board_type, binary format (FDPIC or SHARED-FLAT)"
+    puts "Please input:board_type, binary format (fdpic or shared-flat)"
     exit
 }
+set format [lindex $argv 1]
+set TITLE [title "$argv0"]
 append TITLE " ($format)"
+set log_name fs_xip_${format}_test_log
+
+log_file $log_name
+send_user "Starting $argv0\n"
+send_user "\n#### binary format is $format. ####\n"
+
 
 step "Start kermit"
 source ../common/spawn_kermit.exp

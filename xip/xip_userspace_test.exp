@@ -24,7 +24,7 @@ set log_name xip_userspace_${format}_test_log
 
 log_file $log_name
 send_user "Starting $argv0\n"
-send_user "\n#### binary format is $format\n"
+send_user "\n#### binary format is $format. ####\n"
 
 
 step "Start kermit"
@@ -156,7 +156,7 @@ while 1 {
 }
 
 incr case_num
-set timeout 240	
+set timeout 240
 send -s "erase $start_addr +$max_image_size\r"
 while 1 {
     expect {
@@ -177,7 +177,7 @@ send -s "cp.b 0x1000000 $start_addr $image_size\r"
 while 1 {
     expect {
         -re "done.*$uboot_prompt" {
-            case_pass $case_num 
+            case_pass $case_num
             break
         }
         timeout {

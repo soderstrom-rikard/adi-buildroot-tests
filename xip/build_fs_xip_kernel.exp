@@ -13,16 +13,18 @@
 #
 
 source ../common/kernel_config.exp
-log_file [log_file_name "$argv0"]
-send_user "Starting $argv0\n"
-
-set format [lindex $argv 1]
-send_log "\n#### binary_format is $format\n"
 
 if { $argc < 2} {
     puts "Please input: board_type, binary_format(fdpic or shared-flat)"
     exit
 }
+set format [lindex $argv 1]
+set log_name build_fs_xip_${format}_kernel_log
+
+log_file $log_name
+send_user "Starting $argv0\n"
+send_log "\n#### Build kernel with binary_format $format. ####\n"
+
 
 set HAVE_KERNEL_ONLY_IMAGE 1
 set HAVE_ROMFS_IMAGE 1
@@ -62,11 +64,11 @@ while 1 {
             send "N\r"
         }
 
-        -re "Detect flash chips by Common Flash Interface.*MTD_CFI.*\\\[.*]" {
-            send "N\r"
+        -re "Caching block device access to MTD devices.*MTD_BLOCK.*\\\[.*]" {
+            send "Y\r"
         }
 
-        -re "Support for AMD.*flash chips.*MTD_CFI_AMDSTD.*\\\[.*]" {
+        -re "Detect flash chips by Common Flash Interface.*MTD_CFI.*\\\[.*]" {
             send "N\r"
         }
 
@@ -78,7 +80,7 @@ while 1 {
             send "Y\r"
         }
 
-        -re "Miscellaneous filesystems \\\(MISC_FILESYSTEMS.*\\\[.*]" {
+        -re "Miscellaneous filesystems \\\(MISC_FILESYSTEMS\\\) \\\[.*]" {
             send "Y\r"
         }
 
@@ -91,35 +93,15 @@ while 1 {
         }
 
         -re "Kernel support for FDPIC ELF binaries.*BINFMT_ELF_FDPIC.*\\\[.*]" {
-            if { $format == "fdpic" } {
-                send "Y\r"
-            } else {
-                send "N\r"
-            }
+            send "Y\r"
         }
 
         -re "Kernel support for flat binaries.*BINFMT_FLAT.*\\\[.*]" {
-            if { $format == "shared-flat" } {
-                send "Y\r"
-            } else {
-                send "N\r"
-            }
+            send "Y\r"
         }
 
-        -re "Enable shared FLAT support.*BINFMT_SHARED_FLAT.*\\\[.*]" {
-            if { $format == "shared-flat" } {
-                send "Y\r"
-            } else {
-                send "N\r"
-            }
-        }
-
-        -re "Install ELF shared libraries.*INSTALL_ELF_SHARED_LIBS.*\\\[.*]" {
-            if { $format == "shared-flat" } {
-                send "N\r"
-            } else {
-                send "Y\r"
-            }
+        -re "Enable shared FLAT support \\\(BINFMT_SHARED_FLAT\\\) \\\[.*]" {
+            send "Y\r"
         }
 
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
@@ -142,7 +124,7 @@ while 1 {
 
         timeout {
             send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
-            break
+            exit
         }
     }
 }
@@ -155,10 +137,6 @@ while 1 {
     expect {
         -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
-        }
-
-        -re "xip test.*XIP_TEST.*\\\[.*]" {
-            send "Y\r"
         }
 
         -re "Target ABI.*FDPIC.*FLAT.*FLAT_SEP_DATA.*SHARED_FLAT.*\\\[.*]" {
@@ -187,7 +165,7 @@ while 1 {
 
         timeout {
             send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
-            break
+            exit
         }
     }
 }
