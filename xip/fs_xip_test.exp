@@ -111,8 +111,13 @@ while 1 {
 }
 
 #Bug [#5958]: there is a hardware anomaly in async bank4 instruction pre-fetch, so readjust partitions.
-set new_rootfs_start_addr $kernel_start_addr
-set new_rootfs_end_addr [format "%08x" [expr 0x$rootfs_end_addr - 0x100000]]
+if { $board_type == "BF609-EZKIT" } {
+    set new_rootfs_start_addr $rootfs_start_addr
+    set new_rootfs_end_addr $rootfs_end_addr
+} else {
+    set new_rootfs_start_addr $kernel_start_addr
+    set new_rootfs_end_addr [format "%08x" [expr 0x$rootfs_end_addr - 0x100000]]
+}
 
 incr case_num
 set timeout 80
@@ -178,7 +183,7 @@ while 1 {
     }
 }
 
-send -s "set bootargs root=/dev/mtdblock1 rootfstype=romfs ro console=ttyBF$def_uart_port,57600\r"
+send -s "set bootargs $bootargs_param5\r"
 expect -re $uboot_prompt
 
 incr case_num

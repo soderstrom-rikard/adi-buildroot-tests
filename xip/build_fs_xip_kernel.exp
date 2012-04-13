@@ -149,6 +149,10 @@ while 1 {
             }
         }
 
+        -re "romfs root filesystem.*BR2_TARGET_ROOTFS_ROMFS.*\\\[.*]" {
+            send "Y\r"
+        }
+
         "\\\(*) \\\[*]" {
             sleep .01
             send "\r"

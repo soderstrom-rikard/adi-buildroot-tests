@@ -10,7 +10,7 @@ while 1 {
             continue
         }
 
-        -re "bluez_utils.*BR2_PACKAGE_BLUEZ_UTILS.*\\\[.*]" {
+        -re "alsa-utils.*BR2_PACKAGE_ALSA_UTILS.*\\\[.*]" {
             send "N\r"
         }
 
@@ -18,7 +18,15 @@ while 1 {
             send "N\r"
         }
 
-        -re "lirc.*BR2_PACKAGE_LIRC.*\\\[.*]" {
+        -re "ffmpeg.*BR2_PACKAGE_FFMPEG.*\\\[.*]" {
+            send "N\r"
+        }
+
+        -re "speex.*BR2_PACKAGE_SPEEX.*\\\[.*]" {
+            send "N\r"
+        }
+
+        -re "dhrystone.*BR2_PACKAGE_DHRYSTONE.*\\\[.*]" {
             send "N\r"
         }
 
@@ -26,7 +34,19 @@ while 1 {
             send "N\r"
         }
 
+        -re "SDL.*BR2_PACKAGE_SDL.*\\\[.*]" {
+            send "N\r"
+        }
+
         -re "Qt \\\(BR2_PACKAGE_QT\\\) .*\\\[.*]" {
+            send "N\r"
+        }
+
+        -re "lirc.*BR2_PACKAGE_LIRC.*\\\[.*]" {
+            send "N\r"
+        }
+
+        -re "mtd/jffs2 utilities.*BR2_PACKAGE_MTD.*\\\[.*]" {
             send "N\r"
         }
 
@@ -38,11 +58,7 @@ while 1 {
             send "N\r"
         }
 
-        -re "alsa-lib.*BR2_PACKAGE_ALSA_LIB.*\\\[.*]" {
-            send "N\r"
-        }
-
-        -re "ffmpeg.*BR2_PACKAGE_FFMPEG.*\\\[.*]" {
+        -re "tiff.*BR2_PACKAGE_TIFF.*\\\[.*]" {
             send "N\r"
         }
 
@@ -50,11 +66,11 @@ while 1 {
             send "N\r"
         }
 
-        -re "wireless tools.*BR2_PACKAGE_WIRELESS_TOOLS.*\\\[.*]" {
+        -re "bluez_utils.*BR2_PACKAGE_BLUEZ_UTILS.*\\\[.*]" {
             send "N\r"
         }
 
-        -re "tiff.*BR2_PACKAGE_TIFF.*\\\[.*]" {
+        -re "wireless tools.*BR2_PACKAGE_WIRELESS_TOOLS.*\\\[.*]" {
             send "N\r"
         }
 
@@ -93,11 +109,19 @@ while 1 {
             continue
         }
 
+        -re "alsa-lib.*BR2_PACKAGE_ALSA_LIB.*\\\[.*]" {
+            send "N\r"
+        }
+
         -re "ncurses.*BR2_PACKAGE_NCURSES.*\\\[.*]" {
             send "N\r"
         }
 
         -re "jpeg.*BR2_PACKAGE_JPEG.*\\\[.*]" {
+            send "N\r"
+        }
+
+        -re "libogg.*BR2_PACKAGE_LIBOGG.*\\\[.*]" {
             send "N\r"
         }
 
