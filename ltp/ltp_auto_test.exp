@@ -103,7 +103,7 @@ proc reset_board {} {
    } else {
       set timeout 10
       step "to reset... $LTP_SCRIPT_DIR\n"
-      if [catch {spawn sudo $LTP_SCRIPT_DIR/reset_board $output_pin}] {
+      if [catch {spawn sudo reset_board $output_pin}] {
          report "ERROR: You don't have the reset_board_as_root script."
          report "       You should not specify --pin unless you're using"
          report "       a hacked up printer cable to power cycle the board."
@@ -1324,7 +1324,6 @@ set LTP_SCRIPT_DIR              "$cwd"
 
 source $LTP_SCRIPT_DIR/config/config.exp
 source $LTP_SCRIPT_DIR/../common/kernel_config.exp
-catch {exec cp $LTP_SCRIPT_DIR/../common/reset_board $LTP_SCRIPT_DIR/.}
 
 # There are rational reasons for defining these things like this.
 # It avoids SUBTLE errors with misspelling in favor of big, obvious errors.

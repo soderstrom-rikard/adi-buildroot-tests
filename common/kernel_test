@@ -202,8 +202,6 @@ export PATH=$PATH:$TOOLCHAIN_DIR
 $CROSS_COMPILER -v
 echo
 
-cp $TESTSUITES_DIR/common/reset_board $TESTSUITES_DIR/ltp
-
 
 ########################### Functions ###########################
 
