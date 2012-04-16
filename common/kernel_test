@@ -624,6 +624,45 @@ if [ ${AUTO_RUN_STATUS[$((n+5))]} -eq 1 ] ; then
 fi
 
 
+##################################### USB HOST TEST #####################################
+
+if [ ${AUTO_RUN_STATUS[$((n+7))]} -eq 1 ] ; then
+    TARGET_MUSB_MODE="dma pio"
+    for config in $TARGET_MUSB_MODE
+    do
+
+        CONFIG=`echo $config|tr 'a-z' 'A-Z'`
+        echo "Start testing usb host device in $config mode..."
+
+        use_output_bak 
+        cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
+
+        cd $TESTSUITES_DIR/usbhost
+        ./build_usbhost_kernel.exp $BOARD_TYPE $config >/dev/null 2>&1
+
+        if [ ! -f $IMAGE_DIR/uImage ]
+        then
+            echo "$0:   Error, failed."
+            tail -50 ./build_usbhost_${config}_kernel_log
+        else
+            ./usbhost_test.exp $BOARD_TYPE $config >/dev/null  2>&1
+        fi
+
+        copy_image_config "usbhost.$config"
+        mv $TESTSUITES_DIR/usbhost/*_log  $THIS_LOG
+
+        echo "End testing usb host device..."
+        sleep 10
+
+        if [ $RESET_BOARD -eq 1  ] ; then
+            cd $TESTSUITES_DIR/common
+            ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
+            sleep 10
+        fi
+
+    done
+fi
+
 ################# TEST BOOT UCLINUX_DIST AND MOUNT JFFS2 FS FROM SPI FLASH ########################
 
 if [ ${AUTO_RUN_STATUS[$((n+6))]} -eq 1  ] ; then
