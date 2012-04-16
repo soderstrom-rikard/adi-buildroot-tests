@@ -797,8 +797,6 @@ do
         then
             echo "$0:   Error, failed."
             tail -50 ./build_${MANUAL_TESTCASE[$i]}_kernel_log
-        else
-            ./${MANUAL_TESTCASE[$i]}_test.exp  $BOARD_TYPE >/dev/null 2>&1
         fi
 
         copy_image_config "${MANUAL_TESTCASE[$i]}"
