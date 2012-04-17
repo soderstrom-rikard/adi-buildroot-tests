@@ -5,6 +5,7 @@
 
 set uboot_flag 0
 set timeout 8
+send "\3"
 send "\r"
 while 1 {
     expect {
