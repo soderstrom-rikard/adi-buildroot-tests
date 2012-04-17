@@ -69,7 +69,11 @@ while 1 {
         }
 
         -re "Detect flash chips by Common Flash Interface.*MTD_CFI.*\\\[.*]" {
-            send "N\r"
+            send "Y\r"
+        }
+
+        -re "Support for Intel/Sharp flash chips.*MTD_CFI_INTELEXT.*\\\[.*]" {
+            send "Y\r"
         }
 
         -re "Support for ROM chips in bus mapping.*MTD_ROM.*\\\[.*]" {
@@ -77,6 +81,10 @@ while 1 {
         }
 
         -re "Flash device in physical memory map.*MTD_PHYSMAP.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Blackfin flash support for BF60x.*MTD_BFIN_BF60x.*\\\[.*]" {
             send "Y\r"
         }
 
