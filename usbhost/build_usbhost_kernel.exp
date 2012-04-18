@@ -107,11 +107,11 @@ while 1 {
         }
 
         -re "USB Gadget Drivers \\\[.*]" {
-            send "M\r"
+            send "Y\r"
         }
 
         -re "Gadget Zero.*USB_ZERO.*\\\[.*]" {
-            send "M\r"
+            send "Y\r"
         }
 
         -re "USB Mass Storage support.*USB_STORAGE.*\\\[.*]" {

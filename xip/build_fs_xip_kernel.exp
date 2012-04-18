@@ -199,7 +199,7 @@ cd $src_root/testsuites/common
 step "Make"
 source make_kernel.exp
 
-step "Reverse patch of partition"
+# Reverse patch of partition
 cd $kernel_root
 if [ catch {exec patch -p0 -R < $src_root/testsuites/xip/partition.patch} ] {
     send_user "$errorInfo\n"
