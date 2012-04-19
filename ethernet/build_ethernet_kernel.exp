@@ -60,10 +60,6 @@ while 1 {
             continue
         }
 
-        -re "(USB Gadget Drivers|Platform Glue Layer) \\\[\[^\]]+/.]" {
-            send "\r"
-        }
-
         -re "Use L1 memory for rx/tx packets.*BFIN_MAC_USE_L1.*\\\[.*]" {
             if { $extra_config == "in_buffer" } {
                 send -s "N\r"
@@ -88,6 +84,9 @@ while 1 {
             }
         }
 
+        -re "($anomalous_option) \\\[\[^\]]+/.]" {
+            send "\r"
+        }
 
         "\\\(*) \\\[*]" {
             sleep .01
@@ -99,13 +98,13 @@ while 1 {
         }
 
         eof {
-            puts "End of configuration"
+            send_user "\nEnd of configuration\n"
             break
         }
 
         timeout {
-            puts "\n\nFATAL ERROR: config prompt timeout in make config"
-            break
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
+            exit
         }
     }
 }
@@ -120,9 +119,9 @@ while 1 {
             continue
         }
 
-	-re "netperf.*BR2_PACKAGE_NETPERF.*\\\[.*]" {
-	    send "Y\r"
-	}
+        -re "netperf.*BR2_PACKAGE_NETPERF.*\\\[.*]" {
+            send "Y\r"
+        }
 
         -re "Target ABI.*BFIN_FDPIC.*BFIN_FLAT.*BFIN_FLAT_SEP_DATA.*BFIN_SHARED_FLAT.*\\\[.*]" {
             send "1\r"
@@ -138,13 +137,13 @@ while 1 {
         }
 
         eof {
-            puts "End of configuration"
+            send_user "\nEnd of configuration\n"
             break
         }
 
         timeout {
-            puts "\n\nFATAL ERROR: config prompt timeout in make config"
-            break
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
+            exit
         }
     }
 }

@@ -84,7 +84,7 @@ while 1 {
             send "Y\r"
         }
 
-        -re "Inventra Highspeed Dual Role Controller.*USB_MUSB_HDRC.*\\\[./././.]" {
+        -re "Inventra Highspeed Dual Role Controller.*USB_MUSB_HDRC.*\\\[.*]" {
             send "Y\r"
         }
 
@@ -94,10 +94,6 @@ while 1 {
 
         -re " (\[0-9]+). Blackfin.*USB_MUSB_BLACKFIN.*\[cC]hoice.*\\\[.*]" {
             send "$expect_out(1,string)\r"
-        }
-
-        -re "Disable DMA \\\(always use PIO\\\).*MUSB_PIO_ONLY.*\\\[.*]" {
-            send "\r"
         }
 
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
@@ -158,7 +154,7 @@ while 1 {
         }
 
         timeout {
-            send_user "\n\nFATAL ERROR: config prompt timeout in make config"
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
             exit
         }
     }
@@ -197,7 +193,7 @@ while 1 {
         }
 
         timeout {
-            send_user "\n\nFATAL ERROR: config prompt timeout in make config"
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
             exit
         }
     }

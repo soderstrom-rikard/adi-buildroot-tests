@@ -60,10 +60,6 @@ while 1 {
             send "Y\r"
         }
 
-        -re "USB device filesystem.*USB_DEVICEFS.*\\\[.*]" {
-            send "Y\r"
-        }
-
         -re "USB device class-devices.*USB_DEVICE_CLASS.*\\\[.*]" {
             send "Y\r"
         }

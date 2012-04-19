@@ -60,10 +60,6 @@ while 1 {
             send "Y\r"
         }
 
-        -re "USB device filesystem.*USB_DEVICEFS.*\\\[.*]" {
-            send "Y\r"
-        }
-
         -re "USB device class-devices.*USB_DEVICE_CLASS.*\\\[.*]" {
             send "Y\r"
         }
@@ -80,18 +76,14 @@ while 1 {
             send "$expect_out(1,string)\r"
         }
 
-        -re "Disable DMA.*always use PIO.*MUSB_PIO_ONLY.*\\\[.*]" {
-            if { $musb_mode == "pio" } {
-                send "Y\r"
-            } elseif { $musb_mode == "dma" } {
-                send "N\r"
+        -re " (\[0-9]+). Inventra.*USB_INVENTRA_DMA.* (\[0-9]+). Disable DMA.*MUSB_PIO_ONLY.*\[cC]hoice.*\\\[.*]" {
+            if { $musb_mode == "dma" } {
+                send "$expect_out(1,string)\r"
+            } elseif { $musb_mode == "pio" } {
+                send "$expect_out(2,string)\r"
             } else {
                 send "\r"
             }
-        }
-
-        -re "USB testing driver.*USB_TEST.*\\\[.*]" {
-            send "M\r"
         }
 
         -re "USB Gadget Support.*USB_GADGET.*\\\[.*]" {
@@ -196,7 +188,7 @@ while 1 {
 
         timeout {
             send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
-            break
+            exit
         }
     }
 }
@@ -231,7 +223,7 @@ while 1 {
 
         timeout {
             send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
-            break
+            exit
         }
     }
 }
