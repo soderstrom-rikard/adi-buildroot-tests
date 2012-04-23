@@ -44,7 +44,7 @@ set timeout 500
 send -s  "./linkport_test\r" 
 while 1 {
    expect {
-      "PASS" {         
+      -re "\[Pp]\[Aa]\[Ss]\[Ss]" {         
                 case_pass $case_num
          break
       }
