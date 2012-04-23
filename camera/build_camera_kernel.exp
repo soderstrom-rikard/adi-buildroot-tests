@@ -62,6 +62,10 @@ while 1 {
             send "M\r"
         }
 
+        -re "V4L platform devices.*V4L_PLATFORM_DRIVERS.*\\\[.*]" {
+            send "Y\r"
+        }
+
         -re "Blackfin Video Capture Driver.*VIDEO_BLACKFIN_CAPTURE.*\\\[.*]" {
             send "M\r"
         }
