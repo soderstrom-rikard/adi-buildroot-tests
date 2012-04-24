@@ -70,6 +70,26 @@ while 1 {
 
 incr case_num
 
+step "Erase MTD "
+set timeout 180
+send -s "flash_erase /dev/mtd$spi_rootfs_num 0 0\r"
+while 1 {
+    expect {
+	
+	 -re $kernel_prompt {
+                case_pass $case_num
+		break
+	}
+
+	timeout {
+                case_fail $case_num
+		exit
+	}
+    }
+}
+
+incr case_num
+
 step "Mount MTD "	
 set mtd_temp_result $TEST_FAIL
 set timeout 60
@@ -77,7 +97,6 @@ send -s "mount -t jffs2 /dev/mtdblock$spi_rootfs_num /mnt\n"
 while 1 {
     expect {    
          -re $kernel_prompt {
-                set mtd_temp_result $TEST_PASS
                 case_pass $case_num
 		break
         }
@@ -125,7 +144,6 @@ send -s "umount /mnt\n"
 while 1 {
     expect {    
         ">" {
-                set mtd_temp_result $TEST_PASS
                 case_pass $case_num
 		break
         }
@@ -137,37 +155,99 @@ while 1 {
     }
 } 
                                                                                                                                                       
-if { $mtd_temp_result!=$TEST_PASS } {
-	exit
-}
 sleep 1
 
 incr case_num
 
-step "Erase MTD "
-set mtd_temp_result $TEST_FAIL
-set timeout 180
-send -s "flash_erase /dev/mtd$spi_rootfs_num 0 0\r"
+step "Test with mtd_debug "
+incr case_num
+send -s  "ls -l /etc/inittab \r"
 while 1 {
-    expect {
+   expect {
+     -re "root +(\[0-9]+) " {
+         set size $expect_out(1,string)
+         case_pass $case_num
+         break
+        }
+
+      timeout {
+                case_fail $case_num
+      exit
+      }
+      }
+}
 	
-	 -re $kernel_prompt {
-		set mtd_temp_result $TEST_PASS
+set timeout 60
+send -s "mtd_debug erase /dev/mtd$spi_rootfs_num 0 $erase_size\n"
+while 1 {
+    expect {    
+        -re "Erased.*>" {
                 case_pass $case_num
 		break
-	}
-
-	timeout {
+        }
+                                                                                                                                                             
+        timeout {
                 case_fail $case_num
 		exit
-	}
+        }
     }
-}
-
-if  { $mtd_temp_result!=$TEST_PASS } {
-	exit
-}
-
+} 
+                                                                                                                                                      
+set timeout 60
+send -s "mtd_debug write /dev/mtdblock$spi_rootfs_num  0 $size /etc/inittab\n"
+while 1 {
+    expect {    
+        -re "Copied.*>" {
+                case_pass $case_num
+		break
+        }
+                                                                                                                                                             
+        timeout {
+                case_fail $case_num
+		exit
+        }
+    }
+} 
+                                                                                                                                                      
+set timeout 60
+send -s "mtd_debug read /dev/mtdblock$spi_rootfs_num  0 $size inittab_copy\n"
+while 1 {
+    expect {    
+        -re "Copied.*>" {
+                case_pass $case_num
+		break
+        }
+                                                                                                                                                             
+        timeout {
+                case_fail $case_num
+		exit
+        }
+    }
+} 
+                                                                                                                                                      
+set mtd_temp_result $TEST_FAIL
+set timeout 60
+send -s "diff -u /etc/inittab inittab_copy \n"
+while 1 {
+    expect {   
+        -re "\\\+\\\+\\\+.*$kernel_prompt" {
+            case_fail $case_num
+        }
+        -re "differ.*$kernel_prompt" {
+            case_fail $case_num
+        }
+        ">" {
+                case_pass $case_num
+		break
+        }
+        timeout {
+                case_fail $case_num
+		exit
+        }
+    }
+} 
+                                                                                                                                                      
+sleep 1
 step "Make jffs2 image"
 
 send_log " \n1)create file system directory\n"
