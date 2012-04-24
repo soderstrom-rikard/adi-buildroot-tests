@@ -212,12 +212,16 @@ use_output_bak () {
 
     cp -a $OUTPUT_BAK_DIR $OUTPUT_DIR
 
-    # make sure kernel won't be patched again
-    # make sure kernel will be built again
-    touch $KERNEL_CUSTOM_DIR/.stamp_downloaded
-    touch $KERNEL_CUSTOM_DIR/.stamp_extracted
-    touch $KERNEL_CUSTOM_DIR/.stamp_patched
-    touch $KERNEL_CUSTOM_DIR/.stamp_configured
+    # make sure staff in output won't be patched again
+    for sign in .*downloaded .*extracted .*unpacked .*patched .*configured
+    do
+	for FILE in `find $OUTPUT_DIR -name $sign`
+	do
+		touch $FILE
+  		#echo "touch $FILE"
+	done
+    done
+
 }
 
 make_clean () {
