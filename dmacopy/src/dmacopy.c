@@ -10,6 +10,12 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+#define L1_INST_TEST_ADDRESS       	0xFFA0A000
+#define L1_DATA_TEST_ADDRESS       	0xFF802000
+#define COREB_L1_INST_TEST_ADDRESS     	0xFF60A000
+#define COREB_L1_DATA_TEST_ADDRESS     	0xFF402000
+#define L2_TEST_ADDRESS    		0xC808A000
+
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof(*arr))
 
 static inline void show_diff(int first, int last)
@@ -83,11 +89,24 @@ static void xfree(void *ptr)
 
 int is_l1_inst(void *paddr)
 {
+ 	/*printf("Testing address is %lx .\n", (unsigned long)paddr); */
 	unsigned long addr = (unsigned long)paddr & 0xfff00000;
 	if (addr == 0xffa00000 || addr == 0xff600000)
 		return 1;
 	else
 		return 0;
+}
+
+int has_l2(void)
+{
+	/* if the part does not have L2, then don't try to use it */
+	return WEXITSTATUS(system("grep -qs '^L2 SRAM[[:space:]]*:[[:space:]]*[1-9]' /proc/cpuinfo")) == 0;
+}
+
+int has_coreb(void)
+{
+	/* if the part does not have the 2nd core, then don't try to use it */
+	return WEXITSTATUS(system("grep -e 'BF561' -e 'BF60[1-9]' /proc/cpuinfo")) == 0;
 }
 
 /* Do the actual test:
@@ -163,7 +182,20 @@ int sram_test(int size, char *sram_desc, int flags)
 	int ret = 0;
 	char *src = xmalloc(size);
 	char *dst = xmalloc(size);
-	char *sram = sram_alloc(size, flags);
+	char *sram;
+        //char *sram = sram_alloc(size, flags);
+
+	if (!strcmp(sram_desc,"COREB L1 INST")){
+		sram = (char *) COREB_L1_INST_TEST_ADDRESS; 
+	}else if (!strcmp(sram_desc,"COREB L1 DATA")){
+		sram = (char *) COREB_L1_DATA_TEST_ADDRESS; 
+	}else if (!strcmp(sram_desc,"L1 INST")){
+		sram = (char *) L1_INST_TEST_ADDRESS; 
+	}else if (!strcmp(sram_desc,"L1 DATA")){
+		sram = (char *) L1_DATA_TEST_ADDRESS; 
+	}else if (!strcmp(sram_desc,"L2")){
+		sram = (char *) L2_TEST_ADDRESS;
+	}
 
 	printf("TEST:  --- SRAM (%s) <-> SDRAM w/%i bytes ---\n", sram_desc, size);
 
@@ -226,11 +258,6 @@ int sdram_test(int size)
 	return ret;
 }
 
-int has_l2(void)
-{
-	/* if the part does not have L2, then don't try to use it */
-	return WEXITSTATUS(system("grep -qs '^L2 SRAM[[:space:]]*:[[:space:]]*[1-9]' /proc/cpuinfo")) == 0;
-}
 
 /*
  * Setup some "background noise" and really stress the hell out of the DMA
@@ -296,6 +323,11 @@ int main(int argc, char *argv[])
 	if (has_l2())
 		TEST_RANGE(mid, sram_test, "L2", L2_SRAM);
 	TEST_RANGE(lrg, sdram_test);
+
+	if (has_coreb()) {
+	TEST_RANGE(sml, sram_test, "COREB L1 INST",0);
+	TEST_RANGE(sml, sram_test, "COREB L1 DATA",0);
+	}
 
 	if (ret)
 		printf("SUMMARY: %i tests failed\n", ret);
