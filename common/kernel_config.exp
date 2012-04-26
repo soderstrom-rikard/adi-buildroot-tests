@@ -88,7 +88,7 @@ if { $board_type == "BEAGLE" } {
     set console_null "null"
     set console_args $console_def
 
-    set bootargs "root=/dev/mtdblock0 rw ip=$targetip earlyprintk=serial,uart0,$baud_rate console=\$\{console\}"
+    set bootargs "root=/dev/mtdblock0 rw ip=$targetip earlyprintk=serial,uart0,$baud_rate console=$console_args"
 
     set boot_image uImage
 } elseif { $board_type == "BF609-EZKIT" } {
@@ -107,7 +107,7 @@ if { $board_type == "BEAGLE" } {
     set console_null "null"
     set console_args $console_def 
 
-    set bootargs "root=/dev/mtdblock0 rw ip=$targetip earlyprintk=serial,uart0,$baud_rate console=\$\{console\}"
+    set bootargs "root=/dev/mtdblock0 rw ip=$targetip earlyprintk=serial,uart0,$baud_rate console=$console_args"
 
     set boot_image uImage
 
