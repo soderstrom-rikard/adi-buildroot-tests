@@ -32,7 +32,7 @@ incr case_num
 send -s "modprobe $module_name\r"
 while 1 {
     expect {
-        -re "Blackfin on-chip Ethernet MAC driver.*$kernel_prompt" {
+        -re "(Blackfin on-chip Ethernet MAC driver|Alternate descriptors).*$kernel_prompt" {
             case_pass $case_num
             break
         }
