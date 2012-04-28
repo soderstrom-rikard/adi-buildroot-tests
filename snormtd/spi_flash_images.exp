@@ -17,7 +17,42 @@ append TITLE " TEST"
 step "Spawn kermit"
 source ../common/spawn_kermit.exp
 
-step "Reset the uboot."
+step "Reboot the kernel."
+source ../common/reboot_kernel.exp
+
+set TEST_PASS               "pass"
+set TEST_FAIL               "fail"
+
+step "MTD test"
+
+set case_num 0
+
+incr case_num
+
+set timeout 5
+set mtd_temp_result $TEST_FAIL
+set mtd_result $TEST_FAIL
+#send -s "\r"
+send -s "cat /proc/mtd \r"
+while 1 {
+    expect {
+
+       -re  "mtd(\[0-9]):\[^\r\n]*file system\\\(spi\\\)" {
+                set spi_rootfs_num $expect_out(1,string)
+		set mtd_temp_result $TEST_PASS
+		expect  -re $kernel_prompt
+                case_pass $case_num
+		break
+	}
+
+	timeout {
+                case_fail $case_num
+		exit
+	}
+    }
+}
+
+step "Reset to the uboot."
 source ../common/reset_to_uboot.exp
 
 set TEST_PASS pass
@@ -25,6 +60,7 @@ set TEST_FAIL fail
 
 if { $board_type == "BF537-STAMP" || $board_type == "BF533-STAMP" || $board_type == "BF609-EZKIT"} {
 
+set bootargs_param3 "root=/dev/mtdblock$spi_rootfs_num $bootargs_param3"
 set bootargs 		 $bootargs_param3
 
 }  elseif { $board_type == "BF548-EZKIT" || [string match "BF527-EZKIT*" $board_type] || $board_type == "BF518F-EZBRD" || $board_type == "BF526-EZBRD" } {

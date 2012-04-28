@@ -130,7 +130,7 @@ if { [ catch { set def_uart_port_num [  exec grep  CONFIG_SERIAL_BFIN_UART.*=y $
 if {$board_type == "BEAGLE" || $board_type == "PANDA" || $board_type == "BF537-STAMP" || $board_type == "BF609-EZKIT" } {
     set bootargs_param1 "root=/dev/mtdblock0 rw mem=${res_mem}M max_mem=${max_mem}M console=$console_args"
     set bootargs_param2 "root=/dev/nfs rw nfsroot=$serverip:/tftpboot/romfs,tcp,nfsvers=3 rootdelay=1 earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
-    set bootargs_param3 "root=/dev/mtdblock$spi_rootfs_num rw rootfstype=jffs2 earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
+    set bootargs_param3 "rw rootfstype=jffs2 earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
     set bootargs_param4 "root=/dev/mtdblock$pnor_rootfs_num rw rootfstype=jffs2 earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
     set bootargs_param5 "root=/dev/mtdblock$pnor_rootfs_num ro rootfstype=romfs earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
 }
