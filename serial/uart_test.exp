@@ -178,7 +178,7 @@ expect -re $sh_prompt
 
 set timeout 8
 incr case_num
-send -s "rcp root@$targetip:$save_file .\r"
+send -s "rcp root@$targetip:/$save_file .\r"
 while 1 {
     expect {
         -nocase -re "(fail|error|no such).*$sh_prompt" {
