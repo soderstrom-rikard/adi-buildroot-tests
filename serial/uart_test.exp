@@ -297,10 +297,11 @@ incr case_num
 send -s "diff -u $save_file $target_file\r"
 while 1 {
     expect {
-        -re "\\\+\\\+\\\+.*$kernel_prompt" {
+        -re "\\\+\\\+\\\+" {
+            expect -re "$kernel_prompt"
             case_fail $case_num
         }
-        -re "differ.*$kernel_prompt" {
+        -re "(differ|diff:).*$kernel_prompt" {
             case_fail $case_num
         }
         -re $kernel_prompt {
@@ -444,10 +445,11 @@ set timeout 10
 send -s "diff -u $save_file $host_file\r"
 while 1 {
     expect {
-        -re "\\\+\\\+\\\+.*$sh_prompt" {
+        -re "\\\+\\\+\\\+" {
+            expect -re "$sh_prompt"
             case_fail $case_num
         }
-        -re "differ.*$sh_prompt" {
+        -re "(differ|diff:).*$sh_prompt" {
             case_fail $case_num
         }
         -re $sh_prompt {
