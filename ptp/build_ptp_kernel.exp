@@ -52,6 +52,10 @@ while 1 {
             send -s "Y\r"
         }
 
+        -re "STMMAC platform bus support.*STMMAC_PLATFORM.*\\\[.*]" {
+             send -s "Y\r"
+        }
+
         -re "STMMAC ieee1588 hw timestamp support.*STMMAC_IEEE1588.*\\\[.*]" {
              send -s "Y\r"
         }
@@ -122,7 +126,11 @@ while 1 {
             continue
         }
 
-        -re "ptpd.*BR2_PACKAGE_PTPD.*\\\[.*]" {
+        -re "ptpd v1*BR2_PACKAGE_PTPD.*\\\[.*]" {
+              send -s "Y\r"
+        }
+
+        -re "ptpd v2.*BR2_PACKAGE_PTPD2.*\\\[.*]" {
               send -s "Y\r"
         }
 
