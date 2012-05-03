@@ -44,27 +44,11 @@ while 1 {
             send "N\r"
         }
 
-        -re "Networking support \\\(NET\\\) \\\[.*]" {
-            send "N\r"
-        }
-
-        -re "SCSI device support \\\(SCSI\\\) \\\[.*]" {
+        -re "CAN bus subsystem support \\\(CAN\\\).*\\\[.*]" {
             send "N\r"
         }
 
         -re "Blackfin Rotary support.*INPUT_BFIN_ROTARY.*\\\[.*]" {
-            send "N\r"
-        }
-
-        -re "I2C support \\\(I2C\\\) \\\[.*]" {
-            send "N\r"
-        }
-
-        -re "SPI support \\\(SPI\\\) \\\[.*]" {
-            send "N\r"
-        }
-
-        -re "Watchdog Timer Support.*WATCHDOG.*\\\[.*]" {
             send "N\r"
         }
 
@@ -81,10 +65,6 @@ while 1 {
         }
 
         -re "MMC/SD/SDIO card support \\\(MMC\\\) \\\[.*]" {
-            send "N\r"
-        }
-
-        -re "Miscellaneous filesystems.*MISC_FILESYSTEMS.*\\\[.*]" {
             send "N\r"
         }
 
@@ -108,7 +88,7 @@ while 1 {
 
         timeout {
             send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
-            break
+            exit
         }
     }
 }
@@ -133,13 +113,13 @@ while 1 {
         }
 
         eof {
-            puts "End of configuration"
+            send_user "\nEnd of configuration\n"
             break
         }
 
         timeout {
-            puts "\n\nFATAL ERROR: config prompt timeout in make config"
-            break
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
+            exit
         }
     }
 }
