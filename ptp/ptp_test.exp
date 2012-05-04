@@ -43,15 +43,33 @@ source ../common/spawn_kermit.exp
 step "Reboot the kernel."
 source ../common/reboot_kernel.exp
 
+set second_target_id $kermit_spawn_id
+
+send -s "ifconfig eth0 $targetip \r" 
+while 1 {
+   expect {
+     -re "$kernel_prompt" {
+	 puts "ifconfig success.\n"
+         case_pass $case_num
+         break
+      }
+
+      timeout { 
+         break
+         }
+     }
+}
 for {set i 0} {$i < 2 } {incr i} {
 
 if { $i == 0 } {
 set ptp_cmd "ptpd -z linux_hw"
+set year "2011"
 } elseif { $i == 1 } {
 set ptp_cmd "ptpd2 -d"
+set year "2012"
 }
 
-set second_target_id $kermit_spawn_id
+set spawn_id $second_target_id 
 
 incr case_num
 send_user "\nOn the master machine setting time .\n"
@@ -61,7 +79,7 @@ expect  -re $kernel_prompt
 set timeout 8
 
 incr case_num
-send -s "ifconfig eth0 $targetip \r" 
+send -s "ifconfig eth0 \r" 
 while 1 {
    expect {
      -re "$kernel_prompt" {
@@ -91,9 +109,73 @@ while 1 {
          }
      }
 }
+send -s "ps auxf | grep ptpd | head -1\r" 
+while 1 {
+   expect {
+      -re " (\[0-9]+) +root.*ptpd.*$kernel_prompt" {
+         set process_id $expect_out(1,string)
+                case_pass $case_num
+	 break
+	}
+
+      timeout {                          
+         break 
+         }
+     }
+}
+
+if { [ info exists process_id ] } {
+send_user "\nprocess_id: $process_id \n"
+send -s  "kill -9 $process_id\r"
+while 1 {
+         expect {
+         -re "$kernel_prompt" {
+                break
+         }
+
+         timeout {
+                exit
+         }
+         }
+}
+}
 incr case_num
 
-send -s "date -s 2011.11.14-17:15:10\r" 
+send -s "$ptp_cmd -f log.master\r" 
+while 1 {
+   expect {
+      -re "$kernel_prompt" { 
+                case_pass $case_num
+         break
+      }
+
+      timeout {                           
+                case_fail $case_num
+      exit
+         }
+     }
+}
+
+incr case_num
+
+send -s "ps auxf\r" 
+while 1 {
+   expect {
+      -re " (\[0-9]+) +root.*ptpd.*$kernel_prompt" {
+         set process_id $expect_out(1,string)
+	#send_user "\nprocess_id: $process_id"
+                case_pass $case_num
+	 break
+	}
+
+      timeout {                           
+                case_fail $case_num
+      exit
+         }
+     }
+}
+incr case_num
+send -s "date -s $year.11.14-17:15:10\r" 
 while 1 {
    expect {
       -re "$kernel_prompt" { 
@@ -122,39 +204,6 @@ while 1 {
          }
      }
 }
-
-send -s "$ptp_cmd -f log.master\r" 
-while 1 {
-   expect {
-      -re "$kernel_prompt" { 
-                case_pass $case_num
-         break
-      }
-
-      timeout {                           
-                case_fail $case_num
-      exit
-         }
-     }
-}
-
-incr case_num
-
-send -s "ps auxf\r" 
-while 1 {
-   expect {
-      -re "ptpd.*linux_hw.*$kernel_prompt" { 
-                case_pass $case_num
-         break
-      }
-
-      timeout {                           
-                case_fail $case_num
-      exit
-         }
-     }
-}
-incr case_num
 
 send_user "\nSleep to wait for sync... .\n"
 sleep 20
@@ -205,6 +254,36 @@ while 1 {
          }
      }
 }
+send -s "ps auxf | grep ptpd | head -1\r" 
+while 1 {
+   expect {
+      -re " (\[0-9]+) +root.*ptpd.*$kernel_prompt" {
+         set process_id $expect_out(1,string)
+                case_pass $case_num
+	 break
+	}
+
+      timeout {                           
+	 break
+         }
+     }
+}
+
+if { [ info exists process_id ] } {
+send_user "\nprocess_id: $process_id \n"
+send -s  "kill -9 $process_id\r"
+while 1 {
+         expect {
+         -re "$kernel_prompt" {
+                break
+         }
+
+         timeout {
+                exit
+         }
+         }
+}
+}
 incr case_num
 
 send -s "$ptp_cmd -g -f log.slave\r" 
@@ -222,16 +301,18 @@ while 1 {
      }
 }
 
-sleep 20
+sleep 60
 incr case_num
 
 send -s "ps auxf\r" 
 while 1 {
    expect {
-      -re "ptpd.*linux_hw.*$kernel_prompt" { 
+      -re " (\[0-9]+) +root.*ptpd.*$kernel_prompt" {
+         set process_id $expect_out(1,string)
+	#send_user "\nprocess_id: $process_id"
                 case_pass $case_num
-         break
-      }
+	 break
+	}
 
       timeout {                           
                 case_fail $case_num
@@ -244,7 +325,7 @@ incr case_num
 send -s "date \r" 
 while 1 {
    expect {
-      -re "2011.*$kernel_prompt" { 
+      -re "$year.*$kernel_prompt" { 
                 case_pass $case_num
          break
       }
@@ -259,20 +340,19 @@ while 1 {
 send -s "cat log.slave \r" 
 while 1 {
    expect {
-      -re "offset from master.*$kernel_prompt" { 
+      -re "ptpd info.*$kernel_prompt" { 
                 case_pass $case_num
          break
       }
 
-      -re "\[Ee]rror" {                           
-                case_fail $case_num
-      exit
-         }
+#      -re "\[Ee]rror" {                           
+#                case_fail $case_num
+#      exit
+#         }
 
       timeout {                           
-                case_fail $case_num
-      exit
-         }
+         break
+       }
      }
 }
 }
