@@ -184,7 +184,7 @@ while 1 {
 step "Busybox config"
 cd $src_root
 set timeout 300
-spawn make config
+spawn make busybox-config
 while 1 {
     expect {
         -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
