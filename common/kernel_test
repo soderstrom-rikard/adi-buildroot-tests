@@ -140,7 +140,7 @@ if [ $BOARD_CONFIG = "BF609-EZKIT-STD" ] ; then
     BOARD_TYPE=BF609-EZKIT
 
     AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[24]="1"; AUTO_RUN_STATUS[29]="1"; AUTO_RUN_STATUS[30]="1"; AUTO_RUN_STATUS[34]="1"; AUTO_RUN_STATUS[38]="1"; AUTO_RUN_STATUS[39]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[50]="1"; AUTO_RUN_STATUS[51]="1"; AUTO_RUN_STATUS[52]="1"; AUTO_RUN_STATUS[53]="1";
-    AUTO_RUN_STATUS[$((n+4))]="1"; AUTO_RUN_STATUS[$((n+5))]="1";AUTO_RUN_STATUS[$((n+6))]="1";AUTO_RUN_STATUS[$((n+9))]="1";AUTO_RUN_STATUS[$((n+10))]="1";AUTO_RUN_STATUS[$((n+11))]="1";
+    AUTO_RUN_STATUS[$((n+4))]="1"; AUTO_RUN_STATUS[$((n+5))]="1"; AUTO_RUN_STATUS[$((n+6))]="1"; AUTO_RUN_STATUS[$((n+8))]="1"; AUTO_RUN_STATUS[$((n+9))]="1";AUTO_RUN_STATUS[$((n+10))]="1";AUTO_RUN_STATUS[$((n+11))]="1";
     MANUAL_RUN_STATUS[0]="1"; MANUAL_RUN_STATUS[3]="1";
 fi
 
@@ -148,7 +148,7 @@ if [ $BOARD_CONFIG = "BF609-EZKIT-USBHOST" ] ; then
     BOARD_TYPE=BF609-EZKIT
 
     AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[24]="1"; AUTO_RUN_STATUS[29]="1"; AUTO_RUN_STATUS[30]="1"; AUTO_RUN_STATUS[34]="1"; AUTO_RUN_STATUS[39]="1"; AUTO_RUN_STATUS[43]="1"; AUTO_RUN_STATUS[44]="1"; AUTO_RUN_STATUS[47]="1"; AUTO_RUN_STATUS[48]="1"; AUTO_RUN_STATUS[49]="1";
-    AUTO_RUN_STATUS[$((n+7))]="1"; 
+    AUTO_RUN_STATUS[$((n+7))]="1"; AUTO_RUN_STATUS[$((n+8))]="1"
 fi
 
 if [ $BOARD_CONFIG = "BF609-EZKIT-CAN" ] ; then
@@ -664,6 +664,55 @@ if [ ${AUTO_RUN_STATUS[$((n+7))]} -eq 1 ] ; then
         fi
 
     done
+fi
+
+
+######################################### USB OTG TEST #########################################
+
+if [ ${AUTO_RUN_STATUS[$((n+8))]} -eq 1 ] ; then
+
+    if [ ${AUTO_RUN_STATUS[$((n+7))]} -eq 1 ] ; then
+        OTG_mode=usbhost
+    elif [ ${AUTO_RUN_STATUS[$((n+5))]} -eq 1 ] ; then
+        OTG_mode=usbdev
+    fi
+
+    echo "Start testing usbotg in $OTG_mode mode..."
+
+    use_output_bak
+    cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
+
+    cd $TESTSUITES_DIR/usbotg
+    ./build_usbotg_kernel.exp $BOARD_TYPE >/dev/null 2>&1
+
+    if [ ! -f $IMAGE_DIR/uImage ] ; then
+        echo "$0:   Error, failed."
+        tail -50 ./build_usbotg_kernel_log
+    else
+        sleep 30
+        cd $TESTSUITES_DIR/$OTG_mode
+
+        if [ $OTG_mode = "usbhost" ] ; then
+            ./usbhost_test.exp $BOARD_TYPE otg >/dev/null 2>&1
+            mv usbhost_otg_test_log usbotg_host_test_log
+        elif [ $OTG_mode = "usbdev" ] ; then
+            ./gadget_zero_test.exp $BOARD_TYPE otg >/dev/null 2>&1
+            mv gadget_zero_test_log usbotg_dev_test_log
+        fi
+    fi
+
+    copy_image_config "usbotg"
+    mv $TESTSUITES_DIR/$OTG_mode/*test_log  $THIS_LOG
+
+    echo  "End testing usbotg in $OTG_mode mode..."
+    sleep 10
+
+    if [ $RESET_BOARD -eq 1  ] ; then
+        cd $TESTSUITES_DIR/common
+        ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
+        sleep 10
+    fi
+
 fi
 
 
