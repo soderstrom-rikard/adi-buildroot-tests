@@ -126,7 +126,7 @@ while 1 {
             continue
         }
 
-        -re "ptpd v1*BR2_PACKAGE_PTPD.*\\\[.*]" {
+        -re "ptpd v1.*BR2_PACKAGE_PTPD.*\\\[.*]" {
               send -s "Y\r"
         }
 
