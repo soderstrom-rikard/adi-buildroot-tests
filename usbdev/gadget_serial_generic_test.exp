@@ -159,11 +159,23 @@ while 1 {
 
 incr case_num
 set timeout 5
-send "modprobe -r usbserial\r"
+send "lsmod |grep usb\r"
 while 1 {
     expect {
-        -nocase -re "modprobe:|error|fail" {
+        -nocase -re "lsmod:|error|fail" {
             case_fail $case_num
+        }
+        -re "usbserial.*pl2303.*#" {
+            send "modprobe -r pl2303\r"
+            expect "#"
+            case_pass $case_num
+            break
+        }
+        -re "usbserial.*#" {
+            send "modprobe -r usbserial\r"
+            expect "#"
+            case_pass $case_num
+            break
         }
         -re "#" {
             case_pass $case_num

@@ -194,8 +194,48 @@ while 1 {
     }
 }
 
-send "\r"
-expect -re $sh_prompt
+set timeout 8
+incr case_num
+send "lsusb\r"
+while 1 {
+    expect {
+        -re "PL2303 Serial Port.*$sh_prompt" {
+            set usb_serial_dev pl2303
+            break
+        }
+        -re $sh_prompt {
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
+
+if { [info exists usb_serial_dev] } {
+    set timeout 8
+    incr case_num
+    send "sudo modprobe $usb_serial_dev\r"
+    while 1 {
+        expect {
+            -re "\[sudo\] password for test:" {
+                send "test\r"
+                continue
+            }
+            -nocase -re "(fail|error|no such).*$sh_prompt" {
+                case_fail $case_num
+            }
+            -re $sh_prompt {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+}
+
 incr case_num
 send -s "stty -F $ttydev_for_testcase_use cs$bits_number ispeed $baud_rate ospeed $baud_rate $ttyflags\r"
 while 1 {
