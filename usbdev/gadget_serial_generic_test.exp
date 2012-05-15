@@ -81,6 +81,8 @@ while 1 {
 
 spawn /bin/bash
 set host_spawn_id $spawn_id
+set timeout 5
+expect -re $sh_prompt
 
 incr case_num
 set timeout 15
@@ -94,7 +96,7 @@ while 1 {
         -re "\[eE]rror|\[fF]ail" {
             case_fail $case_num
         }
-        -re "#" {
+        -re $sh_prompt {
             case_pass $case_num
             break
         }
@@ -116,7 +118,7 @@ while 1 {
         -re "\[eE]rror|\[fF]ail" {
             case_fail $case_num
         }
-        -re "#" {
+        -re $sh_prompt {
             case_pass $case_num
             break
         }
@@ -131,7 +133,7 @@ set timeout 4
 send "mount\r"
 while 1 {
     expect {
-        -re "none on /proc/bus/usb type usbfs.*#" {
+        -re "none on /proc/bus/usb type usbfs.*$sh_prompt" {
             case_pass $case_num
             break
         }
@@ -159,65 +161,25 @@ while 1 {
 
 incr case_num
 set timeout 5
-send "lsmod |grep usb\r"
+send "lsmod |grep usbserial\r"
 while 1 {
     expect {
         -nocase -re "lsmod:|error|fail" {
             case_fail $case_num
         }
-        -re "usbserial.*pl2303.*#" {
+        -re "usbserial.*pl2303.*$sh_prompt" {
             send "modprobe -r pl2303\r"
-            expect "#"
+            expect -re $sh_prompt
             case_pass $case_num
             break
         }
-        -re "usbserial.*#" {
+        -re "usbserial.*$sh_prompt" {
             send "modprobe -r usbserial\r"
-            expect "#"
+            expect -re $sh_prompt
             case_pass $case_num
             break
         }
-        -re "#" {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
-
-incr case_num
-set timeout 5
-send "lsmod |grep usb\r"
-while 1 {
-    expect {
-        -nocase -re "lsmod:|error|fail" {
-            case_fail $case_num
-        }
-        -re "usbserial.*#" {
-            send_user "usbserial still exists!\n"
-            case_fail $case_num
-        }
-        -re "#" {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
-
-incr case_num
-set timeout 5
-send "sudo modprobe usbserial vendor=0x0525 product=0xA4A6\r"
-while 1 {
-    expect {
-        -nocase -re "modprobe:|error|fail" {
-            case_fail $case_num
-        }
-        -re "#" {
+        -re $sh_prompt {
             case_pass $case_num
             break
         }
@@ -235,7 +197,47 @@ while 1 {
         -nocase -re "lsmod:|error|fail" {
             case_fail $case_num
         }
-        -re "\r\n.*usbserial.*#" {
+        -re "\r\nusbserial.*$sh_prompt" {
+            send_user "usbserial still exists!\n"
+            case_fail $case_num
+        }
+        -re $sh_prompt {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
+
+incr case_num
+set timeout 5
+send "sudo modprobe usbserial vendor=0x0525 product=0xA4A6\r"
+while 1 {
+    expect {
+        -nocase -re "modprobe:|error|fail" {
+            case_fail $case_num
+        }
+        -re $sh_prompt {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
+
+incr case_num
+set timeout 5
+send "lsmod |grep usbserial\r"
+while 1 {
+    expect {
+        -nocase -re "lsmod:|error|fail" {
+            case_fail $case_num
+        }
+        -re "\r\n.*usbserial.*$sh_prompt" {
             case_pass $case_num
             break
         }
@@ -247,7 +249,9 @@ while 1 {
 
 
 set spawn_id $kermit_spawn_id
-sleep 3
+set timeout 5
+expect -re $kernel_prompt
+
 incr case_num
 set timeout 8
 send "getty 9600 /dev/ttyGS0\r"
@@ -300,20 +304,8 @@ while 1 {
 
 step "Send file to host PC through gadget serial"
 set spawn_id $gserial_spawn_id
-
-incr case_num
-set timeout 8
-while 1 {
-    expect {
-        -re $kernel_prompt {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
+set timeout 5
+expect -re $kernel_prompt
 
 incr case_num
 set timeout 5
@@ -361,6 +353,8 @@ while 1 {
 }
 
 set spawn_id $host_spawn_id
+set timeout 5
+expect -re $sh_prompt
 
 incr case_num
 set timeout 5
@@ -371,7 +365,7 @@ while 1 {
             case_pass $case_num
             break
         }
-        -re "#" {
+        -re $sh_prompt {
             case_pass $case_num
             break
         }
@@ -491,7 +485,8 @@ while 1 {
 
 
 set spawn_id $host_spawn_id 
-sleep 2
+set timeout 5
+expect -re $sh_prompt
 
 incr case_num
 set timeout 5
@@ -519,7 +514,7 @@ while 1 {
         -re "umount:|\[eE]rror|\[fF]ail" {
             case_fail $case_num
         }
-        -re "#" {
+        -re $sh_prompt {
             case_pass $case_num
             break
         }
@@ -537,7 +532,7 @@ while 1 {
         -re "none on /proc/bus/usb type usbfs.*#" {
             case_fail $case_num
         }
-        -re "#" {
+        -re $sh_prompt {
             case_pass $case_num
             break
         }
@@ -555,7 +550,7 @@ while 1 {
         -re "modprobe:|\[eE]rror|\[fF]ail" {
             case_fail $case_num
         }
-        -re "#" {
+        -re $sh_prompt {
             case_pass $case_num
             break
         }
@@ -573,7 +568,7 @@ while 1 {
         -re "\r\n.*usbserial.*#" {
             case_fail $case_num
         }
-        -re "#" {
+        -re $sh_prompt {
             case_pass $case_num
             break
         }
