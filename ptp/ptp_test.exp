@@ -109,7 +109,7 @@ while 1 {
          }
      }
 }
-send -s "ps auxf | grep ptpd | head -1\r" 
+send -s "ps auxf | grep ptpd | grep -v grep | head -1\r" 
 while 1 {
    expect {
       -re " (\[0-9]+) +root.*ptpd.*$kernel_prompt" {
@@ -139,6 +139,37 @@ while 1 {
          }
 }
 }
+
+incr case_num
+send -s "date -s $year.11.14-17:15:10\r" 
+while 1 {
+   expect {
+      -re "$kernel_prompt" { 
+                case_pass $case_num
+         break
+      }
+
+      timeout {                           
+                case_fail $case_num
+      exit
+         }
+     }
+}
+
+send -s "date \r" 
+while 1 {
+   expect {
+      -re "$kernel_prompt" { 
+                case_pass $case_num
+         break
+      }
+
+      timeout {                           
+                case_fail $case_num
+      exit
+         }
+     }
+}
 incr case_num
 
 send -s "$ptp_cmd -f log.master\r" 
@@ -167,36 +198,6 @@ while 1 {
                 case_pass $case_num
 	 break
 	}
-
-      timeout {                           
-                case_fail $case_num
-      exit
-         }
-     }
-}
-incr case_num
-send -s "date -s $year.11.14-17:15:10\r" 
-while 1 {
-   expect {
-      -re "$kernel_prompt" { 
-                case_pass $case_num
-         break
-      }
-
-      timeout {                           
-                case_fail $case_num
-      exit
-         }
-     }
-}
-
-send -s "date \r" 
-while 1 {
-   expect {
-      -re "$kernel_prompt" { 
-                case_pass $case_num
-         break
-      }
 
       timeout {                           
                 case_fail $case_num
@@ -253,36 +254,6 @@ while 1 {
       exit
          }
      }
-}
-send -s "ps auxf | grep ptpd | head -1\r" 
-while 1 {
-   expect {
-      -re " (\[0-9]+) +root.*ptpd.*$kernel_prompt" {
-         set process_id $expect_out(1,string)
-                case_pass $case_num
-	 break
-	}
-
-      timeout {                           
-	 break
-         }
-     }
-}
-
-if { [ info exists process_id ] } {
-send_user "\nprocess_id: $process_id \n"
-send -s  "kill -9 $process_id\r"
-while 1 {
-         expect {
-         -re "$kernel_prompt" {
-                break
-         }
-
-         timeout {
-                exit
-         }
-         }
-}
 }
 incr case_num
 
@@ -354,6 +325,36 @@ while 1 {
          break
        }
      }
+}
+send -s "ps auxf | grep ptpd | grep -v grep | head -1\r" 
+while 1 {
+   expect {
+      -re " (\[0-9]+) +root.*ptpd.*$kernel_prompt" {
+         set process_id $expect_out(1,string)
+                case_pass $case_num
+	 break
+	}
+
+      timeout {                           
+	 break
+         }
+     }
+}
+
+if { [ info exists process_id ] } {
+send_user "\nprocess_id: $process_id \n"
+send -s  "kill -9 $process_id\r"
+while 1 {
+         expect {
+         -re "$kernel_prompt" {
+                break
+         }
+
+         timeout {
+                exit
+         }
+         }
+}
 }
 }
 send_log "\n"
