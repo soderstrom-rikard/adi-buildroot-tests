@@ -42,8 +42,16 @@ while 1 {
             send "$expect_out(1,string)\r"
         }
 
-        -re "Target Architecture Variant.*\\\[.*]" {
-            send "\r"
+        -re "Target ABI.*\[cC]hoice\\\[.*]" {
+            if { $binary_format == "elf" } {
+                send  "1\r"
+            } elseif { $binary_format == "flat" } {
+                send  "2\r"
+            } elseif { $binary_format == "shared-flat" } {
+                send  "4\r"
+            } else {
+                send  "\r"
+            }
         }
 
         -re "Toolchain has IPv6 support.*BR2_TOOLCHAIN_EXTERNAL_INET_IPV6.*\\\[.*]" {
