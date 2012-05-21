@@ -223,13 +223,13 @@ if { [info exists usb_serial_dev] } {
             -nocase -re "lsmod:|error|fail" {
                 case_fail $case_num
             }
-            -re "usbserial.*$usb_serial_dev.*$sh_prompt" {
+            -re "\r\nusbserial.*$usb_serial_dev.*$sh_prompt" {
                 send "modprobe -r $usb_serial_dev\r"
                 expect -re $sh_prompt
                 case_pass $case_num
                 break
             }
-            -re "usbserial.*$sh_prompt" {
+            -re "\r\nusbserial.*$sh_prompt" {
                 send "modprobe -r usbserial\r"
                 expect -re $sh_prompt
                 case_pass $case_num
@@ -282,6 +282,27 @@ if { [info exists usb_serial_dev] } {
             -re $sh_prompt {
                 case_pass $case_num
                 break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    incr case_num
+    set timeout 5
+    send "lsmod |grep usbserial\r"
+    while 1 {
+        expect {
+            -nocase -re "lsmod:|error|fail" {
+                case_fail $case_num
+            }
+            -re "\r\nusbserial.*$usb_serial_dev.*$sh_prompt" {
+                case_pass $case_num
+                break
+            }
+            -re $sh_prompt {
+                case_fail $case_num
             }
             timeout {
                 case_fail $case_num
