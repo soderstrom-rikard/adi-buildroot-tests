@@ -898,76 +898,26 @@ proc run_LTP_test { filename command torun mode} {
    set old_timeout $timeout
    set result_flag $LTP_NOT_RUN
    set timeout 10
-   if [ catch {exec rcp $LTP_TESTCASES_DIR/$filename root@$ipaddr:/bin} ] {
-       send_user "rcp test file fail\n"
-       send_user "$errorInfo\n"
-   }
 
-   if { $filename == "chdir01A" } {
-       if [ catch {exec rcp $LTP_TESTCASES_DIR/chdir01 root@$ipaddr:/bin} ] {
-           send_user "rcp test file fail\n"
-           send_user "$errorInfo\n"
-       }
-       if [ catch {exec rcp $LTP_TESTCASES_DIR/symlink01 root@$ipaddr:/bin} ] {
-           send_user "rcp test file fail\n"
-           send_user "$errorInfo\n"
-       }
-   }
-
-   if { $filename == "chmod01A" } {
-       if [ catch {exec rcp $LTP_TESTCASES_DIR/chmod01 root@$ipaddr:/bin} ] {
-           send_user "rcp test file fail\n"
-           send_user "$errorInfo\n"
-       }
-       if [ catch {exec rcp $LTP_TESTCASES_DIR/symlink01 root@$ipaddr:/bin} ] {
-           send_user "rcp test file fail\n"
-           send_user "$errorInfo\n"
-       }
-   }
-
+   # rcp special files for specific test case
    if { $filename == "execve02" || $filename == "execve04" } {
        if [ catch {exec rcp $LTP_TESTCASES_DIR/test3 root@$ipaddr:/bin} ] {
            send_user "rcp test file fail\n"
            send_user "$errorInfo\n"
        }
    }
-
    if { $filename == "lchown02" || $filename == "lchown02_16" } {
        if [ catch {exec rcp $LTP_TESTCASES_DIR/create_link root@$ipaddr:/bin} ] {
            send_user "rcp test file fail\n"
            send_user "$errorInfo\n"
        }
    }
-
-   if { $filename == "link01" || $filename == "open01A" || $filename == "stat04" || $filename == "unlink01" } {
-       if [ catch {exec rcp $LTP_TESTCASES_DIR/symlink01 root@$ipaddr:/bin} ] {
+   if { $filename == "readlink04" } {
+       if [ catch {exec rcp $LTP_TESTCASES_DIR/creat_slink root@$ipaddr:/bin} ] {
            send_user "rcp test file fail\n"
            send_user "$errorInfo\n"
        }
    }
-
-   if { $filename == "lstat01A" } {
-       if [ catch {exec rcp $LTP_TESTCASES_DIR/symlink01 root@$ipaddr:/bin} ] {
-           send_user "rcp test file fail\n"
-           send_user "$errorInfo\n"
-       }
-       if [ catch {exec rcp $LTP_TESTCASES_DIR/lstat01 root@$ipaddr:/bin} ] {
-           send_user "rcp test file fail\n"
-           send_user "$errorInfo\n"
-       }
-   }
-
-   if { $filename == "mkdir05A" } {
-       if [ catch {exec rcp $LTP_TESTCASES_DIR/symlink01 root@$ipaddr:/bin} ] {
-           send_user "rcp test file fail\n"
-           send_user "$errorInfo\n"
-       }
-       if [ catch {exec rcp $LTP_TESTCASES_DIR/mkdir05 root@$ipaddr:/bin} ] {
-           send_user "rcp test file fail\n"
-           send_user "$errorInfo\n"
-       }
-   }
-
    if { $filename == "mount03" } {
        if [ catch {exec rcp $LTP_TESTCASES_DIR/setuid_test root@$ipaddr:/} ] {
            send_user "rcp test file fail\n"
@@ -978,71 +928,56 @@ proc run_LTP_test { filename command torun mode} {
            send_user "$errorInfo\n"
        }
    }
-
-   if { $filename == "readlink01A" } {
-       if [ catch {exec rcp $LTP_TESTCASES_DIR/symlink01 root@$ipaddr:/bin} ] {
-           send_user "rcp test file fail\n"
-           send_user "$errorInfo\n"
-       }
-       if [ catch {exec rcp $LTP_TESTCASES_DIR/readlink01 root@$ipaddr:/bin} ] {
-           send_user "rcp test file fail\n"
-           send_user "$errorInfo\n"
-       }
-   }
-
-   if { $filename == "readlink04" } {
-       if [ catch {exec rcp $LTP_TESTCASES_DIR/creat_slink root@$ipaddr:/bin} ] {
-           send_user "rcp test file fail\n"
-           send_user "$errorInfo\n"
-       }
-   }
-
-   if { $filename == "rename01A" } {
-       if [ catch {exec rcp $LTP_TESTCASES_DIR/symlink01 root@$ipaddr:/bin} ] {
-           send_user "rcp test file fail\n"
-           send_user "$errorInfo\n"
-       }
-       if [ catch {exec rcp $LTP_TESTCASES_DIR/rename01 root@$ipaddr:/bin} ] {
-           send_user "rcp test file fail\n"
-           send_user "$errorInfo\n"
-       }
-   }
-
-   if { $filename == "rmdir03A" } {
-       if [ catch {exec rcp $LTP_TESTCASES_DIR/symlink01 root@$ipaddr:/bin} ] {
-           send_user "rcp test file fail\n"
-           send_user "$errorInfo\n"
-       }
-       if [ catch {exec rcp $LTP_TESTCASES_DIR/rmdir03 root@$ipaddr:/bin} ] {
-           send_user "rcp test file fail\n"
-           send_user "$errorInfo\n"
-       }
-   }
-
-   if { $filename == "utime01A" } {
-       if [ catch {exec rcp $LTP_TESTCASES_DIR/symlink01 root@$ipaddr:/bin} ] {
-           send_user "rcp test file fail\n"
-           send_user "$errorInfo\n"
-       }
-       if [ catch {exec rcp $LTP_TESTCASES_DIR/utime01 root@$ipaddr:/bin} ] {
-           send_user "rcp test file fail\n"
-           send_user "$errorInfo\n"
-       }
-   }
-
    if { $filename == "chmod05" || \
 		$filename == "chmod06" || \
-		$filename == "chown03" || \
 		$filename == "chown04" || \
+		$filename == "chown04_16" || \
 		$filename == "fchmod05" || \
 		$filename == "fchmod06" || \
                 $filename == "fchown03" || \
-                $filename == "fchown04" } {
-
+                $filename == "fchown03_16" || \
+                $filename == "fchown04" || \
+                $filename == "fchown04_16" } {
       if [ catch {exec rcp $LTP_TESTCASES_DIR/change_owner root@$ipaddr:/bin} ] {
           send_user "rcp test file fail\n"
           send_user "$errorInfo\n"
       }
+   }
+   if { $filename == "chdir01A" || \
+                $filename == "chmod01A" || \
+                $filename == "lstat01A" || \
+                $filename == "mkdir05A" || \
+                $filename == "open01A" || \
+                $filename == "readlink01A" || \
+                $filename == "rename01A" || \
+                $filename == "rmdir03A" || \
+                $filename == "stat04" || \
+                $filename == "unlink01" || \
+                $filename == "utime01A" } {
+       if [ catch {exec rcp $LTP_TESTCASES_DIR/symlink01 root@$ipaddr:/bin} ] {
+           send_user "rcp test file fail\n"
+           send_user "$errorInfo\n"
+       }
+   }
+
+   # rcp main test files
+   if { $filename == "chdir01A" || \
+                $filename == "chmod01A" || \
+                $filename == "lstat01A" || \
+                $filename == "mkdir05A" || \
+                $filename == "readlink01A" || \
+                $filename == "rename01A" || \
+                $filename == "rmdir03A" || \
+                $filename == "utime01A" } {
+       if [ catch {exec rcp $LTP_TESTCASES_DIR/[string trimright $filename A] root@$ipaddr:/bin} ] {
+           send_user "rcp test file fail\n"
+           send_user "$errorInfo\n"
+       }
+   } else {
+       if [ catch {exec rcp $LTP_TESTCASES_DIR/$filename root@$ipaddr:/bin} ] {
+           send_user "rcp test file fail\n"
+           send_user "$errorInfo\n"
+       }
    }
 
    if { $filename == "setrlimit01" } {
@@ -1222,60 +1157,57 @@ proc run_LTP_test { filename command torun mode} {
       set result_flag $LTP_CRASH
    }
 
-   if { $filename == "chdir01A" } {
-      send "rm -f /bin/chdir01\r"
-      send "rm -f /bin/symlink01\r"
-   }
-   if { $filename == "chmod01A" } {
-      send "rm -f /bin/chmod01\r"
-      send "rm -f /bin/symlink01\r"
-   }
+   set timeout 1
    if { $filename == "execve02" || $filename == "execve04" } {
       send "rm -f /bin/test3\r"
+      expect -re $ltp_test_prompt
    }
    if { $filename == "lchown02" || $filename == "lchown02_16" } {
       send "rm -f /bin/create_link\r"
+      expect -re $ltp_test_prompt
    }
-   if { $filename == "link01" || $filename == "open01A" || $filename == "stat04" || $filename == "unlink01" } {
+   if { $filename == "chdir01A" || \
+                $filename == "chmod01A" || \
+                $filename == "lstat01A" || \
+                $filename == "mkdir05A" || \
+                $filename == "open01A" || \
+                $filename == "readlink01A" || \
+                $filename == "rename01A" || \
+                $filename == "rmdir03A" || \
+                $filename == "stat04" || \
+                $filename == "unlink01" || \
+                $filename == "utime01A" } {
       send "rm -f /bin/symlink01\r"
-   }
-   if { $filename == "lstat01A" } {
-      send "rm -f /bin/symlink01\r"
-      send "rm -f /bin/lstat01\r"
-   }
-   if { $filename == "mkdir05A" } {
-      send "rm -f /bin/symlink01\r"
-      send "rm -f /bin/mkdir05\r"
-   }
-   if { $filename == "readlink01A" } {
-      send "rm -f /bin/symlink01\r"
-      send "rm -f /bin/readlink01\r"
-   }
-   if { $filename == "rename01A" } {
-      send "rm -f /bin/symlink01\r"
-      send "rm -f /bin/rename01\r"
-   }
-   if { $filename == "rmdir03A" } {
-      send "rm -f /bin/symlink01\r"
-      send "rm -f /bin/rmdir03\r"
-   }
-   if { $filename == "utime01A" } {
-      send "rm -f /bin/symlink01\r"
-      send "rm -f /bin/utime01\r"
+      expect -re $ltp_test_prompt
    }
    if { $filename == "chmod05" || \
 		$filename == "chmod06" || \
-		$filename == "chown03" || \
 		$filename == "chown04" || \
+		$filename == "chown04_16" || \
 		$filename == "fchmod05" || \
 		$filename == "fchmod06" || \
                 $filename == "fchown03" || \
-                $filename == "fchown04" } {
+                $filename == "fchown03_16" || \
+                $filename == "fchown04" || \
+                $filename == "fchown04_16" } {
       send "rm -f /bin/change_owner\r"
+      expect -re $ltp_test_prompt
    }
 
-   send "rm -f /bin/$filename\r"
+   if { $filename == "chdir01A" || \
+                $filename == "chmod01A" || \
+                $filename == "lstat01A" || \
+                $filename == "mkdir05A" || \
+                $filename == "readlink01A" || \
+                $filename == "rename01A" || \
+                $filename == "rmdir03A" || \
+                $filename == "utime01A" } {
+      send "rm -f /bin/[string trimright $filename A]\r"
+   } else {
+      send "rm -f /bin/$filename\r"
+   }
    expect -re $ltp_test_prompt
+
 
    step "remove testcase done"
 
