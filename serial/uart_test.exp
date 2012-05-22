@@ -215,6 +215,25 @@ while 1 {
 }
 
 if { [info exists usb_serial_dev] } {
+    set timeout 8
+    incr case_num
+    send "su\r"
+    while 1 {
+        expect {
+            -re "Password:" {
+                send "$password\r"
+                continue
+            }
+            -re $sh_prompt {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
     incr case_num
     set timeout 5
     send "lsmod |grep usbserial\r"
@@ -269,13 +288,9 @@ if { [info exists usb_serial_dev] } {
 
     set timeout 8
     incr case_num
-    send "sudo modprobe $usb_serial_dev\r"
+    send "modprobe $usb_serial_dev\r"
     while 1 {
         expect {
-            -re "password for test:" {
-                send "test\r"
-                continue
-            }
             -nocase -re "(fail|error|no such).*$sh_prompt" {
                 case_fail $case_num
             }
@@ -303,6 +318,21 @@ if { [info exists usb_serial_dev] } {
             }
             -re $sh_prompt {
                 case_fail $case_num
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    set timeout 5
+    incr case_num
+    send "exit\r"
+    while 1 {
+        expect {
+            -re $sh_prompt {
+                case_pass $case_num
+                break
             }
             timeout {
                 case_fail $case_num
