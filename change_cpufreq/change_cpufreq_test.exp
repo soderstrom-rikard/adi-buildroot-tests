@@ -23,8 +23,6 @@ set SMP_STATUS 0
 
 if { $board_type == "BF533-STAMP" || $board_type == "BF518F-EZBRD" || $board_type == "BF526-EZBRD" } {
    set std_clock 398
-} elseif { $board_type == "BF609-EZKIT" } {
-   set std_clock 400 
 } else {
    set std_clock 500 
 }
@@ -45,9 +43,8 @@ while 1 {
             set SMP_STATUS 1 
             send_log "Linux kernel SMP status is $SMP_STATUS .\r"
         }
-        -re "Processor Speed: (.*) MHz core clock and (.*) MHz System Clock" {
+        -re "Processor Speed: (.*) MHz core clock" {
             set core_clock $expect_out(1,string)
-            set system_clock $expect_out(2,string)
             expect -re "$kernel_prompt"
             case_pass $case_num
             break
