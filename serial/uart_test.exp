@@ -509,6 +509,10 @@ while 1 {
     }
 }
 
+set timeout 1
+expect -re $sh_prompt
+expect -re $sh_prompt
+
 set timeout 10
 incr case_num
 send -s "cat $ttydev_for_testcase_use > $host_file\r"
