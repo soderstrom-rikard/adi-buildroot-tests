@@ -499,7 +499,7 @@ while 1 {
         -nocase -re "(fail|error|no such).*$sh_prompt" {
             case_fail $case_num
         }
-        -re $sh_prompt {
+        -re "me 0.*$sh_prompt" {
             case_pass $case_num
             break
         }
