@@ -356,6 +356,14 @@ do
                 ./linphone_test.exp $BOARD_TYPE audio_adau1761 >/dev/null 2>&1
             elif [ `echo ${AUTO_TESTCASE[$i]}|grep audio` ] ; then
                 ./audio_test.exp $BOARD_TYPE ${AUTO_TESTCASE[$i]} >/dev/null 2>&1
+                if [ $RESET_BOARD -eq 1  ] ; then
+                    cd $TESTSUITES_DIR/common
+                    ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
+                    sleep 10
+                fi
+                cd $TESTSUITES_DIR/$TESTCASE_DIR
+                ./audio_data_test.exp $BOARD_TYPE ${AUTO_TESTCASE[$i]} >/dev/null 2>&1
+                ./snd2fftw_test.exp $BOARD_TYPE ${AUTO_TESTCASE[$i]} >/dev/null 2>&1
             else
                 ./${AUTO_TESTCASE[$i]}_test.exp $BOARD_TYPE >/dev/null 2>&1
             fi
@@ -367,6 +375,8 @@ do
 
         if [ ${AUTO_TESTCASE[$i]} == "sdiommc" ] ; then
             cp $IMAGE_DIR/vmImage $THIS_LOG/vmImage.${AUTO_TESTCASE[$i]}
+        elif [ `echo ${AUTO_TESTCASE[$i]}|grep audio` ] ; then
+            mv $UCLINUX_DIST_TESTSUITES/audio/audio_data $THIS_LOG/audio_data.${AUTO_TESTCASE[$i]}
         fi
 
         # If bellow test fails, patch is still cleaned here.
