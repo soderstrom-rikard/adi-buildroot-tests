@@ -1,12 +1,12 @@
 #!/usr/bin/expect --
 #
-# Build Kernel for USB host test
+# Build script for USB host power test
 #
 # Usage:
-#   ./build_usbhost_kernel.exp board_type musb_mode
+#   ./build_power_usbhost_kernel.exp board_type musb_mode
 #
 # Example:
-#   ./build_usbhost_kernel.exp BF609-EZKIT dma
+#   ./build_power_usbhost_kernel.exp BF609-EZKIT dma
 #
 
 source ../common/kernel_config.exp
@@ -16,7 +16,7 @@ if { $argc < 2} {
     exit
 }
 set musb_mode [lindex $argv 1]
-set log_name build_usbhost_${musb_mode}_kernel_log
+set log_name build_power_usbhost_${musb_mode}_kernel_log
 
 log_file $log_name
 send_user "Starting $argv0\n"
@@ -38,7 +38,13 @@ while 1 {
             continue
         }
 
-        -re "SCSI device support \\\(SCSI\\\).*\\\[.*]" {
+#Power Management
+        -re "Suspend to RAM and standby.*SUSPEND.*\\\[.*]" {
+            send "Y\r"
+        }
+
+# Storage support
+        -re "SCSI device support \\\(SCSI\\\).*\\\[./././.]" {
             if { [string match "BF527-EZKIT*" $board_type] } {
                 send "Y\r"
             } else {
