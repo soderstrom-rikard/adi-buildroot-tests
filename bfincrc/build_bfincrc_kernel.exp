@@ -31,6 +31,10 @@ while 1 {
             send "Y\r"
         }
 
+        -re "Support for Blackfin CRC hareware accelerator.*CRYPTO_DEV_BFIN_CRC.*\\\[.*]" {
+            send "N\r"
+        }
+
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
             send "\r"
         }
