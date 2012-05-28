@@ -40,11 +40,15 @@ while 1 {
         }
 
         -re "Enable DMA Support.*BFIN_DMA_5XX.*\\\[././.]" {
-            send "y\r"
+            send "Y\r"
+        }
+
+        -re "Enable Core B loader.*BFIN_COREB.*\\\[././.]" {
+            send "Y\r"
         }
 
         -re "DMA has priority over core for ext. accesses.*C_CDPRIO.*\\\[./.]" {
-            send "y\r"
+            send "Y\r"
         }
 
         "\\\(*) \\\[*]" {
