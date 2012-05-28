@@ -1,12 +1,12 @@
 #!/usr/bin/expect --
 #
-# Build Kernel for USB gadget device test
+# Build Kernel for USB dev power test
 #
 # Usage:
-#   ./build_usbdev_kernel.exp board_type
+#   ./build_power_usbdev_kernel.exp board_type musb_mode
 #
 # Example:
-#   ./build_usbdev_kernel.exp BF609-EZKIT
+#   ./build_power_usbdev_kernel.exp BF609-EZKIT dma
 #
 
 source ../common/kernel_config.exp
@@ -16,7 +16,7 @@ if { $argc < 2} {
     exit
 }
 set musb_mode [lindex $argv 1]
-set log_name build_usbdev_${musb_mode}_kernel_log
+set log_name build_power_usbdev_${musb_mode}_kernel_log
 
 log_file $log_name
 send_user "Starting $argv0\n"
@@ -35,6 +35,11 @@ while 1 {
     expect {
         -nocase -re "\\\[\[^\r]*] (\\\(NEW\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
+        }
+
+#Power Management
+        -re "Suspend to RAM and standby.*SUSPEND.*\\\[.*]" {
+            send "Y\r"
         }
 
 # USB support
@@ -85,39 +90,11 @@ while 1 {
         }
 
         -re "USB Gadget Drivers \\\[.*]" {
-            send "M\r"
-        }
-
-        -re "Gadget Zero.*USB_ZERO.*\\\[.*]" {
-            send "M\r"
-        }
-
-        -re "Audio Gadget.*USB_AUDIO.*\\\[.*]" {
-            send "M\r"
-        }
-
-        -re "Ethernet Gadget.*USB_ETH.*\\\[.*]" {
-            send "M\r"
-        }
-
-        -re "RNDIS support.*USB_ETH_RNDIS.*\\\[.*]" {
             send "Y\r"
         }
 
-        -re "Gadget Filesystem.*USB_GADGETFS.*\\\[.*]" {
-            send "M\r"
-        }
-
-        -re "File-backed Storage Gadget.*\\\(USB_FILE_STORAGE\\\).*\\\[.*]" {
-            send "M\r"
-        }
-
-        -re "File-backed Storage Gadget testing version.*USB_FILE_STORAGE_TEST.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "Serial Gadget.*USB_G_SERIAL.*\\\[.*]" {
-            send "M\r"
+        -re "USB Gadget Drivers.* (\[0-9]+). Gadget Zero.*USB_ZERO.*\[cC]hoice\\\[.*]" {
+            send "$expect_out(1,string)\r"
         }
 
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
@@ -153,49 +130,6 @@ while 1 {
     expect {
         -nocase -re "\\\[\[^\r]*] (\\\(NEW\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
-        }
-
-        -re "lrzsz.*BR2_PACKAGE_LRZSZ.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        "\\\(*) \\\[*]" {
-            sleep .01
-            send "\r"
-        }
-
-        -re "\[cC]hoice\\\[.*]:" {
-            send "\r"
-        }
-
-        eof {
-            send_user "\nEnd of configuration\n"
-            break
-        }
-
-        timeout {
-            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
-            exit
-        }
-    }
-}
-
-step "Busybox config"
-cd $src_root
-set timeout 300
-spawn make busybox-config
-while 1 {
-    expect {
-        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
-            continue
-        }
-
-        -re "getty.*CONFIG_GETTY.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "login.*CONFIG_LOGIN.*\\\[.*]" {
-            send "Y\r"
         }
 
         "\\\(*) \\\[*]" {
