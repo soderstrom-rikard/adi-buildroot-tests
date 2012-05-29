@@ -54,6 +54,7 @@ proc rec_at_pc { freq magnitude } {
     global kermit_spawn_id
     global host_spawn_id
     global kernel_prompt
+    global sh_prompt
     global output_dir
     global output_file_type
     global channel
@@ -127,6 +128,7 @@ proc rec_from_pc { freq magnitude } {
     global kermit_spawn_id
     global host_spawn_id
     global kernel_prompt
+    global sh_prompt
     global targetip
     global output_dir
     global output_file_type
@@ -296,6 +298,8 @@ rec_at_pc 440   255
 rec_at_pc 1000  255
 rec_at_pc 2000  255
 rec_at_pc 3000  255
+
+sleep 5
 
 rec_from_pc 100   255
 rec_from_pc 250   255
