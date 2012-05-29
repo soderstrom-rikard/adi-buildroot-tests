@@ -87,11 +87,11 @@ static void xfree(void *ptr)
 	free(ret);
 }
 
-int is_l1_inst(void *paddr)
+int is_l1(void *paddr)
 {
  	/*printf("Testing address is %lx .\n", (unsigned long)paddr); */
 	unsigned long addr = (unsigned long)paddr & 0xfff00000;
-	if (addr == 0xffa00000 || addr == 0xff600000)
+	if (addr == 0xffa00000 || addr == 0xff600000 || addr == 0xff400000 || addr == 0xff800000)
 		return 1;
 	else
 		return 0;
@@ -124,7 +124,7 @@ int _do_test(char *src_desc, char *dst_desc, char *src, char *dst, char *chk, in
 	memset(src, 's', size);
 	memset(dst, 'd', size);
 	__builtin_bfin_ssync();
-	if (!is_l1_inst(chk))
+	if (!is_l1(chk))
 		memset(chk, 'c', size);
 
 	ptr = dma_memcpy(chk, src, size);
@@ -133,7 +133,7 @@ int _do_test(char *src_desc, char *dst_desc, char *src, char *dst, char *chk, in
 	else
 		printf("FAIL: dma_memcpy %s[s] to %s[c]\n", src_desc, dst_desc), ++ret;
 
-	if (!is_l1_inst(chk)) {
+	if (!is_l1(chk)) {
 		i = memcmp(chk, src, size);
 		if (!i)
 			printf("PASS: dma_memcpy(chk, src) test case %i, memcmp result is %d\n", test_num, i);
@@ -149,7 +149,7 @@ int _do_test(char *src_desc, char *dst_desc, char *src, char *dst, char *chk, in
 	else
 		printf("FAIL: dma_memcpy %s[c] to %s[d]\n", dst_desc, src_desc), ++ret;
 
-	if (!is_l1_inst(chk)) {
+	if (!is_l1(chk)) {
 		i = memcmp(dst, chk, size);
 		if (!i)
 			printf("PASS: dma_memcpy(dst, chk) test case %i, memcmp result is %d\n", test_num, i);
