@@ -149,7 +149,7 @@ if [ $BOARD_CONFIG = "BF609-EZKIT-USBHOST" ] ; then
 
     AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[24]="1"; AUTO_RUN_STATUS[29]="1"; AUTO_RUN_STATUS[30]="1"; AUTO_RUN_STATUS[34]="1"; AUTO_RUN_STATUS[39]="1"; AUTO_RUN_STATUS[43]="1"; AUTO_RUN_STATUS[44]="1"; AUTO_RUN_STATUS[47]="1"; AUTO_RUN_STATUS[48]="1"; AUTO_RUN_STATUS[49]="1";
     AUTO_RUN_STATUS[$((n+7))]="1"; AUTO_RUN_STATUS[$((n+8))]="1"
-    MANUAL_RUN_STATUS[$((n+1))]="1"; 
+    MANUAL_RUN_STATUS[$((n+1))]="1";
 fi
 
 if [ $BOARD_CONFIG = "BF609-EZKIT-CAN" ] ; then
@@ -306,7 +306,7 @@ do
 
     if [ ${AUTO_RUN_STATUS[$i]} -eq 1  ] ; then
 
-        use_output_bak 
+        use_output_bak
         cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
 
         echo  "Start testing ${AUTO_TESTCASE[$i]}..."
@@ -407,7 +407,7 @@ if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
 
     rm -fr /tftpboot/uImage.serial*
 
-    use_output_bak 
+    use_output_bak
     cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
 
     cd $TESTSUITES_DIR/serial
@@ -443,7 +443,7 @@ if [ ${AUTO_RUN_STATUS[$((n+9))]} -eq 1 ] ; then
 
     rm -fr /tftpboot/uImage.serial*
 
-    use_output_bak 
+    use_output_bak
     cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
 
     cd $TESTSUITES_DIR/serial
@@ -477,7 +477,7 @@ if [ ${AUTO_RUN_STATUS[$((n+4))]} -eq 1 ] ; then
 
     rm -fr /tftpboot/uImage.timer*
 
-    use_output_bak 
+    use_output_bak
     cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
 
     cd $TESTSUITES_DIR/${AUTO_TESTCASE[$((n+4))]}
@@ -557,7 +557,7 @@ if [ ${AUTO_RUN_STATUS[$((n+5))]} -eq 1 ] ; then
         CONFIG=`echo $config|tr 'a-z' 'A-Z'`
         echo "Start testing usb gadget device in $config mode..."
 
-        use_output_bak 
+        use_output_bak
         cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
 
         cd $TESTSUITES_DIR/usbdev
@@ -656,7 +656,7 @@ if [ ${AUTO_RUN_STATUS[$((n+7))]} -eq 1 ] ; then
         CONFIG=`echo $config|tr 'a-z' 'A-Z'`
         echo "Start testing usb host device in $config mode..."
 
-        use_output_bak 
+        use_output_bak
         cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
 
         cd $TESTSUITES_DIR/usbhost
@@ -749,7 +749,7 @@ if [ ${AUTO_RUN_STATUS[$((n+11))]} -eq 1 ] ; then
             FORMAT=`echo $format|tr 'a-z' 'A-Z'`
             echo "Start testing $sub_test in $format mode..."
 
-            use_output_bak 
+            use_output_bak
             cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
 
             cd $TESTSUITES_DIR/xip
@@ -784,30 +784,33 @@ fi
 ################# TEST BOOT UCLINUX_DIST AND MOUNT JFFS2 FS FROM SPI FLASH ########################
 
 if [ ${AUTO_RUN_STATUS[$((n+6))]} -eq 1  ] ; then
-  echo  "Testing boot uclinux-dist and mount jffs2 file system from SPI flash ..."
- # Please set the chip selection to the 3rd one on bf533 and the 2rd on bf537 board.
+    echo  "Testing boot uclinux-dist and mount jffs2 file system from SPI flash ..."
+    # Please set the chip selection to the 3rd one on bf533 and the 2rd on bf537 board.
 
-  rm -fr /tftpboot/uImage.snormtd*
+    rm -fr /tftpboot/uImage.snormtd* /tftpboot/vmImage
 
-  use_output_bak 
-  cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
+    use_output_bak
+    cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
 
-  cd $TESTSUITES_DIR/${AUTO_TESTCASE[$((n+6))]}
+    cd $TESTSUITES_DIR/${AUTO_TESTCASE[$((n+6))]}
+    ./build_${AUTO_TESTCASE[$((n+6))]}_kernel.exp $BOARD_TYPE >/dev/null 2>&1
 
-  ./build_${AUTO_TESTCASE[$((n+6))]}_kernel.exp $BOARD_TYPE   >/dev/null  2>&1
-  sleep 30
-  ./${AUTO_TESTCASE[$((n+6))]}_test.exp $BOARD_TYPE >/dev/null  2>&1
-  sleep 30
-  ./spi_flash_images.exp $BOARD_TYPE >/dev/null  2>&1
-  if [ $? == 0 ] ; then
-  sleep 30
-  ./snormtd_reboot_test.exp $BOARD_TYPE >/dev/null  2>&1
-  fi
-  sleep 30
-  copy_image_config "snormtd"
-  cp $IMAGE_DIR/images/vmImage $THIS_LOG/vmImage.snormtd
-  cp $IMAGE_DIR/images/rootfs.jffs2 $THIS_LOG/rootfs.jffs2.snormtd
-  mv $TESTSUITES_DIR/${AUTO_TESTCASE[$((n+6))]}/*_log  $THIS_LOG
+    if [ ! -f $IMAGE_DIR/uImage ] || [ ! -f $IMAGE_DIR/vmImage ] ; then
+        echo "$0:   Error, failed."
+        tail -50 ./build_snormtd*kernel_log
+    else
+        ./${AUTO_TESTCASE[$((n+6))]}_test.exp $BOARD_TYPE >/dev/null 2>&1
+        sleep 30
+        ./spi_flash_images.exp $BOARD_TYPE >/dev/null 2>&1
+        if [ $? == 0 ] ; then
+            sleep 30
+            ./snormtd_reboot_test.exp $BOARD_TYPE >/dev/null 2>&1
+        fi
+    fi
+
+    copy_image_config "snormtd"
+    mv $IMAGE_DIR/vmImage $THIS_LOG/vmImage.snormtd
+    mv $TESTSUITES_DIR/${AUTO_TESTCASE[$((n+6))]}/*_log  $THIS_LOG
 
     echo  "End testing snormtd..."
     sleep 10
@@ -818,18 +821,18 @@ if [ ${AUTO_RUN_STATUS[$((n+6))]} -eq 1  ] ; then
         sleep 10
     fi
 
-  fi
+fi
 
-  #############################################################################################
-  #################### TEST SPI FLASH WITH DIFFERENT CONFIGS ##################################
+#############################################################################################
+#################### TEST SPI FLASH WITH DIFFERENT CONFIGS ##################################
 
   snormtd_ext_config=""
 
   if [ ${AUTO_RUN_STATUS[$((n+10))]} -eq 1 ] ; then
   snormtd_ext_config="pio ext"
   fi
- 
-  for config in "$snormtd_ext_config" 
+
+  for config in "$snormtd_ext_config"
   do
 
   if [ -z $config ] ; then
@@ -862,6 +865,8 @@ if [ ${AUTO_RUN_STATUS[$((n+6))]} -eq 1  ] ; then
     fi
 
   done
+
+
 ######################################### TEST LTP #########################################
 
 if [ ${AUTO_RUN_STATUS[$((n+2))]} -eq 1 ] ; then
@@ -982,7 +987,7 @@ if [ ${MANUAL_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
 
         echo "Start testing usb host device in $config mode..."
 
-        use_output_bak 
+        use_output_bak
         cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
 
         cd $TESTSUITES_DIR/power_usbhost
