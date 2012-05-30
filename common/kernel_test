@@ -345,14 +345,15 @@ do
                 sleep 10
             fi
 
+            cd $TESTSUITES_DIR/$TESTCASE_DIR
+
             if [ ${AUTO_TESTCASE[$i]} == "jffs2" ] || [ ${AUTO_TESTCASE[$i]} == "jffs2_fs" ] ; then
                 ./flash_images.exp  $BOARD_TYPE  >/dev/null  2>&1
                 sleep 30
             fi
 
-            cd $TESTSUITES_DIR/$TESTCASE_DIR
             if [ ${AUTO_TESTCASE[$i]} == "ethernet_in_buffer" ] ; then
-                ./${AUTO_TESTCASE[$i]}_test.exp $BOARD_TYPE in_buffer >/dev/null 2>&1
+                ./ethernet_test.exp $BOARD_TYPE in_buffer >/dev/null 2>&1
             elif [ ${AUTO_TESTCASE[$i]} == "linphone_adau1761" ] ; then
                 ./linphone_test.exp $BOARD_TYPE audio_adau1761 >/dev/null 2>&1
             elif [ `echo ${AUTO_TESTCASE[$i]}|grep audio` ] ; then
