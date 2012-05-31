@@ -143,7 +143,7 @@ while 1 {
         }
 
         -re "Kernel ROM Base.*ROM_BASE.*\\\[.*]" {
-            send "0xB0080000\r"
+            send "0xB0080040\r"
         }
 
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
