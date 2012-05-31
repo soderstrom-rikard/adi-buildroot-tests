@@ -20,9 +20,20 @@ while 1 {
             send "Y\r"
         }
 
-        -re "SPI controller driver for ADI Blackfin5xx.*SPI_BFIN.*\\\[.*]" {
-            send "Y\r"
+        -re "SPI controller driver for ADI Blackfin5xx.*SPI_BFIN5XX.*\\\[.*]" {
+            if { [string match "BF5" $board_type] } {
+                send "Y\r"
+            } else {
+                send "N\r"
+            }
         }
+
+        -re "SPI controller driver for ADI Blackfin6xx.*SPI_BFIN6XX.*\\\[.*]" {
+            if { $board_type == "BF609-EZKIT" } {
+                send "Y\r"
+            }
+        }
+
 #########################################################################################
 
         -re "Detect non-CFI AMD/JEDEC-compatible flash chips.*MTD_JEDECPROBE.*\\\[.*]" {
