@@ -20,9 +20,20 @@ while 1 {
             send "Y\r"
         }
 
-        -re "SPI controller driver for ADI Blackfin5xx.*SPI_BFIN.*\\\[.*]" {
-            send "Y\r"
+        -re "SPI controller driver for ADI Blackfin5xx.*SPI_BFIN5XX.*\\\[.*]" {
+            if { [string match "BF5" $board_type] } {
+                send "Y\r"
+            } else {
+                send "N\r"
+            }
         }
+
+        -re "SPI controller driver for ADI Blackfin6xx.*SPI_BFIN6XX.*\\\[.*]" {
+            if { $board_type == "BF609-EZKIT" } {
+                send "Y\r"
+            }
+        }
+
 #########################################################################################
 
         -re "Detect non-CFI AMD/JEDEC-compatible flash chips.*MTD_JEDECPROBE.*\\\[.*]" {
@@ -56,7 +67,7 @@ while 1 {
             }
         }
         -re "Support most SPI Flash chips.*MTD_M25P80.*\\\[.*]" {
-            if { $spi_board_type == "normal" } {
+            if { $spi_board_type == "normal" || $spi_board_type == "ext" } {
                 send "Y\r"
             } else {
                 send "N\r"
@@ -64,7 +75,7 @@ while 1 {
         }
 
         -re "Use FAST_READ OPCode allowing SPI CLK <= 50MHz.*M25PXX_USE_FAST_READ.*\\\[.*]" {
-            if { $spi_board_type == "normal" } {
+            if { $spi_board_type == "normal" || $spi_board_type == "ext" } {
                 send "Y\r"
             } else {
                 send "N\r"
