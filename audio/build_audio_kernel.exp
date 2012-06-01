@@ -193,8 +193,12 @@ while 1 {
         }
 
         -re "SoC I2S\\\(TDM mode\\\) Audio for the ADI BF5xx chip.*SND_BF5XX_TDM.*\\\[.*]" {
-            if { $audio_dev == "audio_ad1836" || [string match "audio_ad193*" $audio_dev] } {
-                send "Y\r"
+            if { [string match "BF5*" $board_type] } {
+                if { $audio_dev == "audio_ad1836" || [string match "audio_ad193*" $audio_dev] } {
+                    send "Y\r"
+                } else {
+                    send "N\r"
+                }
             } else {
                 send "N\r"
             }
@@ -209,10 +213,8 @@ while 1 {
         }
 
         -re "SoC AD193X Audio support for Blackfin.*SND_BF5XX_SOC_AD193X.*\\\[.*]" {
-            if { $audio_dev == "audio_ad1938" } {
+            if { [string match "audio_ad193*" $audio_dev] } {
                 send "Y\r"
-            } elseif { [string match "audio_ad193*" $audio_dev] } {
-                send "M\r"
             } else {
                 send "N\r"
             }
