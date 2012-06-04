@@ -377,6 +377,9 @@ do
 
         if [ ${AUTO_TESTCASE[$i]} == "sdiommc" ] ; then
             cp $IMAGE_DIR/vmImage $THIS_LOG/vmImage.${AUTO_TESTCASE[$i]}
+        elif [ `echo ${AUTO_TESTCASE[$i]}|grep jffs2` ] ; then
+            cp $IMAGE_DIR/vmImage $THIS_LOG/vmImage.${AUTO_TESTCASE[$i]}
+            cp $IMAGE_DIR/rootfs.jffs2 $THIS_LOG/rootfs.jffs2.${AUTO_TESTCASE[$i]}
         elif [ `echo ${AUTO_TESTCASE[$i]}|grep audio` ] ; then
             mv $UCLINUX_DIST_TESTSUITES/audio/audio_data $THIS_LOG/audio_data.${AUTO_TESTCASE[$i]}
         fi
