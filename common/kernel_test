@@ -349,7 +349,7 @@ do
 
             if [ ${AUTO_TESTCASE[$i]} == "jffs2" ] || [ ${AUTO_TESTCASE[$i]} == "jffs2_fs" ] ; then
                 ./flash_images.exp  $BOARD_TYPE  >/dev/null  2>&1
-                sleep 30
+                sleep 10
             fi
 
             if [ ${AUTO_TESTCASE[$i]} == "ethernet_in_buffer" ] ; then
@@ -380,6 +380,7 @@ do
         elif [ `echo ${AUTO_TESTCASE[$i]}|grep jffs2` ] ; then
             cp $IMAGE_DIR/vmImage $THIS_LOG/vmImage.${AUTO_TESTCASE[$i]}
             cp $IMAGE_DIR/rootfs.jffs2 $THIS_LOG/rootfs.jffs2.${AUTO_TESTCASE[$i]}
+            cp $TESTSUITES_DIR/$TESTCASE_DIR/flash_images_log $THIS_LOG/flash_images_log.${AUTO_TESTCASE[$i]}
         elif [ `echo ${AUTO_TESTCASE[$i]}|grep audio` ] ; then
             mv $UCLINUX_DIST_TESTSUITES/audio/audio_data $THIS_LOG/audio_data.${AUTO_TESTCASE[$i]}
         fi
