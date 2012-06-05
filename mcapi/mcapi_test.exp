@@ -10,13 +10,13 @@ step "Start kermit."
 source ../common/spawn_kermit.exp
 
 step "Reboot the kernel."
-set bootargs  $bootargs_param11
+set bootargs  $bootargs_param6
 source ../common/reboot_kernel.exp
 
 step "Starting test"
 set timeout 8
 
-#set allcases { msg1 }
+#set allcases { msg1 msg2 }
 set allcases {msg1  msg2  pkt1  pkt2  pkt3  scl1  scl2}
 
 set all_bin_num [llength $allcases]
@@ -28,6 +28,7 @@ send_user "all_bin_num=$all_bin_num\n"
 proc print_lastlog { } {
 
 global targetip
+global kernel_prompt 
 sleep 5
 set timeout 10
 spawn  /bin/sh 
@@ -35,7 +36,7 @@ expect ">"
 send -s "rsh -l root $targetip ' cat /tmp/* \; dmesg' \r"
   while 1 {
            expect {
-            -re "COREB" {
+            -re "COREB.*$kernel_prompt" {
             send_log "\nPrinting last log finished.\n"
             break
             }
@@ -62,11 +63,13 @@ while 1 {
          }
      }
 }
+send -s "echo 1 > /proc/sys/kernel/printk\r"
+
 expect "root:/bin>"
 send -s "./icc_loader -l ./icc \r"
 while 1 {
    expect {
-     -re "OK" {
+     -re "OK.*$kernel_prompt" {
                 case_pass $case_num
                 break
       }
@@ -122,6 +125,9 @@ set test_case_num [ expr $i % $all_bin_num ]
 
 set case_name [lindex $allcases $test_case_num ]
 
+send -s "\r"
+expect -re $kernel_prompt
+
 if { $t < $all_bin_num } {
 send_log "\n!!!!!#####The first part. Case_name: $case_name, the [ expr $i + 1 ] time testing! t = $t, i = $i ! \n"
 } elseif { $t >= $all_bin_num && $t < 2*$all_bin_num } {
@@ -130,9 +136,6 @@ send_log "\n!!!!!#####The second part. Case_name: $case_name, the [ expr $i + 1 
 send_log "\n!!!!!#####The third part. Case_name: $case_name, the [ expr ($i - $test_case_num)/$bin_num + 1 ] time testing! t = $t, i = $i ! \n"
 }
 
-send -s "date\r"
-expect "root:/bin>"
-sleep 4
 incr case_num
 set timeout 60
 send -s "./icc_loader -f -e ./mcapi_$case_name \r"
@@ -144,10 +147,10 @@ while 1 {
                		break
 	       }
 	
-	        -re "execption" {
-	                case_fail $case_num
-	                exit
-	       }
+	  #      -re "execption" {
+	  #              case_fail $case_num
+	  #              exit
+	  #     }
 	        timeout {
 	                case_fail $case_num
 	                exit
@@ -161,10 +164,10 @@ while 1 {
          break
       }
 
-     -re "execption" {
-         case_fail $case_num
-         exit
-      }
+    # -re "execption" {
+    #     case_fail $case_num
+    #     exit
+    #  }
 
       timeout {
                 case_fail $case_num
@@ -173,17 +176,19 @@ while 1 {
       }
 }
 
-set timeout 600
+send -s "\r"
+expect -re $kernel_prompt
+set timeout 1000
 
 send -s "rm /tmp/* 2> /dev/null; dmesg -c > /dev/null\r"
 sleep 3
-expect "root:/bin>"
+expect -re $kernel_prompt
 
 set corea_case_status  0
 set coreb_case_status  0
 set execption_count  0
 #send -s "$case_name ; ls /tmp/* 2> /dev/null | xargs cat \r"
-spawn  /bin/sh -c "rsh -l root $targetip ' $case_name > /tmp/corea.log  2>&1 \; cat /tmp/* \; dmesg' "
+spawn  /bin/sh -c "rsh -l root $targetip ' $case_name > /tmp/corea.log  2>&1 \; cat /tmp/* \; dmesg ' "
 while 1 {
    expect {
      -re "CoreA Test PASSED" {
