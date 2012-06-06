@@ -92,7 +92,11 @@ while 1 {
             send "\r"
         }
 
-        -re "BF561 ICC utils.*USER_BF561_ICC.*\\\[.*]" {
+        -re "libmcapi.*BR2_PACKAGE_LIBMCAPI.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "bfin inter-core communication support.*BR2_PACKAGE_ICC.*\\\[.*]" {
             send "Y\r"
         }
 

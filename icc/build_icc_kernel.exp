@@ -11,7 +11,7 @@ source  make_default_config.exp
 
 # Following make specific configuration for this case.
 
-cd $uclinux_path/testsuites/icc
+cd $src_root/testsuites/icc
 source  make_icc_config.exp
 
 step "Make kernel config"
@@ -30,9 +30,6 @@ while 1 {
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
             send "\r"
         }
-
-        -re "Build libmcapi.*LIB_LIBMCAPI.*\\\[.*]" {
-            send "Y\r"
 
         "\\\(*) \\\[*]" {
             sleep .01
