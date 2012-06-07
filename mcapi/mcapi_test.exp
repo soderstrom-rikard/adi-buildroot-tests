@@ -138,7 +138,7 @@ send_log "\n!!!!!#####The third part. Case_name: $case_name, the [ expr ($i - $t
 
 incr case_num
 set timeout 60
-send -s "./icc_loader -f -e ./mcapi_$case_name \r"
+send -s "./icc_loader -e ./mcapi_$case_name \r"
 while 1 {
    expect {
      -re "\[icc_task_init\]" {
