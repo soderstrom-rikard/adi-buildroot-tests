@@ -43,6 +43,11 @@ while 1 {
             send "Y\r"
         }
 
+# Disable some drivers as PM is not well supported
+        -re "Memory Technology Device \\\(MTD\\\) support \\\(MTD\\\) \\\[.*]" {
+            send "N\r"
+        }
+
 # Storage support
         -re "SCSI device support \\\(SCSI\\\).*\\\[./././.]" {
             if { [string match "BF527-EZKIT*" $board_type] } {
@@ -182,6 +187,10 @@ while 1 {
     expect {
         -nocase -re "\\\[\[^\r]*] (\\\(NEW\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
+        }
+
+        -re "ethtool.*BR2_PACKAGE_ETHTOOL.*\\\[.*]" {
+            send "Y\r"
         }
 
         -re "bonnie\\\+\\\+.*BR2_PACKAGE_BONNIE.*\\\[.*]" {

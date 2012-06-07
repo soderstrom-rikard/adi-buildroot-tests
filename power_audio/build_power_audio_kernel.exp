@@ -297,6 +297,10 @@ while 1 {
             send "Y\r"
         }
 
+        -re "ethtool.*BR2_PACKAGE_ETHTOOL.*\\\[.*]" {
+            send "Y\r"
+        }
+
         "\\\(*) \\\[*]" {
             sleep .01
             send "\r"

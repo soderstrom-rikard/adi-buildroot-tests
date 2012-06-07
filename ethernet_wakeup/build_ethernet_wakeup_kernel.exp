@@ -32,39 +32,7 @@ while 1 {
         }
 
 # Disable some drivers as PM is not well supported
-        -re "High Resolution Timer Support.*HIGH_RES_TIMERS.*\\\[.*]" {
-            send "N\r"
-        }
-
-        -re "CPU Frequency scaling \\\(CPU_FREQ\\\) \\\[.*]" {
-            send "N\r"
-        }
-
         -re "Memory Technology Device \\\(MTD\\\) support \\\(MTD\\\) \\\[.*]" {
-            send "N\r"
-        }
-
-        -re "CAN bus subsystem support \\\(CAN\\\).*\\\[.*]" {
-            send "N\r"
-        }
-
-        -re "Blackfin Rotary support.*INPUT_BFIN_ROTARY.*\\\[.*]" {
-            send "N\r"
-        }
-
-        -re "Sound card support.*SOUND.*\\\[.*]" {
-            send "N\r"
-        }
-
-        -re "HID Devices.*HID_SUPPORT.*\\\[.*]" {
-            send "N\r"
-        }
-
-        -re "USB support \\\(USB_SUPPORT\\\) \\\[.*]" {
-            send "N\r"
-        }
-
-        -re "MMC/SD/SDIO card support \\\(MMC\\\) \\\[.*]" {
             send "N\r"
         }
 
