@@ -47,6 +47,10 @@ while 1 {
             send "N\r"
         }
 
+        -re "Networking support \\\(NET\\\) \\\[.*]" {
+            send "N\r"
+        }
+
 # USB support
         -re "USB support.*USB_SUPPORT.*\\\[.*]" {
             send "Y\r"
