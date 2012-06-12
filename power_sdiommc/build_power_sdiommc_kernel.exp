@@ -1,27 +1,17 @@
-#!/usr/bin/expect --
+#!/usr/bin/expect
 #
-# Build Kernel for USB dev power test
+# Build Kernel for power test with sdio mmc
 #
 # Usage:
-#   ./build_power_usbdev_kernel.exp board_type musb_mode
+#   ./build_power_sdiommc_kernel.exp board_type
 #
 # Example:
-#   ./build_power_usbdev_kernel.exp BF609-EZKIT dma
+#   ./build_power_sdiommc_kernel.exp BF609-EZKIT
 #
 
 source ../common/kernel_config.exp
-
-if { $argc < 2} {
-    puts "Please input: board_type, musb_mode(pio or dma)"
-    exit
-}
-set musb_mode [lindex $argv 1]
-set log_name build_power_usbdev_${musb_mode}_kernel_log
-
-log_file $log_name
+log_file [log_file_name "$argv0"]
 send_user "Starting $argv0\n"
-send_user "\n#### Build kernel in $musb_mode mode. ####\n"
-
 
 cd $src_root/testsuites/common
 step "Make default config"
@@ -33,11 +23,10 @@ set timeout 300
 spawn make ARCH=$arch linux-config
 while 1 {
     expect {
-        -nocase -re "\\\[\[^\r]*] (\\\(NEW\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
         }
 
-#Power Management
         -re "Suspend to RAM and standby.*SUSPEND.*\\\[.*]" {
             send "Y\r"
         }
@@ -51,59 +40,53 @@ while 1 {
             send "N\r"
         }
 
-# USB support
-        -re "USB support.*USB_SUPPORT.*\\\[.*]" {
+# MMC configuration
+        -re "MMC/SD/SDIO card support \\\(MMC\\\).*\\\[.*]" {
             send "Y\r"
         }
 
-        -re "Support for Host-side USB.*USB.*\\\[.*]" {
+        -re "MMC block device driver.*MMC_BLOCK.*\\\[.*]" {
             send "Y\r"
         }
 
-        -re "USB device class-devices.*USB_DEVICE_CLASS.*\\\[.*]" {
+        -re "Blackfin Secure Digital Host support.*SDH_BFIN.*\\\[.*]" {
             send "Y\r"
         }
 
-        -re "Inventra Highspeed Dual Role Controller.*USB_MUSB_HDRC.*\\\[.*]" {
+#        -re "Pull Up Resistor Workaround.*SDH_BFIN_MISSING_CMD_PULLUP_WORKAROUND.*\\\[.*]" {
+#            send "Y\r"
+#        }
+#
+#        -re "Blackfin on-chip NAND Flash Controller driver.*MTD_NAND_BF5XX.*\\\[.*]" {
+#            send "N\r"
+#        }
+#
+        -re "Second extended fs support.*EXT2_FS.*\\\[.*]" {
             send "Y\r"
         }
 
-        -re "Platform Glue Layer \\\[.*]" {
+        -re "MSDOS fs support.*MSDOS_FS.*\\\[.*]" {
             send "Y\r"
         }
 
-        -re " (\[0-9]+). Blackfin.*USB_MUSB_BLACKFIN.*\[cC]hoice.*\\\[.*]" {
-            send "$expect_out(1,string)\r"
-        }
-
-        -re " (\[0-9]+). Inventra.*USB_INVENTRA_DMA.* (\[0-9]+). Disable DMA.*MUSB_PIO_ONLY.*\[cC]hoice.*\\\[.*]" {
-            if { $musb_mode == "dma" } {
-                send "$expect_out(1,string)\r"
-            } elseif { $musb_mode == "pio" } {
-                send "$expect_out(2,string)\r"
-            } else {
-                send "\r"
-            }
-        }
-
-        -re "USB Gadget Support.*USB_GADGET.*\\\[.*]" {
+        -re "VFAT \\\(Windows-95\\\) fs support.*VFAT_FS.*\\\[.*]" {
             send "Y\r"
         }
 
-        -re "USB Peripheral Controller \\\[.*]" {
+        -re "Default codepage for FAT.*FAT_DEFAULT_CODEPAGE.*\\\[.*]" {
+            send "850\r"
+        }
+
+        -re "Codepage 437.*United States, Canada.*NLS_CODEPAGE_437.*\\\[.*]" {
             send "Y\r"
         }
 
-        -re "USB Peripheral Controller.*(\[0-9]+). Inventra HDRC USB Peripheral.*USB_GADGET_MUSB_HDRC.*\[cC]hoice\\\[.*]" {
-            send "$expect_out(1,string)\r"
-        }
-
-        -re "USB Gadget Drivers \\\[.*]" {
+        -re "Codepage 850.*Europe.*NLS_CODEPAGE_850.*\\\[.*]" {
             send "Y\r"
         }
 
-        -re "USB Gadget Drivers.* (\[0-9]+). Gadget Zero.*USB_ZERO.*\[cC]hoice\\\[.*]" {
-            send "$expect_out(1,string)\r"
+        -re "NLS ISO 8859-1.*Latin 1; Western European Languages.*NLS_ISO8859_1.*\\\[.*]" {
+            send "Y\r"
         }
 
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
@@ -137,11 +120,35 @@ set timeout 300
 spawn make config
 while 1 {
     expect {
-        -nocase -re "\\\[\[^\r]*] (\\\(NEW\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
         }
 
-        -re "ethtool.*BR2_PACKAGE_ETHTOOL.*\\\[.*]" {
+        -re "dosfstools.*BR2_PACKAGE_DOSFSTOOLS.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "mkdosfs.*BR2_PACKAGE_DOSFSTOOLS_MKDOSFS.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "mtd/jffs2 utilities.*BR2_PACKAGE_MTD.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "mkfs.jffs2.*BR2_PACKAGE_MTD_MKFSJFFS2.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "flash_erase.*BR2_PACKAGE_MTD_FLASH_ERASE.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "flash_eraseall.*BR2_PACKAGE_MTD_FLASH_ERASEALL.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "bonnie\\\+\\\+.*BR2_PACKAGE_BONNIE.*\\\[.*]" {
             send "Y\r"
         }
 
