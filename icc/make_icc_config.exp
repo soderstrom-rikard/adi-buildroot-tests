@@ -106,9 +106,9 @@ while 1 {
 
         -re "ICC cpu type.*BF609.*BR2_PACKAGE_ICC_CPU_BF609.*BF561.*BR2_PACKAGE_ICC_CPU_BF561.*choice.*\\\[.*]" {
             if { $board_type == "BF609-EZKIT" } {
-                send  "2\r"
-            } elseif { $board_type == "BF561-EZKIT" } {
                 send  "1\r"
+            } elseif { $board_type == "BF561-EZKIT" } {
+                send  "2\r"
             } else {
                 send  "\r"
             }
