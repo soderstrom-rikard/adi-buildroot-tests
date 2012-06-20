@@ -108,9 +108,11 @@ set bin_num 1
 set bin_num $all_bin_num 
 }
 
-if { $t >= $all_bin_num } {
 # Here is the test_round value that can be changed to control the test rounding.
-set test_round 100 
+if { $t >= $all_bin_num && $t < 2*$all_bin_num } {
+set test_round 5 
+} elseif { $t >= $all_bin_num  } {
+set test_round 50 
 }
 
 for {set i 0} {$i < $bin_num*$test_round} {incr i} {
