@@ -700,42 +700,48 @@ if [ ${AUTO_RUN_STATUS[$((n+8))]} -eq 1 ] ; then
         OTG_mode=usbdev
     fi
 
-    echo "Start testing usbotg in $OTG_mode mode..."
+    TARGET_MUSB_MODE="dma pio"
+    for config in $TARGET_MUSB_MODE
+    do
 
-    use_output_bak
-    cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
+        CONFIG=`echo $config|tr 'a-z' 'A-Z'`
+        echo "Start testing usbotg in $config mode with $OTG_mode..."
 
-    cd $TESTSUITES_DIR/usbotg
-    ./build_usbotg_kernel.exp $BOARD_TYPE >/dev/null 2>&1
+        use_output_bak
+        cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
 
-    if [ ! -f $IMAGE_DIR/uImage ] ; then
-        echo "$0:   Error, failed."
-        tail -50 ./build_usbotg_kernel_log
-    else
-        sleep 30
-        cd $TESTSUITES_DIR/$OTG_mode
+        cd $TESTSUITES_DIR/usbotg
+        ./build_usbotg_kernel.exp $BOARD_TYPE $config >/dev/null 2>&1
 
-        if [ $OTG_mode = "usbhost" ] ; then
-            ./usbhost_test.exp $BOARD_TYPE otg >/dev/null 2>&1
-            mv usbhost_otg_test_log usbotg_host_test_log
-        elif [ $OTG_mode = "usbdev" ] ; then
-            ./gadget_zero_test.exp $BOARD_TYPE otg >/dev/null 2>&1
-            mv gadget_zero_test_log usbotg_dev_test_log
+        if [ ! -f $IMAGE_DIR/uImage ] ; then
+            echo "$0:   Error, failed."
+            tail -50 ./build_usbotg_${config}_kernel_log
+        else
+            sleep 30
+            cd $TESTSUITES_DIR/$OTG_mode
+
+            if [ $OTG_mode = "usbhost" ] ; then
+                ./usbhost_test.exp $BOARD_TYPE otg >/dev/null 2>&1
+                mv usbhost_otg_test_log usbotg_host_${config}_test_log
+            elif [ $OTG_mode = "usbdev" ] ; then
+                ./gadget_zero_test.exp $BOARD_TYPE otg >/dev/null 2>&1
+                mv gadget_zero_test_log usbotg_dev_${config}_test_log
+            fi
         fi
-    fi
 
-    copy_image_config "usbotg"
-    mv $TESTSUITES_DIR/$OTG_mode/*test_log  $THIS_LOG
+        copy_image_config "usbotg"
+        mv $TESTSUITES_DIR/$OTG_mode/*test_log  $THIS_LOG
 
-    echo  "End testing usbotg in $OTG_mode mode..."
-    sleep 10
-
-    if [ $RESET_BOARD -eq 1  ] ; then
-        cd $TESTSUITES_DIR/common
-        ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
+        echo "End testing usbotg in $config mode with $OTG_mode..."
         sleep 10
-    fi
 
+        if [ $RESET_BOARD -eq 1  ] ; then
+            cd $TESTSUITES_DIR/common
+            ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
+            sleep 10
+        fi
+
+    done
 fi
 
 
