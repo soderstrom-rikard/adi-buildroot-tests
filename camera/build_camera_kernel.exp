@@ -15,7 +15,7 @@ send_user "Starting $argv0\n"
 
 cd $src_root/testsuites/common
 step "Make default config"
-source  make_default_config.exp
+source make_default_config.exp
 
 cd $src_root/testsuites/common
 source config_cut_app.exp
@@ -42,8 +42,12 @@ while 1 {
             send "Y\r"
         }
 
-        -re "Uncached DMA region.*(\[0-9]). Enable 4M DMA region.*DMA_UNCACHED_4M.*\[cC]hoice.*\\\[.*]" {
-            send "$expect_out(1,string)\r"
+        -re "Uncached DMA region.*(\[0-9]). Enable 32M DMA region.*DMA_UNCACHED_32M.*\[cC]hoice.*\\\[.*]" {
+            if { $board_type == "BF609-EZKIT" } {
+                send "$expect_out(1,string)\r"
+            } else {
+                send "\r"
+            }
         }
 
         -re "Multimedia support.*MEDIA_SUPPORT.*\\\[.*]" {
@@ -90,7 +94,7 @@ while 1 {
 
         timeout {
             send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
-            break
+            exit
         }
     }
 }
@@ -106,6 +110,10 @@ while 1 {
         }
 
         -re "ffmpeg.*BR2_PACKAGE_FFMPEG.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "V4L2 video test program.*BR2_PACKAGE_V4L2_VIDEO_TEST.*\\\[.*]" {
             send "Y\r"
         }
 
@@ -125,7 +133,7 @@ while 1 {
 
         timeout {
             send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
-            break
+            exit
         }
     }
 }
