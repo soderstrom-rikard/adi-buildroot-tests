@@ -80,10 +80,6 @@ send -s "set console $console_args\r"
 expect -re $uboot_prompt
 send -s "set bootargs $bootargs\r"
 expect -re $uboot_prompt
-send -s "set serverip $serverip\r"
-expect -re $uboot_prompt
-send -s "set ipaddr $targetip\r"
-expect -re $uboot_prompt
 send -s "save\r"
 expect -re $uboot_prompt
 
