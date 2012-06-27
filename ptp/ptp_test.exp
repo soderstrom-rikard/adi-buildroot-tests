@@ -8,6 +8,7 @@ set TITLE [title "$argv0"]
 
 step "Start kermit."
 set kermit_ttydev $ttyUSBdev
+set targetip 10.100.4.51
 source ../common/spawn_kermit.exp
 
 step "Reboot the kernel."
@@ -38,6 +39,7 @@ send_user "Start another machine to test canbus."
 
 step "Start kermit."
 set kermit_ttydev $ttydev
+set targetip 10.100.4.50
 source ../common/spawn_kermit.exp
 
 step "Reboot the kernel."
