@@ -53,6 +53,7 @@ while 1 {
       }
       }
 }
+sleep 3
 send -s "\r"
 expect {
        -re  "root:/bin>" {
@@ -73,6 +74,14 @@ while 1 {
      -re "icc_task_init" {
                case_pass $case_num
                break
+      }
+
+     -re "execption (\[0-9a-fA-F]+) " {
+            set execption_id $expect_out(1,string)
+            if { $execption_id != "26" && $execption_id != "2c" } {
+               case_fail $case_num
+            }
+      send_log "Execption!\n"
       }
 
      -re "Hardware Trace" {
@@ -114,6 +123,13 @@ while 1 {
          break
       }
 
+     -re "execption (\[0-9a-fA-F]+) " {
+            set execption_id $expect_out(1,string)
+            if { $execption_id != "26" && $execption_id != "2c" } {
+               case_fail $case_num
+            }
+      send_log "Execption!\n"
+      }
 
       timeout {
          case_fail $case_num
