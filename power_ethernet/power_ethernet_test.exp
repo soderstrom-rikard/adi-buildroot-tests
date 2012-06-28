@@ -3,44 +3,26 @@
 # Test PM in ethernet driver
 #
 # Usage:
-#   ./power_ethernet_test.exp board_type
+#   ./power_ethernet_test.exp board_type pm_state
 #
 # Example:
-#   ./power_ethernet_test.exp BF609-EZKIT
+#   ./power_ethernet_test.exp BF609-EZKIT standby
 #
 
 source ../common/kernel_config.exp
-log_file [log_file_name "$argv0"]
-send_user "Starting $argv0\n"
+
+if { $argc < 2} {
+    puts "Please input: board_type, pm_state (standby or mem)"
+    exit
+}
+set pm_state [lindex $argv 1]
 set TITLE [title "$argv0"]
+append TITLE " ($pm_state)"
+set log_name power_ethernet_${pm_state}_test_log
 
-if { $argc == 2 } {
-    set pm_state_count [lindex $argv 1]
-} else {
-    puts "Please input a power management state:"
-    puts "1: Standby; 2: Suspend-to-RAM"
-    exit
-}
-
-if { $board_type == "BF548-EZKIT" }  {
-    set wakeup_pattern "Syncing filesystems.*Freezing user space processes \.\.\. \\\(elapsed.*seconds\\\) done\.\r\nFreezing remaining freezable tasks \.\.\. \\\(elapsed.*seconds\\\) done\.\r\nSuspending console\\\(s\\\).*Restarting.*SD card"
-} else {
-    set wakeup_pattern "Syncing filesystems.*Freezing user space processes \.\.\. \\\(elapsed.*seconds\\\) done\.\r\nFreezing remaining freezable tasks \.\.\. \\\(elapsed.*seconds\\\) done\.\r\nSuspending console\\\(s\\\).*Restarting tasks.*done"
-}
-
-if { $pm_state_count == 1 } {
-    set pm_state_str "standby"
-    append TITLE " (STANDBY)"
-} elseif { $pm_state_count == 2 } {
-    set pm_state_str "mem"
-    append TITLE " (SUSPEND-TO-RAM)"
-    if { $board_type == "BF533-STAMP" || $board_type == "BF533-EZKIT" }  {
-        set wakeup_pattern "wakeup from.*rtcwake: short write.*$kernel_prompt"
-    }
-} else {
-    send_user "Power Management State setting error\n"
-    exit
-}
+log_file $log_name
+send_user "Starting $argv0\n"
+send_user "\n#### Power management state is $pm_state. ####\n"
 
 
 step "Start kermit"
@@ -54,37 +36,77 @@ step "Boot kernel"
 source ../common/kernel_boot.exp
 
 set wait_time 10
-set standby_fail 0
+set wakeup_fail 0
+set sleep_pattern "Syncing filesystems.*Freezing user space processes \.\.\. \\\(elapsed.*seconds\\\) done\.\r\nFreezing remaining freezable tasks \.\.\. \\\(elapsed.*seconds\\\) done\.\r\nSuspending console\\\(s\\\) \\\(use no_console_suspend to debug\\\)"
+set wakeup_pattern "Restarting tasks \.\.\. done"
+
 
 proc standby_test_case1 {} {
     global case_num
     global kernel_prompt
-    global wait_time
     global targetip
     global serverip
-    global standby_fail
-    global pm_state_str
+    global wakeup_fail
+    global pm_state
+    global sleep_pattern
     global wakeup_pattern
+    global host_spawn_id
+    global kermit_spawn_id
+    global spawn_id
+    global sh_prompt
 
-    set timeout [expr $wait_time + 10]
+    set timeout 5
     incr case_num
-    send "\nrtcwake -s $wait_time -m $pm_state_str\r"
+    send "echo $pm_state > /sys/power/state\r"
     while 1 {
         expect {
-            -re $wakeup_pattern {
+            -re $sleep_pattern {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                send_user "Test case 1: Sleep fail\n"
+                case_fail $case_num
+            }
+        }
+    }
+
+    sleep 10
+
+    set spawn_id $host_spawn_id
+
+    set timeout 5
+    incr case_num
+    send "reset_board 4\r"
+    while 1 {
+        expect {
+            -re "powering ON board attached to printer port pin 4" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    set spawn_id $kermit_spawn_id
+
+    set timeout 5
+    incr case_num
+    while 1 {
+        expect {
+            -re "$wakeup_pattern.*$kernel_prompt" {
                 case_pass $case_num
                 break
             }
             timeout {
                 send_user "Test case 1: Wake up fail\n"
-                incr standby_fail
+                incr wakeup_fail
                 break
             }
         }
     }
-
-    set timeout 5
-    expect -re "Full\r\n|lpa 0x41E1\r\n"
 
     set timeout 5
     incr case_num
@@ -122,17 +144,56 @@ proc standby_test_case1 {} {
 proc standby_test_case2 {} {
     global case_num
     global kernel_prompt
-    global wait_time
     global targetip
     global serverip
     global pack_num
-    global standby_fail
-    global pm_state_str
+    global wakeup_fail
+    global pm_state
+    global sleep_pattern
     global wakeup_pattern
+    global host_spawn_id
+    global kermit_spawn_id
+    global spawn_id
+    global sh_prompt
 
-    set timeout [expr $wait_time + 10]
+    set timeout 5
     incr case_num
-    send "\nrtcwake -s $wait_time -m $pm_state_str\r"
+    send "echo $pm_state > /sys/power/state\r"
+    while 1 {
+        expect {
+            -re $sleep_pattern {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                send_user "Test case 2: Sleep fail\n"
+                case_fail $case_num
+            }
+        }
+    }
+
+    sleep 10
+
+    set spawn_id $host_spawn_id 
+
+    set timeout 5
+    incr case_num
+    send "reset_board 4\r"
+    while 1 {
+        expect {
+            -re "powering ON board attached to printer port pin 4" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    set spawn_id $kermit_spawn_id
+    set timeout 5
+    incr case_num
     while 1 {
         expect {
             -re $wakeup_pattern {
@@ -141,14 +202,11 @@ proc standby_test_case2 {} {
             }
             timeout {
                 send_user "Test case 2: Wake up fail\n"
-                incr standby_fail
+                incr wakeup_fail
                 break
             }
         }
     }
-
-    set timeout 5
-    expect -re "Full\r\n|lpa 0x41E1\r\n"
 
     set timeout 30
     incr pack_num 15
@@ -170,12 +228,12 @@ proc standby_test_case2 {} {
 
 step "Start testing"
 set case_num 0
-set timeout 15
 set Total_Count 5
-sleep 5
+
+set timeout 15
+expect -re "Up.*Full"
 send "\r"
 expect -re $kernel_prompt
-expect -re "Up.*Full"
 
 set timeout 20
 incr case_num
@@ -223,6 +281,41 @@ while 1 {
     }
 }
 
+
+spawn /bin/bash
+
+set host_spawn_id $spawn_id
+set timeout 5
+expect -re $sh_prompt
+
+incr case_num
+set timeout 15
+send "su\r"
+while 1 {
+    expect {
+        -re "\[pP]assword" {
+            send "$password\r"
+            continue
+        }
+        -re "\[eE]rror|\[fF]ail" {
+            case_fail $case_num
+        }
+        -re $sh_prompt {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
+
+
+set spawn_id $kermit_spawn_id
+set timeout 5
+expect -re $kernel_prompt
+
+
 for {set count 1} {$count <= $Total_Count} {incr count} {
     standby_test_case1
     send_user "\nStandby test case 1 round $count pass\n\n"
@@ -251,11 +344,11 @@ for {set count 1} {$count <= $Total_Count} {incr count} {
 }
 
 incr case_num
-if { $standby_fail == 0 } {
+if { $wakeup_fail == 0 } {
     send_user "Wake up pass\n"
     case_pass $case_num
 } else {
-    send_user "Wake up fail $standby_fail times\n"
+    send_user "Wake up fail $wakeup_fail times\n"
     case_fail $case_num
 }
 

@@ -1,12 +1,12 @@
 #!/usr/bin/expect
 #
-# Build script for power management test.
+# Build script for ethernet power management test.
 #
 # Usage:
-#   ./build_power_kernel.exp board_type
+#   ./build_power_ethernet_kernel.exp board_type
 #
 # Example:
-#   ./build_power_kernel.exp BF537-STAMP
+#   ./build_power_ethernet_kernel.exp BF537-STAMP
 #
 
 source ../common/kernel_config.exp
