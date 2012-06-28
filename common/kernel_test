@@ -366,6 +366,15 @@ do
                 cd $TESTSUITES_DIR/$TESTCASE_DIR
                 ./audio_data_test.exp $BOARD_TYPE ${AUTO_TESTCASE[$i]} >/dev/null 2>&1
                 ./snd2fftw_test.exp $BOARD_TYPE ${AUTO_TESTCASE[$i]} >/dev/null 2>&1
+            elif [ `echo ${AUTO_TESTCASE[$i]}|grep power` ] ; then
+                ./${AUTO_TESTCASE[$i]}_test.exp $BOARD_TYPE standby >/dev/null 2>&1
+                if [ $RESET_BOARD -eq 1  ] ; then
+                    cd $TESTSUITES_DIR/common
+                    ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
+                    sleep 10
+                fi
+                cd $TESTSUITES_DIR/$TESTCASE_DIR
+                ./${AUTO_TESTCASE[$i]}_test.exp $BOARD_TYPE mem >/dev/null 2>&1
             else
                 ./${AUTO_TESTCASE[$i]}_test.exp $BOARD_TYPE >/dev/null 2>&1
             fi
