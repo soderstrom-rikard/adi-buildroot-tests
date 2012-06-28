@@ -47,6 +47,10 @@ while 1 {
             continue
         }
 
+        -re "Kernel executes from.*(\[0-9]). ROM.*choice.*\\\[.*]" {
+            send "$expect_out(1,string)\r"
+        }
+
         -re "Initial RAM filesystem and RAM disk.*BLK_DEV_INITRD.*\\\[.*]" {
             send "Y\r"
         }
