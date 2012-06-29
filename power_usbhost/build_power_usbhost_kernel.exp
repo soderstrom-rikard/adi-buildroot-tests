@@ -1,6 +1,6 @@
 #!/usr/bin/expect --
 #
-# Build script for USB host power test
+# Build script for USB host power test, musb_mode is either pio or dma
 #
 # Usage:
 #   ./build_power_usbhost_kernel.exp board_type musb_mode
@@ -11,12 +11,17 @@
 
 source ../common/kernel_config.exp
 
-if { $argc < 2} {
-    puts "Please input: board_type, musb_mode(pio or dma)"
-    exit
+if { $argc == 2} {
+    # musb_mode can be set to pio or dma
+    set musb_mode [lindex $argv 1]
 }
-set musb_mode [lindex $argv 1]
-set log_name build_power_usbhost_${musb_mode}_kernel_log
+
+if [ info exists musb_mode ] {
+    set log_name build_power_usbhost_${musb_mode}_kernel_log
+} else {
+    set musb_mode dma
+    set log_name build_power_usbhost_kernel_log
+}
 
 log_file $log_name
 send_user "Starting $argv0\n"
