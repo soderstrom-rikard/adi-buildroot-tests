@@ -394,7 +394,7 @@ do
             cp $IMAGE_DIR/rootfs.jffs2 $THIS_LOG/rootfs.jffs2.${AUTO_TESTCASE[$i]}
             cp $TESTSUITES_DIR/$TESTCASE_DIR/flash_images_log $THIS_LOG/flash_images_log.${AUTO_TESTCASE[$i]}
         elif [ `echo ${AUTO_TESTCASE[$i]}|grep audio` ] ; then
-            mv $UCLINUX_DIST_TESTSUITES/audio/audio_data $THIS_LOG/audio_data.${AUTO_TESTCASE[$i]}
+            mv $TESTSUITES_DIR/audio/audio_data $THIS_LOG/audio_data.${AUTO_TESTCASE[$i]}
         fi
         copy_image_config "${AUTO_TESTCASE[$i]}"
         mv $TESTSUITES_DIR/$TESTCASE_DIR/*_log  $THIS_LOG
@@ -845,10 +845,10 @@ fi
 
 
 
-################# TEST BOOT UCLINUX_DIST AND MOUNT JFFS2 FS FROM SPI FLASH ########################
+################# TEST KERNEL BOOT AND MOUNT JFFS2 FS FROM SPI FLASH ########################
 
 if [ ${AUTO_RUN_STATUS[$((n+6))]} -eq 1  ] ; then
-    echo  "Testing boot uclinux-dist and mount jffs2 file system from SPI flash ..."
+    echo  "Testing kernel boot and mount jffs2 file system from SPI flash ..."
     # Please set the chip selection to the 3rd one on bf533 and the 2rd on bf537 board.
 
     rm -fr /tftpboot/uImage.snormtd* /tftpboot/vmImage
@@ -957,7 +957,7 @@ if [ ${AUTO_RUN_STATUS[$((n+2))]} -eq 1 ] ; then
             echo "Build kernel failed for ltp ${ltp_suf[i]} test"
             mv $TESTSUITES_DIR/ltp/build_ltp_kernel_log $THIS_LOG/build_ltp_kernel_log_${ltp_suf[i]}
         else
-            # do if build uclinux-dist succeed
+            # do if build kernel succeed
             echo "build_ltp_kernel.exp done"
 
             if [ $RESET_BOARD -eq 1  ] ; then
@@ -993,7 +993,7 @@ if [ ${AUTO_RUN_STATUS[$((n+2))]} -eq 1 ] ; then
                 ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
                 sleep 10
             fi
-            # end, do if build uclinux-dist succeed
+            # end, do if build kernel succeed
         fi
 
     done
