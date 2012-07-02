@@ -1030,7 +1030,7 @@ do
         if [ ! -f $IMAGE_DIR/uImage ]
         then
             echo "$0:   Error, failed."
-            tail -50 ./build_${MANUAL_TESTCASE[$i]}_kernel_log
+            tail -50 ./build_${MANUAL_TESTCASE[$i]}*_kernel_log
         fi
 
         copy_image_config "${MANUAL_TESTCASE[$i]}"
