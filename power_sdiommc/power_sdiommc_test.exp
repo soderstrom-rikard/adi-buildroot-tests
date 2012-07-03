@@ -598,44 +598,6 @@ for {set count 1} {$count <= $Total_Count} {incr count} {
 }
 
 incr case_num
-set timeout 5
-send "mount -t ext2 /dev/mmcblk0p1 /mnt\r"
-while 1 {
-    expect {
-        -re "(mount:|\[fF]ail|\[eE]rror).*$kernel_prompt" {
-            case_fail $case_num
-        }
-        -re $kernel_prompt {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
-
-incr case_num
-set timeout 30
-send "time dd conv=fsync if=/dev/zero of=/mnt/5m.bin bs=1M count=5\r"
-while 1 {
-    expect {
-        -re "records in.*records out.*real.*user.*sys.*$kernel_prompt" {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
-
-for {set count 1} {$count <= $Total_Count} {incr count} {
-    standby_test_case2
-    send_user "\nStandby test case 2 round $count pass\n\n"
-}
-
-incr case_num
 if { $wakeup_fail == 0 } {
     send_user "Wake up pass\n"
     case_pass $case_num
