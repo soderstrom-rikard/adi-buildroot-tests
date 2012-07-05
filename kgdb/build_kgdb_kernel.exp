@@ -132,6 +132,14 @@ if { $debug_port == "ethernet" } {
     while 1 {
         expect {
 
+       -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+            continue
+        }
+
+        -re "($anomalous_option) \\\[\[^\]]+/.]" {
+            send "\r"
+        }
+
             -re "Kernel debugging.*DEBUG_KERNEL.*\\\[.*]" {
                 send "Y\r"
             }
@@ -167,6 +175,8 @@ if { $debug_port == "ethernet" } {
                     send -s "console=ttyBF$def_uart_port,57600 kgdboc=ttyBF3,57600n8\r"
                 } elseif { [string match "BF527-EZKIT*" $board_type] } {
                     send -s "console=ttyBF$def_uart_port,57600 kgdboc=ttyBF0,57600n8\r"
+                } elseif { $board_type == "BF609-EZKIT" } {
+                    send -s "console=$def_uart_port,57600 kgdboc=ttyBF1,57600n8\r"
                 }
             }
 
@@ -175,7 +185,7 @@ if { $debug_port == "ethernet" } {
             }
 
             -re "Enable UART0.*SERIAL_BFIN_UART0.*\\\[.*]" {
-                if { [string match "BF527-EZKIT*" $board_type] || $board_type == "BF537-STAMP" } {
+                if { [string match "BF527-EZKIT*" $board_type] || $board_type == "BF537-STAMP"  || $board_type == "BF609-EZKIT"  } {
                     send "Y\r"
                 } else {
                     send "\r"
@@ -183,7 +193,7 @@ if { $debug_port == "ethernet" } {
             }
 
             -re "Enable UART1.*SERIAL_BFIN_UART1.*\\\[.*]" {
-                if { $board_type == "BF537-STAMP" || $board_type == "BF548-EZKIT" || [string match "BF527-EZKIT*" $board_type] } {
+                if { $board_type == "BF537-STAMP" || $board_type == "BF548-EZKIT" || [string match "BF527-EZKIT*" $board_type] || $board_type == "BF609-EZKIT" } {
                     send "Y\r"
                 } else {
                     send "\r"
@@ -203,7 +213,7 @@ if { $debug_port == "ethernet" } {
             }
 
             -re "NAND Device Support.*MTD_NAND.*\\\[.*]" {
-                if { $board_type == "BF537-STAMP" } {
+                if { $board_type == "BF537-STAMP" || $board_type == "BF609-EZKIT" } {
                     send "N\r"
                 } else {
                     send "\r"
