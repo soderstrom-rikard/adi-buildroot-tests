@@ -95,6 +95,129 @@ expect {
     }
 }
 
+
+# Make sure drivers for usb to serial converter are properly installed
+if { $debug_port == "uart" } {
+    spawn /bin/bash
+    set host_spawn_id $spawn_id
+    set timeout 5
+    expect -re $sh_prompt
+
+    incr case_num
+    set timeout 15
+    send "su\r"
+    while 1 {
+        expect {
+            -re "\[pP]assword" {
+                send "$password\r"
+                continue
+            }
+            -re "\[eE]rror|\[fF]ail" {
+                case_fail $case_num
+            }
+            -re $sh_prompt {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    incr case_num
+    set timeout 5
+    send "lsmod |grep usbserial\r"
+    while 1 {
+        expect {
+            -nocase -re "lsmod:|error|fail" {
+                case_fail $case_num
+            }
+            -re "usbserial.*pl2303.*$sh_prompt" {
+                send "modprobe -r pl2303\r"
+                expect -re $sh_prompt
+                case_pass $case_num
+                break
+            }
+            -re "usbserial.*$sh_prompt" {
+                send "modprobe -r usbserial\r"
+                expect -re $sh_prompt
+                case_pass $case_num
+                break
+            }
+            -re $sh_prompt {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    incr case_num
+    set timeout 5
+    send "lsmod |grep usbserial\r"
+    while 1 {
+        expect {
+            -nocase -re "lsmod:|error|fail" {
+                case_fail $case_num
+            }
+            -re "\r\nusbserial.*$sh_prompt" {
+                send_user "usbserial still exists!\n"
+                case_fail $case_num
+            }
+            -re $sh_prompt {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    incr case_num
+    set timeout 5
+    send "modprobe pl2303\r"
+    while 1 {
+        expect {
+            -nocase -re "modprobe:|error|fail" {
+                case_fail $case_num
+            }
+            -re $sh_prompt {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    incr case_num
+    set timeout 5
+    send "lsmod |grep usbserial\r"
+    while 1 {
+        expect {
+            -nocase -re "lsmod:|error|fail" {
+                case_fail $case_num
+            }
+            -re "\r\n.*usbserial.*pl2303.*$sh_prompt" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    set spawn_id $kermit_spawn_id
+    set timeout 5
+    expect -re $kernel_prompt
+}
+
 if { $debug_port == "uart" } {
 send -s "\x81"
 send -s "b"
