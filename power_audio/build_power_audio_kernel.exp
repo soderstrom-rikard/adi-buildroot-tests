@@ -155,8 +155,8 @@ while 1 {
             }
         }
 
-        -re "SoC SSM2602 Audio support for BF52x ezkit.*SND_BF5XX_SOC_SSM2602.*\\\[.*]" {
-            if { [string match "BF5*" $board_type] && $audio_dev == "audio_ssm2603" } {
+        -re "SoC SSM2602 Audio Codec Add-On Card support.*SND_BF5XX_SOC_SSM2602.*\\\[.*]" {
+            if { $audio_dev == "audio_ssm2603" } {
                 send "Y\r"
             } else {
                 send "N\r"
