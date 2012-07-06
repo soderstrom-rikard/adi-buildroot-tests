@@ -105,9 +105,9 @@ BUILD_POLICY=1
 
 n=100
 
-AUTO_TESTCASE=( [0]="ethernet" [1]="bfindma" [2]="sd" [3]="usb_storage" [4]="audio" [5]="qt" [6]="lmbench" [7]="nbench" [8]="dhrystone" [9]="whetstone" [10]="edn" [11]="dmacopy" [12]="earlyprintk" [13]="l1_module" [14]="l1_app" [15]="erestart" [16]="pthread" [17]="traps" [18]="module" [19]="boot_addr" [20]="strace" [21]="ramfs" [22]="stress" [23]="kgdb" [24]="sdiommc" [25]="null_point" [26]="watchdog" [27]="malloc_perf" [28]="fixed_code" [29]="l2_app" [30]="l2_module" [31]="sqlite" [32]="g729" [33]="mem_fragment" [34]="bfincrc" [35]="ethernet_in_buffer" [36]="reserve_mem" [37]="mmap" [38]="gptimer" [39]="nfs" [40]="smbfs" [41]="shared_flat"  [42]="string" [43]="usb_camera" [44]="audio_adau1761" [45]="pound" [46]="dll" [47]="linphone_adau1761" [48]="linkport" [49]="bluetooth" [50]="pnormtd" [51]="jffs2" [52]="jffs2_fs" [53]="camera" [54]="canbus" [55]="ptp"  [56]="change_cpufreq" [57]="reprogram_clock" [58]="crypto_bfincrc" [59]="icc" [60]="mcapi" [61]="sram_alloc" [62]="power_ethernet" [63]="power_sdiommc" [64]="kgdb_uart" [65]="power_usbhost" [66]="power_audio" [67]="zflat" [$((n+1))]="serial" [$((n+2))]="ltp" [$((n+3))]="ethernet_usb" [$((n+4))]="timer" [$((n+5))]="usbdev" [$((n+6))]="snormtd" [$((n+7))]="usbhost" [$((n+8))]="usbotg"  [$((n+9))]="serial_uart" [$((n+10))]="snormtd_ext" [$((n+11))]="xip" [$((n+12))]="oprofile" )
+AUTO_TESTCASE=( [0]="ethernet" [1]="bfindma" [2]="sd" [3]="usb_storage" [4]="audio" [5]="qt" [6]="lmbench" [7]="nbench" [8]="dhrystone" [9]="whetstone" [10]="edn" [11]="dmacopy" [12]="earlyprintk" [13]="l1_module" [14]="l1_app" [15]="erestart" [16]="pthread" [17]="traps" [18]="module" [19]="boot_addr" [20]="strace" [21]="ramfs" [22]="stress" [23]="kgdb" [24]="sdiommc" [25]="null_point" [26]="watchdog" [27]="malloc_perf" [28]="fixed_code" [29]="l2_app" [30]="l2_module" [31]="sqlite" [32]="g729" [33]="mem_fragment" [34]="bfincrc" [35]="ethernet_in_buffer" [36]="reserve_mem" [37]="mmap" [38]="gptimer" [39]="nfs" [40]="smbfs" [41]="shared_flat"  [42]="string" [43]="usb_camera" [44]="audio_adau1761" [45]="pound" [46]="dll" [47]="linphone_adau1761" [48]="linkport" [49]="bluetooth" [50]="pnormtd" [51]="jffs2" [52]="jffs2_fs" [53]="camera" [54]="canbus" [55]="ptp"  [56]="change_cpufreq" [57]="reprogram_clock" [58]="crypto_bfincrc" [59]="icc" [60]="mcapi" [61]="sram_alloc" [62]="power_ethernet" [63]="power_sdiommc" [64]="kgdb_uart" [65]="power_usbhost" [66]="power_audio" [67]="zflat" [68]="audio_ssm2603" [$((n+1))]="serial" [$((n+2))]="ltp" [$((n+3))]="ethernet_usb" [$((n+4))]="timer" [$((n+5))]="usbdev" [$((n+6))]="snormtd" [$((n+7))]="usbhost" [$((n+8))]="usbotg"  [$((n+9))]="serial_uart" [$((n+10))]="snormtd_ext" [$((n+11))]="xip" [$((n+12))]="oprofile" )
 
-AUTO_RUN_STATUS=( [0]="1" [1]="0" [2]="0" [3]="0" [4]="0" [5]="0" [6]="1" [7]="1" [8]="1" [9]="1" [10]="1" [11]="0" [12]="0"  [13]="1" [14]="1" [15]="1" [16]="1" [17]="1" [18]="1" [19]="1" [20]="1" [21]="1" [22]="1" [23]="1" [24]="0" [25]="1" [26]="1" [27]="1" [28]="1" [29]="0" [30]="0" [31]="1" [32]="1" [33]="1" [34]="0" [35]="1" [36]="1" [37]="1" [38]="0" [39]="1" [40]="1" [41]="1" [42]="1" [43]="0" [44]="0" [45]="0" [46]="1" [47]="0" [48]="0" [49]="0" [50]="0" [51]="0" [52]="0" [53]="0" [54]="0" [55]="0" [56]="1" [57]="1" [58]="0" [59]="0" [60]="0" [61]="1" [62]="0" [63]="0" [64]="0" [65]="0" [66]="0" [67]="1" [$((n+1))]="1" [$((n+2))]="1" [$((n+3))]="0" [$((n+4))]="0" [$((n+5))]="0" [$((n+6))]="0" [$((n+7))]="0" [$((n+8))]="0" [$((n+9))]="0" [$((n+10))]="0" [$((n+11))]="0" [$((n+12))]="1" )
+AUTO_RUN_STATUS=( [0]="1" [1]="0" [2]="0" [3]="0" [4]="0" [5]="0" [6]="1" [7]="1" [8]="1" [9]="1" [10]="1" [11]="0" [12]="0"  [13]="1" [14]="1" [15]="1" [16]="1" [17]="1" [18]="1" [19]="1" [20]="1" [21]="1" [22]="1" [23]="1" [24]="0" [25]="1" [26]="1" [27]="1" [28]="1" [29]="0" [30]="0" [31]="1" [32]="1" [33]="1" [34]="0" [35]="1" [36]="1" [37]="1" [38]="0" [39]="1" [40]="1" [41]="1" [42]="1" [43]="0" [44]="0" [45]="0" [46]="1" [47]="0" [48]="0" [49]="0" [50]="0" [51]="0" [52]="0" [53]="0" [54]="0" [55]="0" [56]="1" [57]="1" [58]="0" [59]="0" [60]="0" [61]="1" [62]="0" [63]="0" [64]="0" [65]="0" [66]="0" [67]="1" [68]="0" [$((n+1))]="1" [$((n+2))]="1" [$((n+3))]="0" [$((n+4))]="0" [$((n+5))]="0" [$((n+6))]="0" [$((n+7))]="0" [$((n+8))]="0" [$((n+9))]="0" [$((n+10))]="0" [$((n+11))]="0" [$((n+12))]="1" )
 
 MANUAL_TESTCASE=( [0]="bluetooth" [1]="hdmi" [2]="sdio_wifi" [3]="" [4]="" [5]="generic_gpio" [6]="" [7]="video_decoder" [$((n+1))]="" )
 
@@ -139,7 +139,7 @@ fi
 if [ $BOARD_CONFIG = "BF609-EZKIT-STD" ] ; then
     BOARD_TYPE=BF609-EZKIT
 
-    AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[24]="1"; AUTO_RUN_STATUS[29]="1"; AUTO_RUN_STATUS[30]="1"; AUTO_RUN_STATUS[34]="1"; AUTO_RUN_STATUS[38]="1"; AUTO_RUN_STATUS[39]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[50]="1"; AUTO_RUN_STATUS[51]="1"; AUTO_RUN_STATUS[52]="1"; AUTO_RUN_STATUS[53]="1"; AUTO_RUN_STATUS[58]="1"; AUTO_RUN_STATUS[59]="1"; AUTO_RUN_STATUS[60]="1"; AUTO_RUN_STATUS[62]="1"; AUTO_RUN_STATUS[63]="1"; AUTO_RUN_STATUS[64]="1";
+    AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[24]="1"; AUTO_RUN_STATUS[29]="1"; AUTO_RUN_STATUS[30]="1"; AUTO_RUN_STATUS[34]="1"; AUTO_RUN_STATUS[38]="1"; AUTO_RUN_STATUS[39]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[50]="1"; AUTO_RUN_STATUS[51]="1"; AUTO_RUN_STATUS[52]="1"; AUTO_RUN_STATUS[53]="1"; AUTO_RUN_STATUS[58]="1"; AUTO_RUN_STATUS[59]="1"; AUTO_RUN_STATUS[60]="1"; AUTO_RUN_STATUS[62]="1"; AUTO_RUN_STATUS[63]="1"; AUTO_RUN_STATUS[64]="1"; AUTO_RUN_STATUS[68]="1";
     AUTO_RUN_STATUS[$((n+4))]="1"; AUTO_RUN_STATUS[$((n+5))]="1"; AUTO_RUN_STATUS[$((n+6))]="1"; AUTO_RUN_STATUS[$((n+8))]="1"; AUTO_RUN_STATUS[$((n+9))]="1";AUTO_RUN_STATUS[$((n+10))]="1";AUTO_RUN_STATUS[$((n+11))]="1";
     MANUAL_RUN_STATUS[0]="1"; MANUAL_RUN_STATUS[7]="1";
 fi
@@ -335,6 +335,8 @@ do
         elif [ ${AUTO_TESTCASE[$i]} == "power_audio" ] ; then
             if [ ${AUTO_RUN_STATUS[44]} -eq 1  ] ; then
                 audio_dev="audio_adau1761"
+            elif [ ${AUTO_TESTCASE[68]} -eq 1 ] ; then
+                audio_dev="audio_ssm2603"
             fi
             ./build_power_audio_kernel.exp $BOARD_TYPE $audio_dev > /dev/null 2>&1
         elif [ ${AUTO_TESTCASE[$i]} == "kgdb_uart" ] ; then
@@ -380,9 +382,6 @@ do
                 ./snd2fftw_test.exp $BOARD_TYPE ${AUTO_TESTCASE[$i]} >/dev/null 2>&1
             elif [ `echo ${AUTO_TESTCASE[$i]}|grep power` ] ; then
                 if [ ${AUTO_TESTCASE[$i]} == "power_audio" ] ; then
-                    if [ ${AUTO_RUN_STATUS[44]} -eq 1  ] ; then
-                        audio_dev="audio_adau1761"
-                    fi
                     ./power_audio_test.exp $BOARD_TYPE $audio_dev standby > /dev/null 2>&1
                 else
                     ./${AUTO_TESTCASE[$i]}_test.exp $BOARD_TYPE standby >/dev/null 2>&1
@@ -396,9 +395,6 @@ do
 
                 cd $TESTSUITES_DIR/$TESTCASE_DIR
                 if [ ${AUTO_TESTCASE[$i]} == "power_audio" ] ; then
-                    if [ ${AUTO_RUN_STATUS[44]} -eq 1  ] ; then
-                        audio_dev="audio_adau1761"
-                    fi
                     ./power_audio_test.exp $BOARD_TYPE $audio_dev mem > /dev/null 2>&1
                 else
                     ./${AUTO_TESTCASE[$i]}_test.exp $BOARD_TYPE mem >/dev/null 2>&1
