@@ -49,6 +49,10 @@ while 1 {
         }
 
 # Disable some drivers as PM is not well supported
+        -re "SPI support \\\(SPI\\\) \\\[.*]" {
+            send "N\r"
+        }
+
         -re "Memory Technology Device \\\(MTD\\\) support \\\(MTD\\\) \\\[.*]" {
             send "N\r"
         }

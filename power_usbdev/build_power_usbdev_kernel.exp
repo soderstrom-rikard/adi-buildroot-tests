@@ -11,12 +11,17 @@
 
 source ../common/kernel_config.exp
 
-if { $argc < 2} {
-    puts "Please input: board_type, musb_mode(pio or dma)"
-    exit
+if { $argc == 2} {
+    # musb_mode can be set to pio or dma
+    set musb_mode [lindex $argv 1]
 }
-set musb_mode [lindex $argv 1]
-set log_name build_power_usbdev_${musb_mode}_kernel_log
+
+if [ info exists musb_mode ] {
+    set log_name build_power_usbdev_${musb_mode}_kernel_log
+} else {
+    set musb_mode dma
+    set log_name build_power_usbdev_kernel_log
+}
 
 log_file $log_name
 send_user "Starting $argv0\n"
@@ -43,6 +48,10 @@ while 1 {
         }
 
 # Disable some drivers as PM is not well supported
+        -re "SPI support \\\(SPI\\\) \\\[.*]" {
+            send "N\r"
+        }
+
         -re "Memory Technology Device \\\(MTD\\\) support \\\(MTD\\\) \\\[.*]" {
             send "N\r"
         }
@@ -102,7 +111,7 @@ while 1 {
             send "Y\r"
         }
 
-        -re "USB Gadget Drivers.* (\[0-9]+). Gadget Zero.*USB_ZERO.*\[cC]hoice\\\[.*]" {
+        -re "USB Gadget Drivers.* (\[0-9]+). File-backed Storage Gadget.*\\\(USB_FILE_STORAGE\\\).*\[cC]hoice\\\[.*]" {
             send "$expect_out(1,string)\r"
         }
 
