@@ -819,6 +819,8 @@ if [ ${AUTO_RUN_STATUS[$((n+11))]} -eq 1 ] ; then
             copy_image_config "$sub_test.$format"
             if [ $sub_test == "xip_userspace" ] ; then
                 mv /tftpboot/img.romfs $THIS_LOG/img.romfs.$sub_test.$format
+                mv $IMAGE_DIR/vmImage $THIS_LOG/vmImage.$sub_test.$format
+                cp -a $OUTPUT_DIR/target $THIS_LOG/romfs.$sub_test.$format
             elif [ $sub_test == "kernel_xip" ] ; then
                 mv $IMAGE_DIR/vmImage $THIS_LOG/vmImage.$sub_test.$format
                 cp -a $OUTPUT_DIR/target $THIS_LOG/romfs.$sub_test.$format

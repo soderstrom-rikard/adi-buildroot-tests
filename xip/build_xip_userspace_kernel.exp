@@ -1,5 +1,4 @@
 #!/usr/bin/expect --
-
 #
 # Build Kernel for XIP test in userspace.
 # Root file system is initramfs.
@@ -26,6 +25,8 @@ send_user "Starting $argv0\n"
 send_log "\n#### Build kernel with binary_format $format. ####\n"
 
 
+set HAVE_KERNEL_ONLY_IMAGE 1
+
 cd $src_root/testsuites/common
 step "Make clean"
 if { [source make_clean.exp] != 0 } {
@@ -36,6 +37,9 @@ if { [source make_clean.exp] != 0 } {
 cd $src_root/testsuites/common
 step "Make default config"
 source make_default_config.exp
+
+cd $src_root/testsuites/common
+source config_cut_app.exp
 
 step "Make kernel config"
 cd $src_root
@@ -52,7 +56,7 @@ while 1 {
         }
 
         -re "Initial RAM filesystem and RAM disk.*BLK_DEV_INITRD.*\\\[.*]" {
-            send "Y\r"
+            send "N\r"
         }
 
         -re "Caching block device access to MTD devices.*MTD_BLOCK.*\\\[.*]" {
@@ -85,6 +89,30 @@ while 1 {
 
         -re "RomFS backing stores.* (\[0-9]+). MTD-backed ROM file system support.*choice.*\\\[.*]" {
             send "$expect_out(1,string)\r"
+        }
+
+        -re "Network File Systems \\\(NETWORK_FILESYSTEMS\\\).*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "NFS client support \\\(NFS_FS\\\).*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "NFS client support for NFS version 3 \\\(NFS_V3\\\).*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Root file system on NFS \\\(ROOT_NFS\\\).*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Kernel support for FDPIC ELF binaries.*BINFMT_ELF_FDPIC.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Kernel support for flat binaries.*BINFMT_FLAT.*\\\[.*]" {
+            send "Y\r"
         }
 
         -re "Enable shared FLAT support \\\(BINFMT_SHARED_FLAT\\\) \\\[.*]" {
