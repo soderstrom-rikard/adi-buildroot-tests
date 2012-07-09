@@ -285,7 +285,7 @@ if [ $BUILD_POLICY -eq 1  ] ; then
 
     sleep 30
 
-    if [ $RESET_BOARD -eq 1  ] ; then
+    if [ $RESET_BOARD -eq 1 ] ; then
         cd $TESTSUITES_DIR/common
         ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
         sleep 10
@@ -352,7 +352,7 @@ do
             echo "$0:   Error, failed."
             tail -50 ./build_${AUTO_TESTCASE[$i]}*_kernel_log
         else
-            if [ $RESET_BOARD -eq 1  ] ; then
+            if [ $RESET_BOARD -eq 1 ] ; then
                 cd $TESTSUITES_DIR/common
                 ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
                 sleep 10
@@ -371,7 +371,7 @@ do
                 ./linphone_test.exp $BOARD_TYPE audio_adau1761 >/dev/null 2>&1
             elif [ `echo ${AUTO_TESTCASE[$i]}|grep audio_` ] ; then
                 ./audio_test.exp $BOARD_TYPE ${AUTO_TESTCASE[$i]} >/dev/null 2>&1
-                if [ $RESET_BOARD -eq 1  ] ; then
+                if [ $RESET_BOARD -eq 1 ] ; then
                     cd $TESTSUITES_DIR/common
                     ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
                     sleep 10
@@ -387,7 +387,7 @@ do
                     ./${AUTO_TESTCASE[$i]}_test.exp $BOARD_TYPE standby >/dev/null 2>&1
                 fi
 
-                if [ $RESET_BOARD -eq 1  ] ; then
+                if [ $RESET_BOARD -eq 1 ] ; then
                     cd $TESTSUITES_DIR/common
                     ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
                     sleep 10
@@ -436,7 +436,7 @@ do
         echo  "End testing ${AUTO_TESTCASE[$i]}..."
         sleep 10
 
-        if [ $RESET_BOARD -eq 1  ] ; then
+        if [ $RESET_BOARD -eq 1 ] ; then
             cd $TESTSUITES_DIR/common
             ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
             sleep 10
@@ -475,7 +475,7 @@ if [ ${AUTO_RUN_STATUS[$((n+1))]} -eq 1 ] ; then
     echo  "End testing serial..."
     sleep 10
 
-    if [ $RESET_BOARD -eq 1  ] ; then
+    if [ $RESET_BOARD -eq 1 ] ; then
         cd $TESTSUITES_DIR/common
         ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
         sleep 10
@@ -509,7 +509,7 @@ if [ ${AUTO_RUN_STATUS[$((n+9))]} -eq 1 ] ; then
     echo  "End testing serial uart..."
     sleep 10
 
-    if [ $RESET_BOARD -eq 1  ] ; then
+    if [ $RESET_BOARD -eq 1 ] ; then
         cd $TESTSUITES_DIR/common
         ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
         sleep 10
@@ -550,7 +550,7 @@ if [ ${AUTO_RUN_STATUS[$((n+4))]} -eq 1 ] ; then
     echo  "End testing timer..."
     sleep 10
 
-    if [ $RESET_BOARD -eq 1  ] ; then
+    if [ $RESET_BOARD -eq 1 ] ; then
         cd $TESTSUITES_DIR/common
         ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
         sleep 10
@@ -585,7 +585,7 @@ if [ ${AUTO_RUN_STATUS[$((n+3))]} -eq 1 ] ; then
     echo  "End testing ethernet_usb..."
     sleep 10
 
-    if [ $RESET_BOARD -eq 1  ] ; then
+    if [ $RESET_BOARD -eq 1 ] ; then
         cd $TESTSUITES_DIR/common
         ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
         sleep 10
@@ -615,7 +615,7 @@ if [ ${AUTO_RUN_STATUS[$((n+5))]} -eq 1 ] ; then
             echo "$0:   Error, failed."
             tail -50 ./build_usbdev_${config}_kernel_log
         else
-            if [ $RESET_BOARD -eq 1  ] ; then
+            if [ $RESET_BOARD -eq 1 ] ; then
                 cd $TESTSUITES_DIR/common
                 ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
                 sleep 10
@@ -683,7 +683,7 @@ if [ ${AUTO_RUN_STATUS[$((n+5))]} -eq 1 ] ; then
         echo "End testing usb gadget device..."
         sleep 10
 
-        if [ $RESET_BOARD -eq 1  ] ; then
+        if [ $RESET_BOARD -eq 1 ] ; then
             cd $TESTSUITES_DIR/common
             ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
             sleep 10
@@ -723,7 +723,7 @@ if [ ${AUTO_RUN_STATUS[$((n+7))]} -eq 1 ] ; then
         echo "End testing usb host device..."
         sleep 10
 
-        if [ $RESET_BOARD -eq 1  ] ; then
+        if [ $RESET_BOARD -eq 1 ] ; then
             cd $TESTSUITES_DIR/common
             ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
             sleep 10
@@ -778,7 +778,7 @@ if [ ${AUTO_RUN_STATUS[$((n+8))]} -eq 1 ] ; then
         echo "End testing usbotg in $config mode with $OTG_mode..."
         sleep 10
 
-        if [ $RESET_BOARD -eq 1  ] ; then
+        if [ $RESET_BOARD -eq 1 ] ; then
             cd $TESTSUITES_DIR/common
             ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
             sleep 10
@@ -832,7 +832,7 @@ if [ ${AUTO_RUN_STATUS[$((n+11))]} -eq 1 ] ; then
             echo "End testing $sub_test..."
             sleep 10
 
-            if [ $RESET_BOARD -eq 1  ] ; then
+            if [ $RESET_BOARD -eq 1 ] ; then
                 cd $TESTSUITES_DIR/common
                 ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
                 sleep 10
@@ -872,7 +872,7 @@ if [ ${AUTO_RUN_STATUS[$((n+12))]} -eq 1 ] ; then
         echo "End testing oprofile..."
         sleep 10
 
-        if [ $RESET_BOARD -eq 1  ] ; then
+        if [ $RESET_BOARD -eq 1 ] ; then
             cd $TESTSUITES_DIR/common
             ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
             sleep 10
@@ -917,7 +917,7 @@ if [ ${AUTO_RUN_STATUS[$((n+6))]} -eq 1  ] ; then
     echo  "End testing snormtd..."
     sleep 10
 
-    if [ $RESET_BOARD -eq 1  ] ; then
+    if [ $RESET_BOARD -eq 1 ] ; then
         cd $TESTSUITES_DIR/common
         ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
         sleep 10
@@ -960,7 +960,7 @@ fi
   echo  "End testing snormtd ext..."
   sleep 10
 
-    if [ $RESET_BOARD -eq 1  ] ; then
+    if [ $RESET_BOARD -eq 1 ] ; then
         cd $TESTSUITES_DIR/common
         ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
         sleep 10
@@ -998,7 +998,7 @@ if [ ${AUTO_RUN_STATUS[$((n+2))]} -eq 1 ] ; then
             # do if build kernel succeed
             echo "build_ltp_kernel.exp done"
 
-            if [ $RESET_BOARD -eq 1  ] ; then
+            if [ $RESET_BOARD -eq 1 ] ; then
                 cd $TESTSUITES_DIR/common
                 ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
                 sleep 10
@@ -1026,7 +1026,7 @@ if [ ${AUTO_RUN_STATUS[$((n+2))]} -eq 1 ] ; then
 
             sleep 30
 
-            if [ $RESET_BOARD -eq 1  ] ; then
+            if [ $RESET_BOARD -eq 1 ] ; then
                 cd $TESTSUITES_DIR/common
                 ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
                 sleep 10
@@ -1072,7 +1072,7 @@ do
     echo  "End testing ${MANUAL_TESTCASE[$i]}..."
     sleep 10
 
-    if [ $RESET_BOARD -eq 1  ] ; then
+    if [ $RESET_BOARD -eq 1 ] ; then
         cd $TESTSUITES_DIR/common
         ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
         sleep 10
