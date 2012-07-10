@@ -4,19 +4,20 @@
 #
 # Usage:
 #   ./build_video_decoder_kernel.exp board_type video_dev
+# video_dev: adv7393, adv7842
 #
 # Example:
 #   ./build_video_decoder_kernel.exp BF609-EZKIT adv7842
 #
 
 source ../common/kernel_config.exp
-if { $argc < 2} {
-    puts "Please input: board_type, video_dev"
-    puts "video_dev: adv7393, adv7842"
-    exit
+
+if { $argc == 2} {
+    set video_dev [lindex $argv 1]
+} else {
+    set video_dev adv7842
 }
 
-set video_dev [lindex $argv 1]
 set log_name build_video_decoder_${video_dev}_kernel_log
 log_file $log_name
 
