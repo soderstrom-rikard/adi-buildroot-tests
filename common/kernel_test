@@ -774,6 +774,7 @@ if [ ${AUTO_RUN_STATUS[$((n+8))]} -eq 1 ] ; then
 
         copy_image_config "usbotg"
         mv $TESTSUITES_DIR/$OTG_mode/*test_log  $THIS_LOG
+        cp $TESTSUITES_DIR/usbotg/*_log  $THIS_LOG
 
         echo "End testing usbotg in $config mode with $OTG_mode..."
         sleep 10
