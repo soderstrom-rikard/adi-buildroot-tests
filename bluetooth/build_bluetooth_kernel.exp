@@ -20,6 +20,14 @@ source make_default_config.exp
 cd $src_root/testsuites/common
 source config_cut_app.exp
 
+if [ catch { exec grep BR2_BFIN_FLAT=y $src_root/.config } ] {
+    set binary_flat 0
+} else {
+    set binary_flat 1
+}
+send_user "\n#### binary_flat is $binary_flat. ####\n"
+
+
 step "Make kernel config"
 cd $src_root
 set timeout 300
@@ -129,6 +137,18 @@ while 1 {
     expect {
         -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
+        }
+
+        -re "gettext \\\(BR2_PACKAGE_GETTEXT\\\) \\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Use libgettext.a instead of libgettext.so.*BR2_PACKAGE_GETTEXT_STATIC.*\\\[.*]" {
+            if { $binary_flat == 1 } {
+                send "Y\r"
+            } else {
+                send "\r"
+            }
         }
 
         -re "expat \\\(BR2_PACKAGE_EXPAT\\\) \\\[.*]" {
