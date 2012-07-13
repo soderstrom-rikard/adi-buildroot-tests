@@ -8,6 +8,7 @@ set TITLE [title "$argv0"]
 
 step "Start kermit."
 set kermit_ttydev $ttyUSBdev
+send_user "Please make sure the slave ipaddr and ethaddr are reset to 10.100.4.51 and specific mac address!"
 set targetip 10.100.4.51
 source ../common/spawn_kermit.exp
 
