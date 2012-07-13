@@ -38,7 +38,7 @@ source ../common/kernel_boot.exp
 set wait_time 10
 set wakeup_fail 0
 set sleep_pattern "Syncing filesystems.*Freezing user space processes \.\.\. \\\(elapsed.*seconds\\\) done\.\r\nFreezing remaining freezable tasks \.\.\. \\\(elapsed.*seconds\\\) done\.\r\nSuspending console\\\(s\\\) \\\(use no_console_suspend to debug\\\)"
-set wakeup_pattern "Restarting tasks.*done.*Attached SCSI removable disk"
+set wakeup_pattern "Restarting tasks.*done"
 
 
 proc standby_test_case1 {} {
@@ -53,6 +53,7 @@ proc standby_test_case1 {} {
     global spawn_id
     global sh_prompt
     global dev
+    global mnt_point
 
     set spawn_id $kermit_spawn_id
     sleep 2
@@ -99,6 +100,7 @@ proc standby_test_case1 {} {
     while 1 {
         expect {
             -re $wakeup_pattern {
+		expect "speed config #1"
                 case_pass $case_num
                 break
             }

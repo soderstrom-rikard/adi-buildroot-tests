@@ -108,11 +108,35 @@ while 1 {
         }
 
         -re "USB Gadget Drivers \\\[.*]" {
+            send "M\r"
+        }
+
+        -re "Gadget Zero.*USB_ZERO.*\\\[.*]" {
+            send "M\r"
+        }
+
+        -re "Ethernet Gadget.*USB_ETH.*\\\[.*]" {
+            send "M\r"
+        }
+
+        -re "RNDIS support.*USB_ETH_RNDIS.*\\\[.*]" {
             send "Y\r"
         }
 
-        -re "USB Gadget Drivers.* (\[0-9]+). File-backed Storage Gadget.*\\\(USB_FILE_STORAGE\\\).*\[cC]hoice\\\[.*]" {
-            send "$expect_out(1,string)\r"
+        -re "Gadget Filesystem.*USB_GADGETFS.*\\\[.*]" {
+            send "M\r"
+        }
+
+        -re "File-backed Storage Gadget.*\\\(USB_FILE_STORAGE\\\).*\\\[.*]" {
+            send "M\r"
+        }
+
+        -re "File-backed Storage Gadget testing version.*USB_FILE_STORAGE_TEST.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Serial Gadget.*USB_G_SERIAL.*\\\[.*]" {
+            send "M\r"
         }
 
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
