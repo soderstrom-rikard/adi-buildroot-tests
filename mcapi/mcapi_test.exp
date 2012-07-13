@@ -272,7 +272,7 @@ set corea_case_status  0
 set coreb_case_status  0
 set execption_count  0
 #send -s "$case_name ; ls /tmp/* 2> /dev/null | xargs cat \r"
-spawn  /bin/sh -c "rsh -l root $targetip ' $case_name > /tmp/corea.log  2>&1 \; cat /tmp/* \; dmesg ' "
+spawn  /bin/sh -c "rsh -l root $targetip ' $case_name > /tmp/corea.log  2>&1 \; cat /tmp/* \; sleep 2 \; dmesg ' "
 while 1 {
    expect {
      -re "CoreA Test PASSED" {
