@@ -65,6 +65,88 @@ while 1 {
 }
 send -s "echo 1 > /proc/sys/kernel/printk\r"
 
+#### Test two core case between linux and CCES. ####
+expect "root:/bin>"
+send -s "./icc_loader -l ./BF609_MCAPI_msg_Core1.dxe \r"
+while 1 {
+   expect {
+     -re "OK.*$kernel_prompt" {
+                case_pass $case_num
+                break
+      }
+
+     -re "Hardware Trace" {
+         case_fail $case_num
+         break
+      }
+
+      timeout {
+                case_fail $case_num
+                exit
+      }
+      }
+}
+send -s "\r"
+expect {
+       -re  "root:/bin>" {
+       }
+
+       timeout {
+                case_fail $case_num
+                exit
+       }
+}
+
+spawn  /bin/sh -c "rsh -l root $targetip ' cces_msg1 ' "
+while 1 {
+   expect {
+     -re "CoreA Test PASSED" {
+         send_log "CoreA test pass detected\n"
+         set corea_case_status  1
+      }
+
+#     -re "CoreB Test PASSED" {
+#         send_log "CoreB test pass detected!\n"
+#         set coreb_case_status  1
+#         sleep 1
+#      }
+
+     -re "Hardware Trace" {
+         send_log "Hardware Trace!!!\n"
+         #case_fail $case_num
+      }
+
+     -re "execption" {
+         send_log "execption!!!\n"
+         incr execption_count
+      }
+
+      timeout {
+         send_log "time out!!!\n"
+         print_lastlog
+         case_fail $case_num
+         #exit
+      }
+
+      eof {
+         send_log "The case is ending!! corea_case_status: $corea_case_status, execption_count $execption_count!!\n"
+         if { $corea_case_status != 1 } { 
+         send_log "case fail!!!\n"
+         print_lastlog
+         case_fail $case_num
+         } else {
+        # print_lastlog
+         send_log "case pass!!!\n"
+         case_pass $case_num
+	 }
+         break
+      }
+      }
+}
+#### Test linux two core cases. ####
+ 
+set spawn_id $kermit_spawn_id 
+
 expect "root:/bin>"
 send -s "./icc_loader -l ./icc \r"
 while 1 {
