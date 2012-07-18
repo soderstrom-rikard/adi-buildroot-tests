@@ -31,9 +31,8 @@ global targetip
 global kernel_prompt 
 sleep 5
 set timeout 10
-spawn  /bin/sh 
 expect ">"
-send -s "rsh -l root $targetip ' cat /tmp/* \; dmesg' \r"
+send -s "cat /tmp/* \; dmesg\r"
   while 1 {
            expect {
             -re "COREB.*$kernel_prompt" {
@@ -66,6 +65,17 @@ while 1 {
 send -s "echo 1 > /proc/sys/kernel/printk\r"
 
 #### Test two core case between linux and CCES. ####
+
+incr case_num
+if [ catch { exec rcp BF609_MCAPI_msg_Core1.dxe root@$targetip:/bin/. } ] {
+    send_user "\nFAIL: Copy BF609_MCAPI_msg_Core1.dxe to target board\n"
+    send_user "$errorInfo\n"
+    case_fail $case_num
+} else {
+    send_user "\nPASS: Copy BF609_MCAPI_msg_Core1.dxe to target board\n"
+}
+
+set execption_count  0
 expect "root:/bin>"
 send -s "./icc_loader -l ./BF609_MCAPI_msg_Core1.dxe \r"
 while 1 {
@@ -97,7 +107,8 @@ expect {
        }
 }
 
-spawn  /bin/sh -c "rsh -l root $targetip ' cces_msg1 ' "
+#spawn  /bin/sh -c "rsh -l root $targetip ' cces_msg1 ' "
+send -s "cces_msg1 \r"
 while 1 {
    expect {
      -re "CoreA Test PASSED" {
@@ -128,7 +139,7 @@ while 1 {
          #exit
       }
 
-      eof {
+       -re $kernel_prompt {
          send_log "The case is ending!! corea_case_status: $corea_case_status, execption_count $execption_count!!\n"
          if { $corea_case_status != 1 } { 
          send_log "case fail!!!\n"
@@ -145,6 +156,7 @@ while 1 {
 }
 #### Test linux two core cases. ####
  
+incr case_num
 set spawn_id $kermit_spawn_id 
 
 expect "root:/bin>"
@@ -271,19 +283,13 @@ expect -re $kernel_prompt
 set corea_case_status  0
 set coreb_case_status  0
 set execption_count  0
-#send -s "$case_name ; ls /tmp/* 2> /dev/null | xargs cat \r"
-spawn  /bin/sh -c "rsh -l root $targetip ' $case_name > /tmp/corea.log  2>&1 \; cat /tmp/* \; sleep 2 \; dmesg ' "
+#spawn  /bin/sh -c "rsh -l root $targetip ' $case_name > /tmp/corea.log  2>&1 \; cat /tmp/* \; sleep 2 \; dmesg ' "
+send -s "$case_name > /tmp/corea.log  2>&1 \; cat /tmp/*\r"
 while 1 {
    expect {
      -re "CoreA Test PASSED" {
          send_log "CoreA test pass detected\n"
          set corea_case_status  1
-      }
-
-     -re "CoreB Test PASSED" {
-         send_log "CoreB test pass detected!\n"
-         set coreb_case_status  1
-         sleep 1
       }
 
      -re "Hardware Trace" {
@@ -300,23 +306,63 @@ while 1 {
          send_log "time out!!!\n"
          print_lastlog
          case_fail $case_num
-         #exit
       }
 
-      eof {
-         send_log "The case is ending!! corea_case_status: $corea_case_status, coreb_case_status $coreb_case_status , execption_count $execption_count!!\n"
-         if { $corea_case_status != 1 || $coreb_case_status != 1 } { 
-         send_log "case fail!!!\n"
+      -re $kernel_prompt {
+         send_log "corea_case_status: $corea_case_status !!\n"
+         if { $corea_case_status != 1 } { 
+         send_log "Core A case fail!!!\n"
          print_lastlog
          case_fail $case_num
          } else {
-        # print_lastlog
-         send_log "case pass!!!\n"
+         send_log "Core A case pass!!!\n"
+	 }
+         break
+      }
+      }
+}
+
+if { $corea_case_status == 1 } { 
+send -s "dmesg;date\r"
+while 1 {
+   expect {
+
+     -re "CoreB Test PASSED" {
+         send_log "CoreB test pass detected!\n"
+         set coreb_case_status  1
+      }
+
+     -re "Hardware Trace" {
+         send_log "Hardware Trace!!!\n"
+         #case_fail $case_num
+      }
+
+     -re "execption" {
+         send_log "execption!!!\n"
+         incr execption_count
+      }
+
+      timeout {
+         send_log "time out!!!\n"
+         print_lastlog
+         case_fail $case_num
+      }
+
+      -re $kernel_prompt {
+         send_log "The case is ending!! corea_case_status: $corea_case_status, coreb_case_status $coreb_case_status , execption_count $execption_count!!\n"
+         if { $coreb_case_status != 1 } { 
+         send_log "Core B case fail!!!\n"
+         print_lastlog
+         case_fail $case_num
+         } else {
+         send_log "Core B case pass!!!\n"
          case_pass $case_num
 	 }
          break
       }
       }
+}
+
 }
 }
 }
