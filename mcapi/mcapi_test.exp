@@ -20,8 +20,6 @@ set timeout 8
 set allcases {msg1  msg2  pkt1  pkt2  pkt3  scl1  scl2}
 
 set all_bin_num [llength $allcases]
-# Don't change this test_round. If you need to change the overall testing time, modify the next test_round below.
-set test_round 1
 
 send_user "all_bin_num=$all_bin_num\n"
 
@@ -29,7 +27,7 @@ proc print_lastlog { } {
 
 global targetip
 global kernel_prompt 
-sleep 5
+sleep 1
 set timeout 10
 expect ">"
 send -s "cat /tmp/* \; dmesg\r"
@@ -107,7 +105,6 @@ expect {
        }
 }
 
-#spawn  /bin/sh -c "rsh -l root $targetip ' cces_msg1 ' "
 send -s "cces_msg1 \r"
 while 1 {
    expect {
@@ -136,7 +133,6 @@ while 1 {
          send_log "time out!!!\n"
          print_lastlog
          case_fail $case_num
-         #exit
       }
 
        -re $kernel_prompt {
@@ -146,7 +142,6 @@ while 1 {
          print_lastlog
          case_fail $case_num
          } else {
-        # print_lastlog
          send_log "case pass!!!\n"
          case_pass $case_num
 	 }
@@ -194,29 +189,31 @@ expect {
 # 2 part: allcases run $test_round times respectively. case one, case one,... case two, case two,...
 # 3 part: allcases run $test_round times one by one continously. case one, case two,... case one, case two,...
 
-for {set t 0} {$t < 2*$all_bin_num + 1} {incr t} { 
+for {set t 0} {$t < 3} {incr t} { 
 
-if { $t < 2*$all_bin_num } {
+# Here is the test_round value that can be changed to control the test rounding.
+if { $t == 0 } {
+set test_round 1
+} elseif { $t ==1} {
+set test_round 5 
+} elseif { $t ==2 } {
+set test_round 35 
+}
+
+if { $t < 2 } {
 set bin_num 1 
 } else {
 set bin_num $all_bin_num 
 }
 
-# Here is the test_round value that can be changed to control the test rounding.
-if { $t >= $all_bin_num && $t < 2*$all_bin_num } {
-set test_round 5 
-} elseif { $t >= $all_bin_num  } {
-set test_round 50 
-}
-
-for {set i 0} {$i < $bin_num*$test_round} {incr i} {
+for {set i 0} {$i < $all_bin_num*$test_round} {incr i} {
 
 set spawn_id $kermit_spawn_id 
 
-if { $bin_num == 1 } {
-set test_case_num [ expr $t % $all_bin_num ] 
-} else {
+if { $t == 0 || $t == 2 } {
 set test_case_num [ expr $i % $all_bin_num ] 
+} else {
+set test_case_num [ expr $i / $test_round ] 
 }
 
 set case_name [lindex $allcases $test_case_num ]
@@ -224,12 +221,12 @@ set case_name [lindex $allcases $test_case_num ]
 send -s "\r"
 expect -re $kernel_prompt
 
-if { $t < $all_bin_num } {
-send_log "\n!!!!!#####The first part. Case_name: $case_name, the [ expr $i + 1 ] time testing! t = $t, i = $i ! \n"
-} elseif { $t >= $all_bin_num && $t < 2*$all_bin_num } {
-send_log "\n!!!!!#####The second part. Case_name: $case_name, the [ expr $i + 1 ] time testing! t = $t, i = $i ! \n"
-} elseif { $t >= 2*$all_bin_num } {
-send_log "\n!!!!!#####The third part. Case_name: $case_name, the [ expr ($i - $test_case_num)/$bin_num + 1 ] time testing! t = $t, i = $i ! \n"
+if { $t == 0 } {
+send_log "\n!!!!!##### 1. Case_name: $case_name, the [ expr $t+ 1 ] part , the [ expr $i / $all_bin_num + 1 ] time testing (total $test_round) ! t = $t, i = $i ! \n"
+} elseif { $t == 1 } {
+send_log "\n!!!!!##### 2. Case_name: $case_name, the [ expr $t+ 1 ] part , the [ expr $i - [ expr $i / $test_round  ]*$test_round + 1 ] time testing (total $test_round) ! t = $t, i = $i ! \n"
+} elseif { $t == 2 } {
+send_log "\n!!!!!##### 3. Case_name: $case_name, the [ expr $t+ 1 ] part , the [ expr [ expr $i / $all_bin_num ] + 1 ] time testing (total $test_round) ! t = $t, i = $i ! \n"
 }
 
 incr case_num
@@ -249,7 +246,6 @@ while 1 {
 	  #     }
 	        timeout {
 	                case_fail $case_num
-	                exit
 	       }
   	       }
 
@@ -262,12 +258,10 @@ while 1 {
 
     # -re "execption" {
     #     case_fail $case_num
-    #     exit
     #  }
 
       timeout {
                 case_fail $case_num
-                exit
       }
       }
 }
@@ -277,7 +271,7 @@ expect -re $kernel_prompt
 set timeout 1000
 
 send -s "rm /tmp/* 2> /dev/null; dmesg -c > /dev/null\r"
-sleep 3
+#sleep 3
 expect -re $kernel_prompt
 
 set corea_case_status  0
@@ -366,9 +360,8 @@ while 1 {
 }
 }
 }
-print_lastlog
+#print_lastlog
 
-sleep 4
 send_log "\n"
 send_log "\n$TITLE ............\[PASS\]\n"
 
