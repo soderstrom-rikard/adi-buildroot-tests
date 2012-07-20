@@ -1,0 +1,64 @@
+#!/usr/bin/expect
+#
+# Test adv7842 driver on BF609-EZKIT.
+# Now we support 720p60 input from port HDMIA on BF609-EZKIT and generate yuv file.
+# Check yuv file on PC with PYUV tool.
+#
+# Usage:
+#   ./video_decoder_test.exp board_type
+#
+# Example:
+#   ./video_decoder_test.exp BF609-EZKIT
+#
+
+source ../common/kernel_config.exp
+log_file [log_file_name "$argv0"]
+send_user "Starting $argv0\n"
+set TITLE [title "$argv0"]
+
+step "Start kermit"
+source ../common/spawn_kermit.exp
+
+step "Boot kernel"
+# Different bootargs can be set here.
+# For example:
+# set bootargs $bootargs_param1
+source ../common/kernel_boot.exp
+
+set timeout 10
+expect -re $kernel_prompt
+send "\r"
+expect -re $kernel_prompt
+
+step "Start testing"
+set case_num 0
+
+set timeout 10
+incr case_num
+send "v4l2_video_capture -I 4 -F /adv7842.yuv\r"
+while 1 {
+    expect {
+        -re "\[eE]rror|\[fF]ail|Hardware Trace|SIGSEGV" {
+            case_fail $case_num
+        }
+        -re "frames captured.*$kernel_prompt" {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
+
+if [ catch {exec rcp root@$targetip:/adv7842.yuv ./} ] {
+    send_user "FAIL: rcp video to host PC\n"
+    send_user "$errorInfo\n"
+    case_fail $case_num
+} else {
+    send_user "PASS: rcp video to host PC\n"
+}
+
+all_pass
+send_user "Ending $argv0\n"
+log_file
