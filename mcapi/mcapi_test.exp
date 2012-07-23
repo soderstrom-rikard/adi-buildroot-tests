@@ -197,7 +197,7 @@ set test_round 1
 } elseif { $t ==1} {
 set test_round 5 
 } elseif { $t ==2 } {
-set test_round 35 
+set test_round 30 
 }
 
 if { $t < 2 } {
