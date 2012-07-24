@@ -51,19 +51,6 @@ while 1 {
             send "Y\r"
         }
 
-# Disable some drivers as PM is not well supported
-        -re "SPI support \\\(SPI\\\) \\\[.*]" {
-            send "N\r"
-        }
-
-        -re "Memory Technology Device \\\(MTD\\\) support \\\(MTD\\\) \\\[.*]" {
-            send "N\r"
-        }
-
-        -re "Networking support \\\(NET\\\) \\\[.*]" {
-            send "N\r"
-        }
-
 # audio driver
         #some flash in MTD conflict with adau1761 on bf609-ezkit
         -re "Memory Technology Device \\\(MTD\\\) support \\\(MTD\\\).*\\\[.*]" {

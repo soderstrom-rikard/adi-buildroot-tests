@@ -31,19 +31,6 @@ while 1 {
             send "Y\r"
         }
 
-# Disable some drivers as PM is not well supported
-        -re "SPI support \\\(SPI\\\) \\\[.*]" {
-            send "N\r"
-        }
-
-        -re "Memory Technology Device \\\(MTD\\\) support \\\(MTD\\\) \\\[.*]" {
-            send "N\r"
-        }
-
-        -re "Networking support \\\(NET\\\) \\\[.*]" {
-            send "N\r"
-        }
-
 # MMC configuration
         -re "MMC/SD/SDIO card support \\\(MMC\\\).*\\\[.*]" {
             send "Y\r"
