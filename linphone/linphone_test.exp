@@ -87,6 +87,22 @@ while 1 {
     }
 }
 
+if { $audio_dev == "audio_adau1761" } {
+    incr case_num
+    set timeout 15
+    send "amixer cset name='Headphone Playback Switch' on; amixer cset name='Headphone Playback Volume' 40; amixer cset name='Right Playback Mixer Right DAC Switch' on; amixer cset name='Left Playback Mixer Left DAC Switch' on; amixer cset name='DSP Bypass Playback Switch' on; amixer cset name='DSP Bypass Capture Switch' on; amixer cset name='Digital Capture Volume' 255; amixer cset name='Input 2 Capture Volume' 7; amixer cset name='Input 4 Capture Volume' 7;\r"
+    while 1 {
+        expect {
+            -re $kernel_prompt {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+}
 
 incr case_num
 spawn linphonec
@@ -107,24 +123,6 @@ while 1 {
 }
 
 set spawn_id $kermit_spawn_id
-sleep 2
-
-if { $audio_dev == "audio_adau1761" } {
-    incr case_num
-    set timeout 15
-    send "amixer cset name='Headphone Playback Switch' on; amixer cset name='Headphone Playback Volume' 40; amixer cset name='Right Playback Mixer Right DAC Switch' on; amixer cset name='Left Playback Mixer Left DAC Switch' on; amixer cset name='DSP Bypass Playback Switch' on; amixer cset name='DSP Bypass Capture Switch' on; amixer cset name='Digital Capture Volume' 255; amixer cset name='Input 2 Capture Volume' 7; amixer cset name='Input 4 Capture Volume' 7;\r"
-    while 1 {
-        expect {
-            -re $kernel_prompt {
-                case_pass $case_num
-                break
-            }
-            timeout {
-                case_fail $case_num
-            }
-        }
-    }
-}
 
 set timeout 10
 send "linphonec\r"
@@ -192,6 +190,7 @@ set spawn_id $kermit_spawn_id
 while 1 {
     expect {
         "Connected" {
+            expect "linphonec>"
             case_pass $case_num
             break
         }
@@ -231,14 +230,14 @@ while 1 {
 
 set timeout 10
 incr case_num
-send "\3"
+send "quit\r"
 while 1 {
     expect {
         -re "Hardware Trace:" {
 	    expect -re $kernel_prompt
             case_fail $case_num
         }
-        -re "$kernel_prompt" {
+        -re $kernel_prompt {
             case_pass $case_num
             break
         }
@@ -251,7 +250,7 @@ while 1 {
 
 set spawn_id $host_linphonec_id
 sleep 2
-send "\3"
+send "quit\r"
 expect -re $sh_prompt
 
 if { $underrun_test_status == "0" } {
