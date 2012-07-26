@@ -54,6 +54,12 @@ while 1 {
             }
         }
 
+        -re "prefer static libraries.*BR2_PREFER_STATIC_LIB.*\\\[.*]" {
+            if { $binary_format == "flat" && [string match "BF*" $board_type] } {
+                send  "Y\r"
+            }
+        }
+
         -re "Toolchain has IPv6 support.*BR2_TOOLCHAIN_EXTERNAL_INET_IPV6.*\\\[.*]" {
             send "Y\r"
         }
