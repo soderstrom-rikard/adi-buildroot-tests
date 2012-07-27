@@ -57,6 +57,8 @@ while 1 {
         -re "prefer static libraries.*BR2_PREFER_STATIC_LIB.*\\\[.*]" {
             if { $binary_format == "flat" && [string match "BF*" $board_type] } {
                 send  "Y\r"
+            } else {
+                send  "\r"
             }
         }
 
