@@ -207,6 +207,14 @@ while 1 {
             }
         }
 
+        -re "prefer static libraries.*BR2_PREFER_STATIC_LIB.*\\\[.*]" {
+            if { [string match "*flat" $format] && [string match "BF*" $board_type] } {
+                send "Y\r"
+            } else {
+                send "\r"
+            }
+        }
+
         "\\\(*) \\\[*]" {
             sleep .01
             send "\r"
