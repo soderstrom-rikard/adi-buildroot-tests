@@ -40,6 +40,9 @@ if [ catch {exec rcp adv7842.yuv root@$targetip:/} ] {
     send_user "PASS: rcp test file to target\n"
 }
 
+send "v4l2_video_display -h\r"
+expect -re $kernel_prompt
+
 set timeout 10
 incr case_num
 send "v4l2_video_display -F /adv7842.yuv\r"

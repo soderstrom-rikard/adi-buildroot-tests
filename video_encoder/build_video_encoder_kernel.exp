@@ -43,6 +43,14 @@ while 1 {
             send "N\r"
         }
 
+        -re "Memory Technology Device \\\(MTD\\\) support \\\(MTD\\\).*\\\[.*]" {
+            if { [string match "BF6*" $board_type] } {
+                send "N\r"
+            } else {
+                send "\r"
+            }
+        }
+
 # I2C is required
         -re "I2C support.*I2C.*\\\[.*]" {
             send "Y\r"

@@ -33,6 +33,9 @@ expect -re $kernel_prompt
 step "Start testing"
 set case_num 0
 
+send "v4l2_video_capture -h\r"
+expect -re $kernel_prompt
+
 set timeout 10
 incr case_num
 send "v4l2_video_capture -I 4 -F /adv7842.yuv\r"
