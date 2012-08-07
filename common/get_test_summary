@@ -97,6 +97,7 @@ do
     result=PASS
     case_name=${test_log/_test_log/}
     err_msg=''
+    test_time=`grep -e "Test Period is: [0-9]* miniutes" $test_log  --binary-files=text | awk 'BEGIN { FS="[ ]" } {print $4}'`
 
     ((pass_num += 1))
     gen_testcase "$result" "$class_name" "$case_name" "$test_time" "$result_xml" "$err_msg"
@@ -109,6 +110,7 @@ do
     result=FAIL
     case_name=${test_log/_test_log/}
     err_msg=`tail -n 20 $test_log | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g' | tr -d "\033" | tr -d "\010" | tr -d "\r"`
+    test_time=`grep -e "Test Period is: [0-9]* miniutes" $test_log  --binary-files=text | awk 'BEGIN { FS="[ ]" } {print $4}'`
 
     ((fail_num += 1))
     gen_testcase "$result" "$class_name" "$case_name" "$test_time" "$result_xml" "$err_msg"

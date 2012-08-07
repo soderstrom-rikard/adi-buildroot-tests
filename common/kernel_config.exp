@@ -170,7 +170,8 @@ set CACHE_ENABLED           "enabled"
 set CACHE_DISABLED          "disabled"
 
 set step_sequence_number    1
-
+set start_date [ exec date +%s ]
+set end_date $start_date 
 
 proc log_file_name { file_name } {
     return [ exec echo "$file_name" | sed "s/\\.exp/_log/g" | sed "s/\\.\\(\[a-zA-Z\]\\)/_\\1/g" | sed "s/\\(\.\*\\)\\(_\.\*_log\\)\\(\.\*\\)/\\1\\3\\2/g" ]
@@ -178,6 +179,15 @@ proc log_file_name { file_name } {
 
 proc title { file_name } {
     return [ exec echo "$file_name" | sed "s/_/ /g" | sed "s/\\.\\/\\(\.\*\\).exp/\\1/g" | tr 'a-z' 'A-Z' ]
+}
+
+proc test_period {} {
+
+    global start_date
+    global end_date
+    set end_date [ exec date +%s ] 
+#   send_user "\nStart time: $start_date, End time: $end_date!\n"
+    return [ expr [ expr $end_date - $start_date ] / 60 ] 
 }
 
 proc step { message } {
@@ -232,6 +242,7 @@ proc case_fail { casenum } {
     send_user "\n$TITLE FAIL\n"
     send_log "$TITLE ............\[FAIL\]\n"
 
+    send_log "Test Period is: [ test_period ] miniutes.\n"
     exit
 }
 
@@ -240,6 +251,7 @@ proc all_pass {} {
 
     send_log "\n"
     send_log "\n$TITLE ............\[PASS\]\n"
+    send_log "Test Period is: [ test_period ] miniutes.\n"
 }
 
 proc decide_smp {} {
