@@ -56,7 +56,14 @@ while 1 {
     }
 }
 
-if { $core_clock >= $std_clock } {
+proc change_cpufreq { change_devider } {
+
+global kernel_prompt 
+global case_num 
+global core_clock
+global governor 
+global SMP_STATUS
+
     send "cd /usr/bin\r"
     while 1 {
         expect {
@@ -113,7 +120,7 @@ if { $core_clock >= $std_clock } {
     }
 
     set core_clock_inK [ expr $core_clock * 1000 ] 
-    set new_core_clock_inK [ expr $core_clock_inK / 2 ]
+    set new_core_clock_inK [ expr $core_clock_inK / $change_devider ]
     incr case_num
     send -s  "cpufreq-set -f $new_core_clock_inK\r"
     while 1 {
@@ -130,7 +137,7 @@ if { $core_clock >= $std_clock } {
     }
 
     set new_core_clock [ expr $new_core_clock_inK / 1000 ] 
-    set calibration_after [ expr $calibration_before / 2 ]
+    set calibration_after [ expr $calibration_before / $change_devider ]
  
     incr case_num
     send -s  "cat /proc/cpuinfo\r"
@@ -209,11 +216,6 @@ if { $core_clock >= $std_clock } {
             }
         }
     }
-} else {
-    send_user "The original cpu core clock is not as required.\n"
-    case_fail $case_num
-    exit
-}
 
 send "cd /sys/devices/system/cpu/cpu0/cpufreq/\r"
 while 1 {
@@ -260,6 +262,21 @@ while 1 {
         }
     }
 }
+}
+
+if { $core_clock >= $std_clock } {
+
+change_cpufreq 2
+
+if { $board_type == "BF548-EZKIT" || $board_type == "BF609-EZKIT" } {
+  change_cpufreq 4 
+}
+} else {
+    send_user "The original cpu core clock is not as required.\n"
+    case_fail $case_num
+    exit
+}
+
 
 send_log "\n"
 send_log "\n$TITLE ............\[PASS\]\n"
