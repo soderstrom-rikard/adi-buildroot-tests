@@ -13,7 +13,7 @@ if { $argc < 1} {
 if { $argv0 == "./build_policy_kernel.exp" } {
     puts "File name is $argv0.\n"
 
-    set binary_format  flat
+    set binary_format  fdpic 
     set xenomai        off
 
     if { $argc >= 2} {
