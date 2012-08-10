@@ -109,10 +109,10 @@ while 1 {
             continue
         }
 
-        -re "alsa-lib.*BR2_PACKAGE_ALSA_LIB.*\\\[.*]" {
-            send "N\r"
-        }
-
+#        -re "alsa-lib.*BR2_PACKAGE_ALSA_LIB.*\\\[.*]" {
+#            send "N\r"
+#        }
+#
         -re "ncurses.*BR2_PACKAGE_NCURSES.*\\\[.*]" {
             send "N\r"
         }
