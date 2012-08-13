@@ -215,6 +215,16 @@ while 1 {
             }
         }
 
+        -re "Toolchain prefix.*BR2_TOOLCHAIN_EXTERNAL_CUSTOM_PREFIX.*\\\[.*]" {
+            if { [string match "*flat" $format] && [string match "BF*" $board_type] } {
+                send "bfin-uclinux\r"
+            } elseif { $format == "fdpic" } {
+                send "bfin-linux-uclibc\r"
+            } else {
+                send "\r"
+            }
+        }
+
         "\\\(*) \\\[*]" {
             sleep .01
             send "\r"
