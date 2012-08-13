@@ -54,7 +54,7 @@ complete_xml () {
 ls build*kernel_log*  > test_summary/all_build_log_list
 
 #grep -r "Leaving directory.*uclinux-dist\/vendors\/AnalogDevices" -m 30 -A 3 build*kernel_log* | grep "STEP .* Copy" | sed 's/\-\*/ \*/'| awk '{print$1}'| uniq > test_summary/build_kernel_pass_log
-grep -r "rm.*\.fakeroot" -m 30 -A 3 * | grep "STEP .* Copy" | sed 's/\-\*/ \*/'| awk '{print$1}'| uniq > test_summary/build_kernel_pass_log
+grep -r "rm.*fakeroot" -m 30 -A 20 * | grep "STEP .* Copy" | sed 's/\-\*/ \*/'| awk '{print$1}'| uniq > test_summary/build_kernel_pass_log
 
 echo -e "\n######The following build kernel fails:#######\n" > test_summary/summary
 comm -3  test_summary/all_build_log_list  test_summary/build_kernel_pass_log > test_summary/build_kernel_fail_log
@@ -100,7 +100,7 @@ do
     test_time=`grep -e "Test Period is: [0-9]* miniutes" $test_log  --binary-files=text | awk 'BEGIN { FS="[ ]" } {print $4}'`
 
     ((pass_num += 1))
-    gen_testcase "$result" "$class_name" "$case_name" "`expr $test_time \* 60000`" "$result_xml" "$err_msg"
+    gen_testcase "$result" "$class_name" "$case_name" "`expr $test_time \* 60`" "$result_xml" "$err_msg"
 done
 
 # generate xml content for failed test log
@@ -113,7 +113,7 @@ do
     test_time=`grep -e "Test Period is: [0-9]* miniutes" $test_log  --binary-files=text | awk 'BEGIN { FS="[ ]" } {print $4}'`
 
     ((fail_num += 1))
-    gen_testcase "$result" "$class_name" "$case_name" "`expr $test_time \* 60000`" "$result_xml" "$err_msg"
+    gen_testcase "$result" "$class_name" "$case_name" "`expr $test_time \* 60`" "$result_xml" "$err_msg"
 done
 
 rm -f test_summary/all_test_log_list
