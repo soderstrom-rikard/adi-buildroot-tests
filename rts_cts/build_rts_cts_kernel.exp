@@ -14,7 +14,7 @@ source  make_default_config.exp
 cd $src_root
 set timeout 300
 set baud_rate_done_flag 0
-spawn make ARCH=$arch linux-config
+spawn make linux-config
 
 #puts "Begin the interactive process of configuration"
 while 1 {

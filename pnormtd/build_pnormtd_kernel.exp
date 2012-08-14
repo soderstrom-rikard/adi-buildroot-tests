@@ -23,7 +23,7 @@ source  make_parallel_config.exp
 step "Make kernel config"
 cd $src_root
 set timeout 300
-spawn make ARCH=$arch linux-config
+spawn make linux-config
 
 #puts "Begin the interactive process of configuration"
 while 1 {

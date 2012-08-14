@@ -42,7 +42,7 @@ source make_default_config.exp
 step "Make kernel config"
 cd $src_root
 set timeout 300
-spawn make ARCH=$arch linux-config
+spawn make linux-config
 while 1 {
     expect {
         -nocase -re "\\\[\[^\r]*] (\\\(NEW\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
