@@ -43,7 +43,7 @@ while 1 {
         }
 
         -re "Target ABI.*\[cC]hoice\\\[.*]" {
-            if { $binary_format == "elf" } {
+            if { $binary_format == "fdpic" } {
                 send  "1\r"
             } elseif { $binary_format == "flat" } {
                 send  "2\r"
