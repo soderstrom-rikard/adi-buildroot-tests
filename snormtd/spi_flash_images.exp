@@ -308,9 +308,6 @@ expect {
 }
 }
 
-send_log "\n"
-send_log "\n$TITLE ............\[PASS\]\n"
-
-log_file
+all_pass
 send_user "Ending $argv0\n"
-exit 0
+log_file

@@ -1,8 +1,8 @@
-diff --git a/package/Makefile.package.in b/package/Makefile.package.in
-index bf4e1b4..9edbe5e 100644
---- a/package/Makefile.package.in
-+++ b/package/Makefile.package.in
-@@ -287,7 +287,7 @@ $(BUILD_DIR)/%/.stamp_configured:
+diff --git a/package/pkg-gentargets.mk b/package/pkg-gentargets.mk
+index f20cbb9..4f42ac3 100644
+--- a/package/pkg-gentargets.mk
++++ b/package/pkg-gentargets.mk
+@@ -106,7 +106,7 @@ $(BUILD_DIR)/%/.stamp_configured:
  # Build
  $(BUILD_DIR)/%/.stamp_built::
  	@$(call MESSAGE,"Building")
