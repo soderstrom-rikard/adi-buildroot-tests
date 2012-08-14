@@ -190,7 +190,7 @@ proc test_period {} {
     global end_date
     set end_date [ exec date +%s ] 
 #   send_user "\nStart time: $start_date, End time: $end_date!\n"
-    return [ expr [ expr $end_date - $start_date ] / 60 ] 
+    return [ expr $end_date - $start_date ]  
 }
 
 proc step { message } {
@@ -245,7 +245,7 @@ proc case_fail { casenum } {
     send_user "\n$TITLE FAIL\n"
     send_log "$TITLE ............\[FAIL\]\n"
 
-    send_log "Test Period is: [ test_period ] miniutes.\n"
+    send_log "Test Period is: [ test_period ] seconds.\n"
     exit
 }
 
@@ -254,7 +254,7 @@ proc all_pass {} {
 
     send_log "\n"
     send_log "\n$TITLE ............\[PASS\]\n"
-    send_log "Test Period is: [ test_period ] miniutes.\n"
+    send_log "Test Period is: [ test_period ] seconds.\n"
 }
 
 proc decide_smp {} {
