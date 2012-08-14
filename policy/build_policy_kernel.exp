@@ -39,7 +39,11 @@ while 1 {
         }
 
         -re "Target Architecture\r\n.*(\[0-9]+). $arch .*\\\[.*]" {
-            send "$expect_out(1,string)\r"
+            if { $arch == "blackfin" } {
+                send  "4\r"
+            } else { 
+                send "$expect_out(1,string)\r"
+            }
         }
 
         -re "Target ABI.*\[cC]hoice\\\[.*]" {

@@ -73,7 +73,7 @@ if { $board_type == "BEAGLE" } {
 
     set boot_image uImage
 } elseif { $board_type == "BF537-STAMP" } {
-    set arch "Blackfin"
+    set arch "blackfin"
     set board_defconfig "bf537-stamp_defconfig"
     set eth_dev "eth0"
     set usb_eth_dev "eth1"
@@ -92,7 +92,7 @@ if { $board_type == "BEAGLE" } {
 
     set boot_image uImage
 } elseif { $board_type == "BF609-EZKIT" } {
-    set arch "Blackfin"
+    set arch "blackfin"
     set board_defconfig "bf609-ezkit_defconfig"
     if { [info exists binary_format] && $binary_format == "flat" } {
         set board_defconfig "bf609-ezkit-flat_defconfig"
