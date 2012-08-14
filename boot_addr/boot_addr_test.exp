@@ -41,21 +41,14 @@ while 1 {
 }
 
 incr case_num
-
-send_log "\nmap_text  $map_text\n"
 send_user "\nmap_text  $map_text\n"
+send_user "\nCheck if map_text is the right value\n"
 if {$map_text == 0x00002000 } {
-   send_log "\n"
    case_pass $case_num
 } else {
-   send_log "\n"
    case_fail $case_num
 }
 
-send_log "\n"
-send_log "\n$TITLE ............\[PASS\]\n" 
-
+all_pass
 send_user "Ending $argv0\n"
-
 log_file
-

@@ -362,12 +362,6 @@ while 1 {
 }
 #print_lastlog
 
-send_log "\n"
-send_log "\n$TITLE ............\[PASS\]\n"
-
+all_pass
 send_user "Ending $argv0\n"
 log_file
-
-
-
-

@@ -480,11 +480,6 @@ while 1 {
     }
 }
 
-
-send_log "\n"
-send_log "\n$TITLE ............\[PASS\]\n"
-
-exit
+all_pass
+send_user "Ending $argv0\n"
 log_file
- 
-send_user "\nEnding snormtd_test.exp\n"

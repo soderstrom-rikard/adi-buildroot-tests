@@ -91,17 +91,16 @@ expect {
        }
 }
 }
+
+incr case_num
+send_user "Check if SCLK is in the right range\n"
 if { [ expr $SCLK/10000000.0*5 - $ISR_in ] >= 0 &&  [ expr $SCLK/10000000.0*5 - $ISR_out ] < 10 } {
-    send_user "\n"
-    send_user "\n$TITLE ............\[PASS\]\n"
+    case_pass $case_num
 } else {
     send_user "\n"
     case_fail $case_num
 }
 
+all_pass
 send_user "Ending $argv0\n"
 log_file
-
-
-
-

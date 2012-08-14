@@ -118,22 +118,19 @@ send -s "reboot\r"
 
 }
 
-send_log "\n$TITLE ............\[PASS\]\n"
-
-log_file
- 
 while 1 {
-       expect {
-         "Hit any key " {
-             send "\r"
-             expect ">"
-             break
-         }
+    expect {
+        "Hit any key " {
+            send "\r"
+            expect ">"
+            break
+        }
+        timeout {
+            break
+        }
+    }
+}
 
-         timeout {
-             break
-         }
-      }
-   }
-
-send_user "\nEnding jffs2_reboot_test.exp\n"
+all_pass
+send_user "Ending $argv0\n"
+log_file

@@ -114,13 +114,14 @@ while 1 {
 set TIMER_TICK_AVERAGE [ expr [ expr $TIMER_TICK_END - $TIMER_TICK_START ] / [ expr $END_TIME - $START_TIME ] ]
 send_user "TIMER_TICK_AVERAGE  $TIMER_TICK_AVERAGE\r"
 
+incr case_num
+send_user "\rCheck if TIMER_TICK_AVERAGE is in the right range\r"
 if {$TIMER_TICK_AVERAGE < [expr $timer_frequency + 25]   && $TIMER_TICK_AVERAGE > [expr $timer_frequency - 25] } {
-    send_user "\n"
-    send_user "\n$TITLE ............\[PASS\]\n"
+    case_pass $case_num
 } else {
-    send_user "\n"
     case_fail $case_num
 }
 
+all_pass
 send_user "Ending $argv0\n"
 log_file
