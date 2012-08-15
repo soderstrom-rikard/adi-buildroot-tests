@@ -532,19 +532,19 @@ if [ ${AUTO_RUN_STATUS[$((n+4))]} -eq 1 ] ; then
     ./build_${AUTO_TESTCASE[$((n+4))]}_kernel.exp $BOARD_TYPE 100 >/dev/null 2>&1
     ./${AUTO_TESTCASE[$((n+4))]}_test.exp $BOARD_TYPE 100 >/dev/null 2>&1
     copy_image_config "timer100"
-    mv $TESTSUITES_DIR/${AUTO_TESTCASE[$((n+4))]}/*_log  $THIS_LOG
+    mv $TESTSUITES_DIR/${AUTO_TESTCASE[$((n+4))]}/*_log  $THIS_LOG/timer100_test_log
 
     # Test timer freqency 250
     ./build_${AUTO_TESTCASE[$((n+4))]}_kernel.exp $BOARD_TYPE 250 >/dev/null 2>&1
     ./${AUTO_TESTCASE[$((n+4))]}_test.exp $BOARD_TYPE 250 >/dev/null 2>&1
     copy_image_config "timer250"
-    mv $TESTSUITES_DIR/${AUTO_TESTCASE[$((n+4))]}/*_log  $THIS_LOG
+    mv $TESTSUITES_DIR/${AUTO_TESTCASE[$((n+4))]}/*_log  $THIS_LOG/timer250_test_log
 
     # Test timer freqency 1000
     ./build_${AUTO_TESTCASE[$((n+4))]}_kernel.exp $BOARD_TYPE 1000 >/dev/null 2>&1
     ./${AUTO_TESTCASE[$((n+4))]}_test.exp $BOARD_TYPE 1000 >/dev/null 2>&1
     copy_image_config "timer1000"
-    mv $TESTSUITES_DIR/${AUTO_TESTCASE[$((n+4))]}/*_log  $THIS_LOG
+    mv $TESTSUITES_DIR/${AUTO_TESTCASE[$((n+4))]}/*_log  $THIS_LOG/timer1000_test_log
 
     echo  "End testing timer..."
     sleep 10
