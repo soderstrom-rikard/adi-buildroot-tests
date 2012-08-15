@@ -86,7 +86,7 @@ while 1 {
         }
 
         -re "Initramfs source file.*INITRAMFS_SOURCE.*\\\[.*]" {
-            send "$src_root/output/images/rootfs.initramfs\r"
+            send "$src_root/output/images/rootfs.cpio\r"
         }
 
         -re "Generic uClinux RAM/ROM filesystem support.*MTD_UCLINUX.*\\\[.*]" {
