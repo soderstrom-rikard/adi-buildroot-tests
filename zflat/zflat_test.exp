@@ -42,7 +42,7 @@ expect {
 }
 send -s "bfin-uclinux-flthdr -p $src_root/output/target/bin/version\r"
 expect {
-       -re "$sh_prompt" { }
+       -re "Compressed.*$sh_prompt" { }
         timeout { send_user "Failed to show flthdr info.\n"
                 break }
 }
