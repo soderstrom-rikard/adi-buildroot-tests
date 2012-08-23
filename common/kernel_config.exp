@@ -4,7 +4,9 @@ source  ../common/board_info.exp
 
 # directory and file locations
 set workspace_root /home/test/workspace
-if { [info exists env(BOARD_CONFIG)] } {
+if { [info exists env(NODE_NAME)] } {
+    set src_root $workspace_root/src/kernel/label/$env(NODE_NAME)
+} elseif { [info exists env(BOARD_CONFIG)] } {
     set src_root $workspace_root/src/kernel/label/$env(BOARD_CONFIG)
 } else {
     set src_root $workspace_root/src/kernel
