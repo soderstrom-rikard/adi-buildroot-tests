@@ -76,6 +76,22 @@ while 1 {
 }
 
 sleep 2
+set timeout 10
+incr case_num
+send "agent 0000 &\r"
+while 1 {
+    expect {
+        -re $kernel_prompt {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
+
+sleep 2
 set timeout 30
 incr case_num
 send "hcitool -i hci0 info $SLV_BD_ADDR\r"
