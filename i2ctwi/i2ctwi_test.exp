@@ -21,7 +21,7 @@ set case_num 0
 
 set timeout 10
 incr case_num
-send "modprobe twi_smbus_test\r"
+send "insmod /lib/modules/twi_smbus_test.ko\r"
 while 1 {
     expect {
         -re "PASS.*$kernel_prompt" {
