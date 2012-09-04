@@ -125,7 +125,7 @@ set timeout 180
 send -s "ubiattach /dev/ubi_ctrl -m $nand_rootfs_num\r"
 while 1 {
     expect {
-        -re "UBI device number 0.*$kernel_prompt" {
+        -re "UBI: attaching .* to ubi0.*$kernel_prompt" {
             case_pass $case_num
             break
         }
@@ -379,7 +379,7 @@ while 1 {
 }
 
 incr case_num
-send -s "dd if=/dev/zero of=10meg bs=1M count=10\r"
+send -s "dd if=/dev/zero of=5meg bs=1M count=5\r"
 while 1 {
     expect {
         -re "records in.*records out.*$kernel_prompt" {
@@ -394,7 +394,7 @@ while 1 {
 
 set timeout 10
 incr case_num
-send -s "while : ; do cat 10meg > /mnt/foo ; date ; done\r"
+send -s "while : ; do cat 5meg > /mnt/foo ; date ; done\r"
 while 1 {
     expect {
         -re $kernel_prompt {
@@ -415,6 +415,13 @@ set timeout 20
 expect -re $sh_prompt
 send -s "telnet $targetip\r"
 expect {
+       "login:" {  }
+       timeout { send_user "Failed telnet login\n"
+       }
+}
+
+send -s "root\r"
+expect {
     -re $kernel_prompt {
         case_pass $case_num
     }
@@ -425,7 +432,7 @@ expect {
 }
 
 incr case_num
-set timeout 200
+set timeout 20
 send -s "watch -n 1 ps\r"
 while 1 {
     expect {
@@ -449,7 +456,7 @@ while 1 {
 }
 
 set spawn_id $kermit_spawn_id
-set timeout 5
+set timeout 15
 send -s "\3"
 while 1 {
     expect {
@@ -483,7 +490,7 @@ while 1 {
 
 incr case_num
 set timeout 60
-send -s "ubidetach /dev/ubi_ctrl -m $nand_rootfs_num\r"
+send -s "ubidetach -d 0 /dev/ubi_ctrl\r"
 while 1 {
     expect {
         -re "(\[fF]ail|\[eE]rror|No).*$kernel_prompt" {
