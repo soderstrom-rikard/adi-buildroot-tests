@@ -127,6 +127,10 @@ while 1 {
             continue
         }
 
+        -re "Toolchain has WCHAR support.*BR2_TOOLCHAIN_EXTERNAL_WCHAR.*\\\[.*]" {
+            send "Y\r"
+        }
+
         -re "e2fsprogs.*BR2_PACKAGE_E2FSPROGS.*\\\[.*]" {
             send "Y\r"
         }
