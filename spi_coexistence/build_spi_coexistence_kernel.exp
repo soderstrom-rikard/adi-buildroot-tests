@@ -215,23 +215,6 @@ while 1 {
             send "Y\r"
         }
 
-
-#        -re "tone.*USER_PLAY_TONE.*\\\[.*]" {
-#            send "Y\r"
-#        }
-#
-#        -re "mp3play.*USER_MP3PLAY_MP3PLAY.*\\\[.*]" {
-#            send "Y\r"
-#        }
-#
-#        -re "vplay.*USER_VPLAY_VPLAY.*\\\[.*]" {
-#            send "Y\r"
-#        }
-#
-#        -re "vrec.*USER_VPLAY_VREC.*\\\[.*]" {
-#            send "Y\r"
-#        }
-#
         -re "bonnie\\\+\\\+.*BR2_PACKAGE_BONNIE.*\\\[.*]" {
             send "Y\r"
         }
