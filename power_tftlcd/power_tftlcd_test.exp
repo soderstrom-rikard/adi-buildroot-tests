@@ -20,17 +20,9 @@ set TITLE [title "$argv0"]
 append TITLE " ($pm_state)"
 set log_name power_tftlcd_${pm_state}_test_log
 
-if { $board_type == "BF548-EZKIT" }  {
-    set wakeup_pattern "Syncing filesystems \.\.\. done.*Freezing user space processes \.\.\. \\\(elapsed.*seconds\\\) done.*Freezing remaining freezable tasks \.\.\. \\\(elapsed.*seconds\\\) done.*Suspending console\\\(s\\\).*Restarting tasks.*$kernel_prompt"
-} else {
-    set wakeup_pattern "Syncing filesystems \.\.\. done\.\r\nFreezing user space processes \.\.\. \\\(elapsed.*seconds\\\) done\.\r\nFreezing remaining freezable tasks \.\.\. \\\(elapsed.*seconds\\\) done\.\r\nSuspending console\\\(s\\\).*Restarting tasks \.\.\. done.*$kernel_prompt"
-}
-
-if { $pm_state == "mem" } {
-    if { $board_type == "BF533-STAMP" || $board_type == "BF533-EZKIT" }  {
-        set wakeup_pattern "wakeup from.*rtcwake: short write.*$kernel_prompt"
-    }
-}
+log_file $log_name
+send_user "Starting $argv0\n"
+send_user "\n#### Power management state is $pm_state. ####\n"
 
 
 step "Start kermit"
@@ -45,6 +37,17 @@ source ../common/kernel_boot.exp
 
 set wait_time 15
 set wakeup_fail 0
+if { $board_type == "BF548-EZKIT" }  {
+    set wakeup_pattern "Syncing filesystems \.\.\. done.*Freezing user space processes \.\.\. \\\(elapsed.*seconds\\\) done.*Freezing remaining freezable tasks \.\.\. \\\(elapsed.*seconds\\\) done.*Suspending console\\\(s\\\).*Restarting tasks.*$kernel_prompt"
+} else {
+    set wakeup_pattern "Syncing filesystems \.\.\. done\.\r\nFreezing user space processes \.\.\. \\\(elapsed.*seconds\\\) done\.\r\nFreezing remaining freezable tasks \.\.\. \\\(elapsed.*seconds\\\) done\.\r\nSuspending console\\\(s\\\).*Restarting tasks \.\.\. done.*$kernel_prompt"
+}
+
+if { $pm_state == "mem" } {
+    if { $board_type == "BF533-STAMP" || $board_type == "BF533-EZKIT" }  {
+        set wakeup_pattern "wakeup from.*rtcwake: short write.*$kernel_prompt"
+    }
+}
 
 proc standby_test_case1 {} {
     global case_num
