@@ -1,12 +1,12 @@
 #!/usr/bin/expect
 #
-# Build Kernel for tft lcd driver test
+# Build script for tft lcd power management test.
 #
 # Usage:
-#   ./build_tftlcd_kernel.exp board_type
+#   ./build_power_tftlcd_kernel.exp board_type
 #
 # Example:
-#   ./build_tftlcd_kernel.exp BF537-STAMP
+#   ./build_power_tftlcd_kernel.exp BF537-STAMP
 #
 
 source ../common/kernel_config.exp
@@ -25,6 +25,10 @@ while 1 {
     expect {
         -nocase -re "\\\[\[^\r]*] (\\\(NEW\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
+        }
+
+        -re "Suspend to RAM and standby.*SUSPEND.*\\\[.*]" {
+            send "Y\r"
         }
 
         -re "I2C support \\\(I2C\\\).*\\\[.*]" {
@@ -110,6 +114,41 @@ while 1 {
         timeout {
             send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
             exit
+        }
+    }
+}
+
+step "Make busybox config"
+cd $src_root
+set timeout 300
+spawn make busybox-config
+while 1 {
+    expect {
+        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+            continue
+        }
+
+        -re "rtcwake \\\(RTCWAKE\\\) \\\[.*]" {
+            send "Y\r"
+        }
+
+        "\\\(*) \\\[*]" {
+            sleep .01
+            send "\r"
+        }
+
+        -re "\[cC]hoice\\\[.*]:" {
+            send "\r"
+        }
+
+        eof {
+            send_user "End of configuration"
+            break
+        }
+
+        timeout {
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config"
+            break
         }
     }
 }
