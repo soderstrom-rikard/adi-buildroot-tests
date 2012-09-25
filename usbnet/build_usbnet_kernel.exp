@@ -1,6 +1,6 @@
 #!/usr/bin/expect --
 #
-# Build Kernel for wake up test through uart
+# Build Kernel for USB network test of PLX NET2272
 #
 # Usage:
 #   ./build_uart_wakeup_kernel.exp board_type
@@ -27,30 +27,37 @@ while 1 {
             continue
         }
 
-        -re "Virtual terminal.*VT.*\\\[.*]" {
-            send "N\r"
+        -re "SPI controller driver for ADI Blackfin5xx.*SPI_BFIN.*\\\[.*]" {
+            #GPIO_6 conflict
+            send "M\r"
         }
 
         -re "USB support.*USB_SUPPORT.*\\\[.*]" {
-            #USB driver now doesn't support power function
-            send "N\r"
-        }
-
-        -re "UART Mode.*(\[0-9])\. PIO mode \\\(SERIAL_BFIN_PIO\\\).*\[cC]hoice\\\[.*]:" {
-            send "$expect_out(1,string)\r"
-        }
-
-#Power Management
-        -re "Suspend to RAM and standby \\\(SUSPEND\\\) \\\[.*]" {
             send "Y\r"
         }
 
-        -re "Power Saving Mode.*(\[0-9])\. Sleep \\\(PM_BFIN_SLEEP\\\).*\[cC]hoice\\\[.*]:" {
+        -re "Support for Host-side USB.*USB.*\\\[.*]" {
+            send "N\r"
+        }
+
+        -re "USB Gadget Support.*USB_GADGET.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "PLX NET2272.*USB_NET2272.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "USB Gadget Drivers \\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "(\[0-9]+)\. Ethernet Gadget.*choice\\\[.*]:" {
             send "$expect_out(1,string)\r"
         }
 
-        -re "($anomalous_option) \\\[\[^\]]+/.]" {
-            send "\r"
+        -re "RNDIS support.*USB_ETH_RNDIS.*\\\[.*]" {
+            send "Y\r"
         }
 
         "\\\(*) \\\[*]" {
