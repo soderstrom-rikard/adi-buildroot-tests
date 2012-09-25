@@ -1,12 +1,12 @@
 #!/usr/bin/expect --
 #
-# Build kernel for ethernet wake up test
+# Build Kernel for wake up test through uart
 #
 # Usage:
-#   ./build_ethernet_wakeup_kernel.exp board_type
+#   ./build_uart_wakeup_kernel.exp board_type
 #
 # Example:
-#   ./build_ethernet_wakeup_kernel.exp BF609-EZKIT
+#   ./build_uart_wakeup_kernel.exp BF537-STAMP
 #
 
 source ../common/kernel_config.exp
@@ -23,7 +23,7 @@ set timeout 300
 spawn make linux-config
 while 1 {
     expect {
-        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+        -nocase -re "\\\[\[^\r]*] (\\\(NEW\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
         }
 
@@ -36,15 +36,11 @@ while 1 {
             send "N\r"
         }
 
-        -re "MMC/SD/SDIO card support \\\(MMC\\\).*\\\[.*]" {
-            send "N\r"
+        -re "UART Mode.*(\[0-9])\. PIO mode \\\(SERIAL_BFIN_PIO\\\).*\[cC]hoice\\\[.*]:" {
+            send "$expect_out(1,string)\r"
         }
 
 #Power Management
-        -re "Power Management support \\\(PM\\\) \\\[.*]" {
-            send "Y\r"
-        }
-
         -re "Suspend to RAM and standby \\\(SUSPEND\\\) \\\[.*]" {
             send "Y\r"
         }
@@ -67,13 +63,13 @@ while 1 {
         }
 
         eof {
-            send_user "\nEnd of configuration\n"
+            send_user "End of configuration"
             break
         }
 
         timeout {
-            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
-            exit
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config"
+            break
         }
     }
 }
@@ -88,8 +84,8 @@ while 1 {
             continue
         }
 
-        -re "ethtool.*BR2_PACKAGE_ETHTOOL.*\\\[.*]" {
-            send "Y\r"
+        -re "($anomalous_option) \\\[\[^\]]+/.]" {
+            send "\r"
         }
 
         "\\\(*) \\\[*]" {
