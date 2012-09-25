@@ -145,6 +145,13 @@ while 1 {
                 break
             }
         }
+
+        -re "(Trace:.*\r\n\r\n)|(Kernel panic)" {
+            expect -re $kernel_prompt
+            send_user "\nKernel show dump info or panic\n"
+            case_fail $case_num
+        }
+
         timeout {
             send_user "\ntest timeout\n"
             break
