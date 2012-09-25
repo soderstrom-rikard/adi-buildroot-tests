@@ -27,13 +27,30 @@ while 1 {
             continue
         }
 
-        -re "Suspend to RAM and standby.*SUSPEND.*\\\[.*]" {
+        -re "Virtual terminal.*VT.*\\\[.*]" {
+            send "N\r"
+        }
+
+        -re "USB support.*USB_SUPPORT.*\\\[.*]" {
+            #USB driver now doesn't support power function
+            send "N\r"
+        }
+
+        -re "MMC/SD/SDIO card support \\\(MMC\\\).*\\\[.*]" {
+            send "N\r"
+        }
+
+#Power Management
+        -re "Power Management support \\\(PM\\\) \\\[.*]" {
             send "Y\r"
         }
 
-# Disable some drivers as PM is not well supported
-        -re "Memory Technology Device \\\(MTD\\\) support \\\(MTD\\\) \\\[.*]" {
-            send "N\r"
+        -re "Suspend to RAM and standby \\\(SUSPEND\\\) \\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Power Saving Mode.*(\[0-9])\. Sleep \\\(PM_BFIN_SLEEP\\\).*\[cC]hoice\\\[.*]:" {
+            send "$expect_out(1,string)\r"
         }
 
         -re "($anomalous_option) \\\[\[^\]]+/.]" {

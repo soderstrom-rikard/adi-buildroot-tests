@@ -28,7 +28,7 @@ while 1 {
             break
         }
         timeout {
-            send_user "Fail: no kernel response" 
+            send_user "Fail: no kernel response"
             exit
         }
     }
@@ -71,6 +71,21 @@ send -s "set ipaddr $targetip\r"
 expect -re $uboot_prompt
 send -s "save\r"
 expect -re $uboot_prompt
+
+send -s "printenv ethaddr\r"
+while 1 {
+    expect {
+        -nocase -re "ethaddr=((\[0-9a-f]+:)\{5\}\[0-9a-f]\{2\}).*>" {
+            set target_mac $expect_out(1,string)
+            send_user "mac address=$target_mac\n"
+            break
+        }
+        timeout {
+            send_user "FAIL: get mac address\n"
+            break
+        }
+    }
+}
 
 set bootcmd bootm
 set bootaddr_low 0x1000000
