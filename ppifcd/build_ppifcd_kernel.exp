@@ -118,6 +118,10 @@ while 1 {
             send "Y\r"
         }
 
+        -re "bfin canned demos.*BR2_PACKAGE_BFIN_CANNED_DEMOS.*\\\[.*]" {
+            send "Y\r"
+        }
+
         -re "CGI based Test Application for the PPI Frame Capture Driver.*BR2_PACKAGE_PPIFCDCGI.*\\\[.*]" {
             send "Y\r"
         }
