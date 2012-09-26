@@ -38,6 +38,10 @@ while 1 {
             continue
         }
 
+        -re "Virtual terminal.*VT.*\\\[.*]" {
+            send "N\r"
+        }
+
         -re "SCSI device support \\\(SCSI\\\).*\\\[.*]" {
             if { [string match "BF527-EZKIT*" $board_type] } {
                 send "Y\r"
@@ -56,10 +60,6 @@ while 1 {
         }
 
         -re "Support for Host-side USB.*USB.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "USB device class-devices.*USB_DEVICE_CLASS.*\\\[.*]" {
             send "Y\r"
         }
 
@@ -89,12 +89,8 @@ while 1 {
             send "Y\r"
         }
 
-        -re "USB Peripheral Controller \\\[.*]" {
+        -re "Inventra HDRC USB Peripheral.*USB_GADGET_MUSB_HDRC.*\\\[.*]" {
             send "Y\r"
-        }
-
-        -re "USB Peripheral Controller.*(\[0-9]+). Inventra HDRC USB Peripheral.*USB_GADGET_MUSB_HDRC.*\[cC]hoice\\\[.*]" {
-            send "$expect_out(1,string)\r"
         }
 
         -re "USB Gadget Drivers \\\[.*]" {
