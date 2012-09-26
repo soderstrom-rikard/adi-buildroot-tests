@@ -19,7 +19,7 @@ set TITLE [title "$argv0 ($spi_mode)"]
 #set NUM_CYLINDER +[lindex $argv 0]
 #set FILE_SIZE [lindex $argv 1]
 set NUM_CYLINDER 1024
-set FILE_SIZE 10
+set FILE_SIZE 5
 
 step "Start kermit."
 source ../common/spawn_kermit.exp
@@ -66,7 +66,7 @@ while 1 {
         -re "No such .*$kernel_prompt" {
             case_fail $case_num
         }
-        -re "mkdosfs \[0-9]\.\[0-9]+.*$kernel_prompt" {
+        -re "\[0-9]\.\[0-9]+.*$kernel_prompt" {
             send_user "mkdosfs done, test pass\n"
             case_pass $case_num
             break
@@ -210,6 +210,22 @@ expect -re $kernel_prompt
 
 send_user "Creat 2 partitions done\n"
 
+#incr case_num
+#set timeout 5
+#send "mdev -s\r"
+#while 1 {
+#    expect {
+#        -re "$kernel_prompt" {
+#            case_pass $case_num
+#            break
+#        }
+#        timeout {
+#            case_fail $case_num
+#        }
+#    }
+#}
+sleep 5
+
 incr case_num
 set timeout 5
 send "ls /sys/block/$mmc_dev\r"
@@ -283,10 +299,14 @@ set timeout 90
 send "mke2fs /dev/$mmc_dev1\r"
 while 1 {
     expect {
-        -re "Writing superblocks and filesystem accounting information: done.*$kernel_prompt" {
+        -re "Filesystem label.*$kernel_prompt" {
             send_user "mke2fs done, test pass\n"
             case_pass $case_num
             break
+        }
+        -re "\[Ee]rror|failed.*$kernel_prompt" {
+            send_user "mke2fs fail, test fail\n"
+            case_fail $case_num
         }
         timeout {
             send_user "mke2fs timeout, test fail\n"
@@ -324,7 +344,7 @@ while 1 {
         -re "No such .*$kernel_prompt" {
             case_fail $case_num
         }
-        -re "mkdosfs.*$kernel_prompt" {
+        -re "\[0-9]\.\[0-9]+.*$kernel_prompt" {
             send_user "mkdosfs done, test pass\n"
             case_pass $case_num
             break
@@ -597,10 +617,14 @@ set timeout 90
 send "mke2fs /dev/$mmc_dev1\r"
 while 1 {
     expect {
-        -re "Writing superblocks and filesystem accounting information: done.*$kernel_prompt" {
+        -re "Filesystem label.*$kernel_prompt" {
             send_user "mke2fs done, test pass\n"
             case_pass $case_num
             break
+        }
+        -re "\[Ee]rror|failed.*$kernel_prompt" {
+            send_user "mke2fs fail, test fail\n"
+            case_fail $case_num
         }
         timeout {
             send_user "mke2fs timeout, test fail\n"
@@ -621,7 +645,7 @@ expect -re $kernel_prompt
 send "ifconfig eth0 $targetip up\r"
 expect -re $kernel_prompt
 sleep 5
-exec rcp ../runcp.sh root@$targetip:/.
+exec rcp ../common/runcp.sh root@$targetip:/.
 sleep 1
 set timeout 900
 send "./runcp.sh\r"
@@ -826,13 +850,14 @@ set timeout 120
 send "time mke2fs /dev/$mmc_dev1\r"
 while 1 {
     expect {
-        -re "No such .*$kernel_prompt" {
-            case_fail $case_num
-        }
-        -re "Writing superblocks and filesystem accounting information: done.*$kernel_prompt" {
+        -re "Filesystem label.*$kernel_prompt" {
             send_user "mke2fs done, test pass\n"
             case_pass $case_num
             break
+        }
+        -re "\[Ee]rror|failed|No such.*$kernel_prompt" {
+            send_user "mke2fs fail, test fail\n"
+            case_fail $case_num
         }
         timeout {
             send_user "mke2fs timeout, test fail\n"
