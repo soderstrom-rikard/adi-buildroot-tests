@@ -9,7 +9,7 @@ fi
 cvs_server_addr=$1
 arch_type=$2
 CWD=`pwd`
-LTP_SUB_DIR=ltp-full-20101031
+LTP_SUB_DIR=ltp-full-20120903
 
 
 # Remove old ltp source directory
