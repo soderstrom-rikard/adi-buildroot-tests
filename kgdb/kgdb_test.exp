@@ -61,7 +61,7 @@ spawn /bin/sh
 expect -re  $sh_prompt
 
 set timeout 10
-send -s "ps aux | grep bfin-uclinux-gdb\r"
+send -s "ps | grep bfin-uclinux-gdb\r"
 expect {
     -re  $sh_prompt { }
     timeout {

@@ -52,7 +52,7 @@ while 1 {
 }
 
 incr case_num
-send -s  "ps aux| grep watchdog | head -1 \r" 
+send -s  "ps | grep watchdog | head -1 \r" 
 while 1 {
    expect {
      -re " (\[0-9]+) root" {

@@ -112,7 +112,7 @@ while 1 {
          }
      }
 }
-send -s "ps auxf | grep ptpd | grep -v grep | head -1\r" 
+send -s "ps | grep ptpd | grep -v grep | head -1\r" 
 while 1 {
    expect {
       -re " (\[0-9]+) +root.*ptpd.*$kernel_prompt" {
@@ -192,7 +192,7 @@ while 1 {
 
 incr case_num
 
-send -s "ps auxf\r" 
+send -s "ps \r" 
 while 1 {
    expect {
       -re " (\[0-9]+) +root.*ptpd.*$kernel_prompt" {
@@ -278,7 +278,7 @@ while 1 {
 sleep 60
 incr case_num
 
-send -s "ps auxf\r" 
+send -s "ps \r" 
 while 1 {
    expect {
       -re " (\[0-9]+) +root.*ptpd.*$kernel_prompt" {
@@ -329,7 +329,7 @@ while 1 {
        }
      }
 }
-send -s "ps auxf | grep ptpd | grep -v grep | head -1\r" 
+send -s "ps | grep ptpd | grep -v grep | head -1\r" 
 while 1 {
    expect {
       -re " (\[0-9]+) +root.*ptpd.*$kernel_prompt" {
