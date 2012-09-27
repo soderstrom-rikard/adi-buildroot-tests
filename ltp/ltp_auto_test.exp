@@ -2358,7 +2358,7 @@ if [ catch {exec ./build_ltp.sh $cvs_server_addr $arch > build_ltp_log} ] {
 #set LTP_SOURCE_DIR		"$cwd/ltp/$LTP_SUB_DIR"
 #set LTP_TESTCASES_DIR           "$cwd/ltp/$LTP_SUB_DIR/testcases/bin"
 #set LTP_SUB_DIR			[exec cat ltp/current]
-set LTP_SOURCE_NAME             "ltp-full-20101031"
+set LTP_SOURCE_NAME             "ltp-full-20120903"
 set LTP_SOURCE_DIR		"$cwd/$LTP_SOURCE_NAME"
 set LTP_TESTCASES_DIR           "$cwd/$LTP_SOURCE_NAME/installation/testcases/bin"
 
