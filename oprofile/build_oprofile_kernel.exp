@@ -96,6 +96,10 @@ while 1 {
             continue
         }
 
+        -re "libiconv.*BR2_PACKAGE_LIBICONV.*\\\[.*]" {
+            send "Y\r"
+        }
+
         -re "oprofile.*BR2_PACKAGE_OPROFILE.*\\\[.*]" {
             send "Y\r"
         }
