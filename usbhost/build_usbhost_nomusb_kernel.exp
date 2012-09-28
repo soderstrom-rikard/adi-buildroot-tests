@@ -1,26 +1,26 @@
 #!/usr/bin/expect --
 #
-# Build Kernel for USB host test
+# Build Kernel for USB host test for isp1362 and sl811
 #
 # Usage:
-#   ./build_usbhost_kernel.exp board_type musb_mode
+#   ./build_usbhost_nonmusb_kernel.exp board_type usb_driver
 #
 # Example:
-#   ./build_usbhost_kernel.exp BF609-EZKIT dma
+#   ./build_usbhost_nonmusb_kernel.exp BF537-STAMP usbhost_isp1362
 #
 
 source ../common/kernel_config.exp
 
 if { $argc < 2} {
-    puts "Please input: board_type, musb_mode(pio or dma)"
+    puts "Please input: board_type, usb_driver(usbhost_isp1362, usbhost_sl811 or usbhost_isp1760)"
     exit
 }
-set musb_mode [lindex $argv 1]
-set log_name build_usbhost_${musb_mode}_kernel_log
+set usb_driver [lindex $argv 1]
+set log_name build_${usb_driver}_kernel_log
 
 log_file $log_name
 send_user "Starting $argv0\n"
-send_user "\n#### Build kernel in $musb_mode mode. ####\n"
+send_user "\n#### Build kernel with $usb_driver. ####\n"
 
 cd $src_root/testsuites/common
 step "Make default config"
@@ -36,19 +36,31 @@ while 1 {
             continue
         }
 
-        -re "Virtual terminal.*VT.*\\\[.*]" {
+        -re "Flash device in physical memory map.*MTD_PHYSMAP.*\\\[.*]" {
+#CONFIG_MTD_PHYSMAP claims the entire Async. Memory Space
+#need to entirely disable it while using various U-Connector boards
             send "N\r"
         }
 
-        -re "SCSI device support \\\(SCSI\\\).*\\\[.*]" {
-            if { [string match "BF527-EZKIT*" $board_type] } {
-                send "Y\r"
+        -re "Bank 3.*BANK_3.*\\\[.*]" {
+            if { $usb_driver == "usbhost_isp1362" || $usb_driver == "usbhost_sl811" } {
+                send "0xAAC2\r"
+            } elseif { $usb_driver == "usbhost_isp1760" } {
+                send "0x66C4\r"
             } else {
                 send "\r"
             }
         }
 
+        -re "SCSI device support \\\(SCSI\\\).*\\\[.*]" {
+            send "Y\r"
+        }
+
         -re "SCSI disk support.*BLK_DEV_SD.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Probe all LUNs on each SCSI device.*SCSI_MULTI_LUN.*\\\[.*]" {
             send "Y\r"
         }
 
@@ -61,42 +73,48 @@ while 1 {
             send "Y\r"
         }
 
-        -re "Inventra Highspeed Dual Role Controller.*USB_MUSB_HDRC.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "Platform Glue Layer \\\[.*]" {
-            send "Y\r"
-        }
-
-        -re " (\[0-9]+). Blackfin.*USB_MUSB_BLACKFIN.*\[cC]hoice.*\\\[.*]" {
-            send "$expect_out(1,string)\r"
-        }
-
-        -re " (\[0-9]+). Inventra.*USB_INVENTRA_DMA.* (\[0-9]+). Disable DMA.*MUSB_PIO_ONLY.*\[cC]hoice.*\\\[.*]" {
-            if { $musb_mode == "dma" } {
-                send "$expect_out(1,string)\r"
-            } elseif { $musb_mode == "pio" } {
-                send "$expect_out(2,string)\r"
+        -re "ISP 1760 HCD support.*USB_ISP1760_HCD.*\\\[.*]" {
+            if { $usb_driver == "usbhost_isp1362" } {
+                send "N\r"
+            } elseif { $usb_driver == "usbhost_sl811" } {
+                send "N\r"
+            } elseif { $usb_driver == "usbhost_isp1760" } {
+                send "Y\r"
             } else {
                 send "\r"
             }
         }
 
-        -re "USB Gadget Support.*USB_GADGET.*\\\[.*]" {
-            send "Y\r"
+        -re "ISP1362 HCD support.*USB_ISP1362_HCD.*\\\[.*]" {
+            if { $usb_driver == "usbhost_isp1362" } {
+                send "Y\r"
+            } elseif { $usb_driver == "usbhost_sl811" } {
+                send "N\r"
+            } elseif { $usb_driver == "usbhost_isp1760" } {
+                send "N\r"
+            } else {
+                send "\r"
+            }
         }
 
-        -re "Inventra HDRC USB Peripheral.*USB_GADGET_MUSB_HDRC.*\\\[.*]" {
-            send "Y\r"
+        -re "SL811HS HCD support.*USB_SL811_HCD.*\\\[.*]" {
+            if { $usb_driver == "usbhost_isp1362" } {
+                send "N\r"
+            } elseif { $usb_driver == "usbhost_sl811" } {
+                send "Y\r"
+            } elseif { $usb_driver == "usbhost_isp1760" } {
+                send "N\r"
+            } else {
+                send "\r"
+            }
         }
 
-        -re "USB Gadget Drivers \\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "USB Gadget Drivers.* (\[0-9]+). Gadget Zero.*USB_ZERO.*\[cC]hoice\\\[.*]" {
-            send "$expect_out(1,string)\r"
+        -re "Dummy Delay ASYNC Memory Bank.*(\[0-9]+). Bank0.*DUMMY_DELAY_BANK0.*\[cC]hoice\\\[.*]" {
+            if { $usb_driver == "usbhost_isp1362" || $usb_driver == "usbhost_sl811" } {
+                send "$expect_out(1,string)\r"
+            } else {
+                send "\r"
+            }
         }
 
         -re "USB Mass Storage support.*USB_STORAGE.*\\\[.*]" {

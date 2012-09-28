@@ -6,8 +6,6 @@ log_file [log_file_name "$argv0"]
 send_user "Starting $argv0\n"
 
 set HAVE_KERNEL_ONLY_IMAGE 1
-set env(EXT2_BLOCKS) "20480"
-set env(UBIFS_LEB_SIZE) "129024"
 
 cd $src_root/testsuites/common
 step "Make config."

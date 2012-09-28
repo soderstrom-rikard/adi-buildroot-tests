@@ -23,8 +23,6 @@ log_file $log_name
 send_user "Starting $argv0\n"
 send_user "\n#### Build kernel in $musb_mode mode. ####\n"
 
-set env(EXT2_BLOCKS) "16384"
-
 cd $src_root/testsuites/common
 step "Make default config"
 source  make_default_config.exp

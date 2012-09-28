@@ -22,12 +22,6 @@ log_file $log_name
 send_user "Starting $argv0\n"
 send_log "\n#### Build kernel with binary_format $format. ####\n"
 
-if { $board_type == "BF548-EZKIT" } {
-    set env(EXT2_BLOCKS) "18864"
-} else {
-    set env(EXT2_BLOCKS) "12288"
-}
-
 cd $src_root/testsuites/common
 step "Make clean"
 if { [source make_clean.exp] != 0 } {
