@@ -14,8 +14,6 @@ if [ catch {exec sed -i "/modalias.*mmc_spi/,/chip_select/ s/4/1/" $board_file} 
     exit
 }
 
-set env(EXT2_BLOCKS) "10240"
-
 cd $src_root/testsuites/common
 step "Make clean."
 if { [source make_clean.exp] != 0 } {
