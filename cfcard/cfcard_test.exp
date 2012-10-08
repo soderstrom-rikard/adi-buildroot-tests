@@ -145,7 +145,7 @@ while 1 {
 
     send "w\r"
     expect {
-        -re "Syncing disks.*$kernel_prompt" {
+        -re "altered.*$kernel_prompt" {
             case_pass $case_num
             break
         }
@@ -159,9 +159,14 @@ incr case_num
 send "mke2fs /dev/sda1\r"
 while 1 {
     expect {
-        -re "Writing superblocks and filesystem accounting information: done.*$kernel_prompt" {
+        -re "Filesystem label.*$kernel_prompt" {
+            send_user "mke2fs done, test pass\n"
             case_pass $case_num
             break
+        }
+        -re "\[Ee]rror|failed.*$kernel_prompt" {
+            send_user "mke2fs fail, test fail\n"
+            case_fail $case_num
         }
         timeout {
             case_fail $case_num
@@ -290,14 +295,11 @@ while 1 {
     }
 }
 
-set timeout 10
+set timeout 20
 incr case_num
 send "pccardctl eject 0\r"
 while 1 {
     expect {
-        -nocase -re "(error|fail).*$kernel_prompt" {
-            case_fail $case_num
-        }
         -re "card ejected from slot 0.*$kernel_prompt" {
             case_pass $case_num
             break
