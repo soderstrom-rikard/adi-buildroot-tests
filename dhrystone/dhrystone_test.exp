@@ -15,10 +15,10 @@ send_user "Starting $argv0\n"
 set TITLE [title "$argv0"]
 
 step "Start kermit"
-source ../common/spawn_kermit.exp
+#source ../common/spawn_kermit.exp
 
 step "Boot kernel"
-source ../common/kernel_boot.exp
+#source ../common/kernel_boot.exp
 
 step "Start testing"
 set case_num 0
@@ -42,46 +42,10 @@ while 1 {
     }
 }
 
-set timeout 5
-incr case_num
-send "patch -p1 <testsuites/dhrystone/dhrystone_test.patch\r"
-while 1 {
-    expect {
-        -re "FAILED.*$sh_prompt" {
-            case_fail $case_num
-        }
-        -re "patching file package.*$sh_prompt" {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
-
-set timeout 5
-incr case_num
-send "cp package/dhrystone/Makefile output/build/dhrystone-2/\r"
-while 1 {
-    expect {
-        -nocase -re "(fail|cp:).*$sh_prompt" {
-            case_fail $case_num
-        }
-        -re $sh_prompt {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
-
 set result_flag NA
 set timeout 4500
 incr case_num
-send "make dhrystone-clean; time make dhrystone\r"
+send "./testsuites/dhrystone/test_dhrystone.sh $targetip\r"
 while 1 {
     expect {
         -re "(rcp:|No such).*$sh_prompt" {
@@ -98,42 +62,6 @@ while 1 {
 	    expect -re $sh_prompt
             set result_flag FAIL
             break
-        }
-    }
-}
-
-set timeout 5
-incr case_num
-send "patch -p1 -R <testsuites/dhrystone/dhrystone_test.patch\r"
-while 1 {
-    expect {
-        -re "FAILED.*$sh_prompt" {
-            case_fail $case_num
-        }
-        -re "patching file package.*$sh_prompt" {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
-
-set timeout 5
-incr case_num
-send "cp package/dhrystone/Makefile output/build/dhrystone-2/\r"
-while 1 {
-    expect {
-        -nocase -re "(fail|cp:).*$sh_prompt" {
-            case_fail $case_num
-        }
-        -re $sh_prompt {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
         }
     }
 }
