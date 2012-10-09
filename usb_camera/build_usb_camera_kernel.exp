@@ -24,6 +24,12 @@ cd $src_root/testsuites/common
 step "Make default config"
 source  make_default_config.exp
 
+# Command source_args can pass arguments while running source.
+# Send bfin binary formats as argument for config_bfin-format.exp,
+# and change to the specified bfin binary formats.
+cd $src_root/testsuites/common
+source_args config_bfin-format.exp fdpic
+
 cd $src_root/testsuites/common
 source config_cut_app.exp
 
@@ -166,6 +172,10 @@ while 1 {
     expect {
         -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
+        }
+
+        -re "Target ABI.*FDPIC.*FLAT.*FLAT_SEP_DATA.*SHARED_FLAT.*\\\[.*]" {
+            send "1\r"
         }
 
         -re "SDL.*BR2_PACKAGE_SDL.*\\\[.*]" {

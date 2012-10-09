@@ -1,5 +1,4 @@
 #!/usr/bin/expect --
-
 #
 # Build Kernel for XIP test in ROM file system.
 # Root file system is romfs.
@@ -46,6 +45,12 @@ if [ catch {exec patch -p0 < $src_root/testsuites/xip/partition.patch} ] {
 cd $src_root/testsuites/common
 step "Make default config"
 source make_default_config.exp
+
+# Command source_args can pass arguments while running source.
+# Send bfin binary formats as argument for config_bfin-format.exp,
+# and change to the specified bfin binary formats.
+cd $src_root/testsuites/common
+source_args config_bfin-format.exp $format
 
 cd $src_root/testsuites/common
 source config_cut_app.exp
@@ -150,24 +155,6 @@ while 1 {
                 send "4\r"
             } else {
                 send "1\r"
-            }
-        }
-
-        -re "prefer static libraries.*BR2_PREFER_STATIC_LIB.*\\\[.*]" {
-            if { [string match "*flat" $format] && [string match "BF*" $board_type] } {
-                send "Y\r"
-            } else {
-                send "\r"
-            }
-        }
-
-        -re "Toolchain prefix.*BR2_TOOLCHAIN_EXTERNAL_CUSTOM_PREFIX.*\\\[.*]" {
-            if { [string match "*flat" $format] && [string match "BF*" $board_type] } {
-                send "bfin-uclinux\r"
-            } elseif { $format == "fdpic" } {
-                send "bfin-linux-uclibc\r"
-            } else {
-                send "\r"
             }
         }
 

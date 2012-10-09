@@ -32,10 +32,22 @@ if { $audio_dev == "audio_adau1361" && $board_type == "BF537-STAMP" } {
     }
 }
 
+cd $src_root/testsuites/common
+step "Make clean"
+if { [source make_clean.exp] != 0 } {
+    send_user "\n\nFail to make clean. Exit!\n\n"
+    exit
+}
 
 cd $src_root/testsuites/common
 step "Make default config"
 source make_default_config.exp
+
+# Command source_args can pass arguments while running source.
+# Send bfin binary formats as argument for config_bfin-format.exp,
+# and change to the specified bfin binary formats.
+cd $src_root/testsuites/common
+source_args config_bfin-format.exp fdpic
 
 step "Make kernel config"
 cd $src_root

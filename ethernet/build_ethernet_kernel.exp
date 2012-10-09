@@ -47,6 +47,14 @@ cd $src_root/testsuites/common
 step "Make default config"
 source make_default_config.exp
 
+if { $arch == "blackfin" } {
+    # Command source_args can pass arguments while running source.
+    # Send bfin binary formats as argument for config_bfin-format.exp,
+    # and change to the specified bfin binary formats.
+    cd $src_root/testsuites/common
+    source_args config_bfin-format.exp fdpic
+}
+
 cd $src_root/testsuites/common
 source config_cut_app.exp
 
@@ -124,7 +132,11 @@ while 1 {
         }
 
         -re "Target ABI.*BFIN_FDPIC.*BFIN_FLAT.*BFIN_FLAT_SEP_DATA.*BFIN_SHARED_FLAT.*\\\[.*]" {
-            send "1\r"
+            if { $arch == "blackfin" } {
+                send "1\r"
+            } else {
+                send "\r"
+            }
         }
 
         "\\\(*) \\\[*]" {

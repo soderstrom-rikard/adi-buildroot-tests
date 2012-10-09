@@ -1,7 +1,15 @@
 #!/usr/bin/expect
+#
+# Build Kernel for zflat format test
+#
+# Usage:
+#   ./build_zflat_kernel.exp board_type
+#
+# Example:
+#   ./build_zflat_kernel.exp BF537-STAMP
+#
 
 source ../common/kernel_config.exp
-source ../common/board_info.exp
 log_file [log_file_name "$argv0"]
 send_user "Starting $argv0\n"
 
@@ -13,20 +21,19 @@ if { [source make_clean.exp] != 0 } {
 }
 
 cd $src_root/testsuites/common
+step "Make default config"
+source make_default_config.exp
 
-step "Make config."
-
-source  make_default_config.exp
+# Command source_args can pass arguments while running source.
+# Send bfin binary formats as argument for config_bfin-format.exp,
+# and change to the specified bfin binary formats.
+cd $src_root/testsuites/common
+source_args config_bfin-format.exp flat
 
 cd $src_root/testsuites/common
-
 step "Make config to remove some needless items."
-
 source  make_cut_fs_config.exp
 
-# Following make specific configuration for this case.
-
-#tee "Begin the interactive process of configuration"
 step "Make kernel config"
 cd $src_root
 set timeout 300
@@ -37,16 +44,16 @@ while 1 {
             continue
         }
 
-        -re "($anomalous_option) \\\[\[^\]]+/.]" {
-            send "\r"
-        }
-
         -re "Kernel support for flat binaries.*BINFMT_FLAT.*\\\[.*]" {
             send -s "Y\r"
         }
 
         -re "Enable ZFLAT support.*BINFMT_ZFLAT.*\\\[.*]" {
             send -s "Y\r"
+        }
+
+        -re "($anomalous_option) \\\[\[^\]]+/.]" {
+            send "\r"
         }
 
         "\\\(*) \\\[*]" {
@@ -59,23 +66,21 @@ while 1 {
         }
 
         eof {
-            send_user "End of configuration"
+            send_user "\nEnd of configuration\n"
             break
         }
 
         timeout {
-            send_user "\n\nFATAL ERROR: config prompt timeout in make config"
-            break
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
+            exit
         }
     }
 }
 
+step "user space config"
 cd $src_root
 set timeout 300
-set baud_rate_done_flag 0
 spawn make config
-
-#puts "Begin the interactive process of configuration"
 while 1 {
     expect {
         -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
@@ -86,10 +91,6 @@ while 1 {
             send "$expect_out(1,string)\r"
         }
 
-        -re "Toolchain prefix.*BR2_TOOLCHAIN_EXTERNAL_CUSTOM_PREFIX.*\\\[.*]" {
-            send "bfin-uclinux\r"
-        }
-
         "\\\(*) \\\[*]" {
             sleep .01
             send "\r"
@@ -100,27 +101,24 @@ while 1 {
         }
 
         eof {
-            puts "End of configuration"
+            send_user "\nEnd of configuration\n"
             break
         }
 
         timeout {
-            puts "\n\nFATAL ERROR: config prompt timeout in make config"
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
+            exit
         }
     }
 }
 
 cd $src_root/testsuites/common
-
 step "Make"
-
-source  make_kernel.exp
+source make_kernel.exp
 
 cd $src_root/testsuites/common
-
-step "Copy linux"
-
-source   copy_image.exp
+step "Copy image"
+source copy_image.exp
 
 send_user "Ending $argv0\n"
 log_file
