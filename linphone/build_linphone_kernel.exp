@@ -47,8 +47,10 @@ source make_default_config.exp
 # Command source_args can pass arguments while running source.
 # Send bfin binary formats as argument for config_bfin-format.exp,
 # and change to the specified bfin binary formats.
-cd $src_root/testsuites/common
-source_args config_bfin-format.exp fdpic
+if { $arch == "blackfin" } {
+    cd $src_root/testsuites/common
+    source_args config_bfin-format.exp fdpic
+}
 
 cd $src_root/testsuites/common
 source config_cut_app.exp

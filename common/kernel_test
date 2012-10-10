@@ -281,8 +281,13 @@ if [ $BUILD_POLICY -eq 1  ] ; then
     echo "./build_policy_kernel.exp $BOARD_TYPE $BINARY_FORMAT $XENOMAI >/dev/null  2>&1"
     ./build_policy_kernel.exp $BOARD_TYPE $BINARY_FORMAT $XENOMAI >/dev/null  2>&1
 
+    # Back up image, configs and log to current log directory
     copy_image_config "policy"
     mv $TESTSUITES_DIR/policy/build_policy_kernel_log $THIS_LOG
+
+    # Back up configs to source directory for regression test usage
+    rm $SRC_ROOT/config.kernel.policy $SRC_ROOT/config.user.policy
+    cp $THIS_LOG/config.kernel.policy $THIS_LOG/config.user.policy $SRC_ROOT/
 
     if [ ! -f $IMAGE_DIR/uImage ] ; then
         echo "Kernel image fails to generate. Terminate test!"
@@ -290,8 +295,6 @@ if [ $BUILD_POLICY -eq 1  ] ; then
         make_clean
         exit 3
     fi
-
-    cp $SRC_ROOT/.config $SRC_ROOT/config.user.policy
 
     # back up compiled stuff for future build
     cd $KERNEL_CUSTOM_DIR

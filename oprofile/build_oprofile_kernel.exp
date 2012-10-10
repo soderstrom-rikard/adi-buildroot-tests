@@ -29,6 +29,11 @@ if { [source make_clean.exp] != 0 } {
     exit
 }
 
+# This step should be done after buildroot is cleaned
+cd $src_root/testsuites/common
+step "Restore kernel config of policy"
+source restore_kernel_config.exp
+
 cd $src_root/testsuites/common
 step "Make default config"
 source make_default_config.exp
@@ -36,8 +41,10 @@ source make_default_config.exp
 # Command source_args can pass arguments while running source.
 # Send bfin binary formats as argument for config_bfin-format.exp,
 # and change to the specified bfin binary formats.
-cd $src_root/testsuites/common
-source_args config_bfin-format.exp $format
+if { $arch == "blackfin" } {
+    cd $src_root/testsuites/common
+    source_args config_bfin-format.exp $format
+}
 
 step "Make kernel config"
 cd $src_root
