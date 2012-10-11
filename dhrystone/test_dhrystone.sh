@@ -5,7 +5,9 @@ tmp=
 cpu=
 ITT=10000000
 IP=$1
+DIR=$2
 DHRYSTONE_DIR="output/build/dhrystone-2"
+cd $DIR
        cpu=`rsh -l root $IP 'grep "cpu MHz" /proc/cpuinfo' | awk -F ":" '{print $2}' | awk -F "/" '{print $1}' | sed 's/^[ \t]*//;s/[ \t]*$$//'` ;\
 	echo "testing on $cpu MHz with $CC" ;\
 	echo "^ Flags ((standard ''CFLAGS'' include ''OPTIMIZATION''))  ^  size (bytes)  ^  Loops  ^  Dhrystones per Second ((Based on $CC)) ^  Dhrystone MIPS ((DMIPS is obtained when the Dhrystone score is divided by 1,757 (the number of Dhrystones per second obtained on the VAX 11/780, nominally a 1 MIPS machine))  ^  DMIPS/MHz  ^";\
