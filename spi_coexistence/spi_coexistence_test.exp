@@ -18,15 +18,27 @@ set case_num 0
 set timeout 10
 
 spawn telnet $targetip
+expect {
+        "login:" { }
+        timeout { send_user "Failed first return\n"
+                }
+}
+send -s "root\r"
+expect {
+        ">" {  }
+        timeout { send_user "Failed inital telnet\n"
+                exit }
+}
+
 set spawn_telnet $spawn_id
 send "\r"
 expect -re $kernel_prompt
 
 incr case_num
-send "while \[ 1 \]; do mixer vol 15; mixer vol 20; done\r"
+send "while \[ 1 \]; do amixer cset name='DAC1 Playback Volume' 655; amixer cset name='DAC1 Playback Volume' 1002; done\r"
 while 1 {
     expect {
-        -re "15.*20.*15.*20" {
+        -re "655.*1002.*655.*1002" {
             case_pass $case_num
             break
         }
@@ -134,11 +146,16 @@ set timeout 90
 send "mke2fs /dev/$mmc_dev1\r"
 while 1 {
     expect {
-        -re "mke2fs.*Writing.*$kernel_prompt" {
+        -re "Filesystem label.*$kernel_prompt" {
             send_user "mke2fs done, test pass\n"
             case_pass $case_num
             break
         }
+        -re "\[Ee]rror|failed.*$kernel_prompt" {
+            send_user "mke2fs fail, test fail\n"
+            case_fail $case_num
+        }
+
         timeout {
             send_user "mke2fs timeout, test fail\n"
             case_fail $case_num
