@@ -4,31 +4,43 @@ export BOARD_CONFIG=$NODE_NAME
 custom_workspace=$WORKSPACE
 mkdir -p $custom_workspace/../../../../dl
 
+
 # Set repository info
 MAIN_PROJ_REPO_NAME=buildroot
-TEST_FRAME_REPO_URL=git://10.99.22.20/git/unreleased/buildroot-testsuites.git
 TEST_FRAME_REPO_NAME=testsuites
-KERNEL_REPO_URL=git://10.99.22.20/git/linux-kernel
 KERNEL_REPO_NAME=kernel
 
+use_local_src_server=1
+SERVER_ADDR=10.99.29.20
+TEST_FRAME_REPO_ADDR=git://$SERVER_ADDR/buildroot_test
+KERNEL_REPO_ADDR=git://$SERVER_ADDR/linux-kernel
+
+
 # Set branch info
-INDEX=1
-if [ "$INDEX" == "1" ] ; then
-    MAIN_PROJ_INDEX=adi
-    TEST_FRAME_INDEX=master
+INDEX=trunk
+if [ "$INDEX" == "trunk" ] ; then
+    MAIN_PROJ_INDEX=trunk
+    TEST_FRAME_INDEX=trunk
     KERNEL_INDEX=trunk
-elif [ "$INDEX" == "2" ] ; then
-    MAIN_PROJ_INDEX="2011.05"
-    TEST_FRAME_INDEX="2011.05"
-    KERNEL_INDEX="linux-2.6.37"
+elif [ "$INDEX" == "branch" ] ; then
+    MAIN_PROJ_INDEX="2012R1"
+    TEST_FRAME_INDEX="2012R1"
+    KERNEL_INDEX="2012R1"
+elif [ "$INDEX" == "tag" ] ; then
+    MAIN_PROJ_INDEX="2012R1-RC6-BF60X"
+    TEST_FRAME_INDEX="2012R1-RC6-BF60X"
+    KERNEL_INDEX="2012R1-RC6-BF60X"
 fi
+
 
 # Link to real directory for downloading
 cd $custom_workspace
 ln -sf ../../../../dl
 
-debug=1
+
 # check if use right source
+debug=0
+
 check_git_info ()
 {
     echo "##########"
@@ -45,8 +57,8 @@ check_git_info ()
         git remote -v
     fi
 
-    if [ -d $custom_workspace/linux/linux-2.6.x ] ; then
-        cd $custom_workspace/linux/linux-2.6.x
+    if [ -d $custom_workspace/linux/linux-kernel ] ; then
+        cd $custom_workspace/linux/linux-kernel
         git branch
         git remote -v
     fi
@@ -57,17 +69,33 @@ if [ $debug -eq 1 ] ; then
     check_git_info
 fi
 
+
+# Before checkout master project, fetch related info
+cd $custom_workspace
+git fetch -t git://$SERVER_ADDR/$MAIN_PROJ_REPO_NAME
+
+
 # Checkout master project, switch to desired branch and get the latest source.
 cd $custom_workspace
-if [ "`git branch | grep -c \"$MAIN_PROJ_INDEX\"`" -eq 0 ] ; then
-    git checkout -b $MAIN_PROJ_INDEX remotes/$MAIN_PROJ_REPO_NAME/$MAIN_PROJ_INDEX
-else
+if [ "$INDEX" == "tag" ] || [ "`git branch | grep -c \"$MAIN_PROJ_INDEX\"`" -ne 0 ] ; then
     git checkout $MAIN_PROJ_INDEX
+else
+    git checkout -b $MAIN_PROJ_INDEX remotes/$MAIN_PROJ_REPO_NAME/$MAIN_PROJ_INDEX
 fi
 
-git pull $MAIN_PROJ_REPO_NAME $MAIN_PROJ_INDEX
+if [ "`git branch | grep -c \"$MAIN_PROJ_INDEX\"`" -ne 0 ] ; then
+    git pull $MAIN_PROJ_REPO_NAME $MAIN_PROJ_INDEX
+fi
 
-git submodule update --init
+
+# Use local submodule git server
+cd $custom_workspace
+git submodule init
+if [ $use_local_src_server -eq 1 ] ; then
+    git config submodule.testsuites.url $TEST_FRAME_REPO_ADDR
+    git config submodule.linux/linux-kernel.url $KERNEL_REPO_ADDR
+fi
+git submodule update
 
 
 if [ $debug -eq 1 ] ; then
@@ -75,37 +103,44 @@ if [ $debug -eq 1 ] ; then
 fi
 
 
-# Checkout test frame and switch to desired branch.
+# Checkout test frame and switch to desired branch/tag.
 cd $custom_workspace/testsuites
-if [ "`git branch | grep -c \"$TEST_FRAME_INDEX\"`" -eq 0 ] ; then
-    git checkout -b $TEST_FRAME_INDEX remotes/$TEST_FRAME_REPO_NAME/$TEST_FRAME_INDEX
-else
-
+git fetch -t $TEST_FRAME_REPO_ADDR
+if [ "$INDEX" == "tag" ] || [ "`git branch | grep -c \"$TEST_FRAME_INDEX\"`" -ne 0 ] ; then
     git checkout $TEST_FRAME_INDEX
+else
+    git checkout -b $TEST_FRAME_INDEX remotes/origin/$TEST_FRAME_INDEX
 fi
+
 
 # Checkout kernel and switch to desired branch.
-cd $custom_workspace/linux/linux-2.6.x
+cd $custom_workspace/linux/linux-kernel
+git fetch -t $KERNEL_REPO_ADDR
 git checkout .
-if [ "'git branch | grep -c \"$KERNEL_INDEX\"'" -eq 0 ] ; then
-    git checkout -b $KERNEL_INDEX remotes/$KERNEL_REPO_NAME/$KERNEL_INDEX
-else
+if [ "$INDEX" == "tag" ] || [ "`git branch | grep -c \"$KERNEL_INDEX\"`" -ne 0 ] ; then
     git checkout $KERNEL_INDEX
+else
+    git checkout -b $KERNEL_INDEX remotes/origin/$KERNEL_INDEX
 fi
+
 
 # Get the latest source for all submodules.
 cd $custom_workspace/
-git submodule foreach git pull
-
+if [ "$INDEX" != "tag" ] ; then
+    git submodule foreach git pull
+fi
 
 if [ $debug -eq 1 ] ; then
     check_git_info
 fi
+
+
+# In WORKSPACE dir, make soft link to test log, so we can browse in hudson
+rm -fr $WORKSPACE/thisrun $WORKSPACE/logs
+ln -s /home/test/workspace/logs $WORKSPACE/logs
 
 
 # Start regression test
 cd $custom_workspace/testsuites/common/
 ./run_kernel_test
-rm -fr $WORKSPACE/thisrun
-cp -fr /home/test/workspace/logs/thisrun $WORKSPACE
 
