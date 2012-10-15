@@ -47,7 +47,7 @@ while 1 {
 
 set timeout 20
 incr case_num
-send -s "mount.cifs //$serverip/users /mnt rw -o user=$name,pass=$name\r" 
+send -s "mount -t cifs //$serverip/users /mnt  -o rw,user=$name,pass=$name\r" 
 while 1 {
     expect  {
         -nocase -re "(mount:|error|fail).*$kernel_prompt" {
