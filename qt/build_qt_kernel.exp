@@ -18,6 +18,10 @@ cd $src_root/testsuites/common
 step "Make default config"
 source make_default_config.exp
 
+cd $src_root/testsuites/common
+step "Kernel config for tft lcd driver"
+source config_tftlcd.exp
+
 step "Make kernel config"
 cd $src_root
 set timeout 300
@@ -63,12 +67,20 @@ while 1 {
             continue
         }
 
+        -re "video test program.*BR2_PACKAGE_VIDEO_TEST.*\\\[.*]" {
+            send "Y\r"
+        }
+
         -re "Qt \\\(BR2_PACKAGE_QT\\\) \\\[.*]" {
             send "Y\r"
         }
 
         -re "Compile and install demos and examples.*\\\(BR2_PACKAGE_QT_DEMOS\\\) \\\[.*]" {
             send "Y\r"
+        }
+
+        -re "($anomalous_option) \\\[\[^\]]+/.]" {
+            send "\r"
         }
 
         "\\\(*) \\\[*]" {
