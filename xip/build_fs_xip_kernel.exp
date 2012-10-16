@@ -28,13 +28,6 @@ send_log "\n#### Build kernel with binary_format $format. ####\n"
 set HAVE_KERNEL_ONLY_IMAGE 1
 set HAVE_ROMFS_IMAGE 1
 
-cd $src_root/testsuites/common
-step "Make clean"
-if { [source make_clean.exp] != 0 } {
-    send_user "\n\nFail to make clean. Exit!\n\n"
-    exit
-}
-
 step "Apply patch to change partition"
 cd $kernel_root
 if [ catch {exec patch -p0 < $src_root/testsuites/xip/partition.patch} ] {
@@ -42,17 +35,14 @@ if [ catch {exec patch -p0 < $src_root/testsuites/xip/partition.patch} ] {
     exit
 }
 
-cd $src_root/testsuites/common
-step "Make default config"
-source make_default_config.exp
-
 # Command source_args can pass arguments while running source.
-# Send bfin binary formats as argument for config_bfin-format.exp,
+# Send bfin binary formats as argument for make_bfin-format.exp,
 # and change to the specified bfin binary formats.
-if { $arch == "blackfin" } {
-    cd $src_root/testsuites/common
-    source_args config_bfin-format.exp $format
-}
+# It won't change formats for arm.
+# make clean and source make_default_config.exp are already included.
+cd $src_root/testsuites/common
+step "Make config for specified bfin format"
+source_args make_bfin-format.exp $format
 
 cd $src_root/testsuites/common
 source config_cut_app.exp

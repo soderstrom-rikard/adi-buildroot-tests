@@ -32,28 +32,14 @@ if { $extra_config == "in_buffer" || $extra_config == "normal" } {
     exit
 }
 
-if { $arch == "blackfin" } {
-    cd $src_root/testsuites/common
-    step "Make clean to use FDPIC format"
-    if { [source make_clean.exp] != 0 } {
-        send_user "\n\nFail to make clean. Exit!\n\n"
-        exit
-    }
-}
-
-#source ../common/ifconfig_ethaddr.exp
-
-cd $src_root/testsuites/common
-step "Make default config"
-source make_default_config.exp
-
 # Command source_args can pass arguments while running source.
-# Send bfin binary formats as argument for config_bfin-format.exp,
+# Send bfin binary formats as argument for make_bfin-format.exp,
 # and change to the specified bfin binary formats.
-if { $arch == "blackfin" } {
-    cd $src_root/testsuites/common
-    source_args config_bfin-format.exp fdpic
-}
+# It won't change formats for arm.
+# make clean and source make_default_config.exp are already included.
+cd $src_root/testsuites/common
+step "Make config for specified bfin format"
+source_args make_bfin-format.exp fdpic
 
 cd $src_root/testsuites/common
 source config_cut_app.exp
