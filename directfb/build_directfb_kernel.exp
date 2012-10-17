@@ -26,6 +26,15 @@ cd $src_root/testsuites/common
 step "Kernel config for tft lcd driver"
 source config_tftlcd.exp
 
+cd $src_root/testsuites/common
+step "Kernel config for specified usb host"
+if { $board_type == "BF537-STAMP" } {
+    source_args config_usb.exp usbhost_isp1362
+} else {
+    source_args config_usb.exp musb
+}
+
+
 step "Make kernel config"
 cd $src_root
 set timeout 300
@@ -59,6 +68,47 @@ while 1 {
         }
 
         -re "Mac console 6x11 font.*FONT_6x11.*\\\[.*]" {
+            send "Y\r"
+        }
+
+# Input and HID
+        -re "Generic input layer.*needed for keyboard, mouse.*INPUT.*\\\[./.*]" {
+            send "Y\r"
+        }
+
+        -re "Mouse interface.*INPUT_MOUSEDEV.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Horizontal screen resolution.*INPUT_MOUSEDEV_SCREEN_X.*\\\[.*]" {
+            if { $board_type == "BF548-EZKIT" } {
+                send "480\r"
+            } else {
+                send "320\r"
+            }
+        }
+
+        -re "Vertical screen resolution.*INPUT_MOUSEDEV_SCREEN_Y.*\\\[.*]" {
+            if { $board_type == "BF548-EZKIT" } {
+                send "272\r"
+            } else {
+                send "240\r"
+            }
+        }
+
+        -re "Event interface.*INPUT_EVDEV.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Keyboards.*INPUT_KEYBOARD.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Mice.*INPUT_MOUSE.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "USB HID transport layer.*USB_HID.*\\\[.*]" {
             send "Y\r"
         }
 
@@ -109,7 +159,7 @@ while 1 {
             send "Y\r"
         }
 
-        -re "df_dok.*BR2_PACKAGE_DIRECTFB_EXAMPLES_DOK.*\\\[.*]" {
+        -re "df_.*BR2_PACKAGE_DIRECTFB_EXAMPLES_.*\\\[.*]" {
             send "Y\r"
         }
 
