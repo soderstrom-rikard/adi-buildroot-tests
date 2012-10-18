@@ -1,6 +1,33 @@
 #!/usr/bin/expect
+#
+# This file can't be indepently executed.
+# It needs to be included into build***kernel.exp scripts.
+#
+# Usage:
+# source_args config_audio.exp audio_dev module
+#
+# Examples:
+# * config adau1761 driver as module:
+#   source_args config_audio.exp audio_adau1761 module
+#
+# * config adau1761 driver as built-in mode:
+#   source_args config_audio.exp audio_adau1761
+#
 
-set audio_dev [lindex $argv 1]
+if { $argc < 1} {
+    send_user "\nconfig_audio.exp\nPlease input: audio_dev, module(module or null)\n"
+    send_user "Refer to build_audio_kernel.exp for audio_dev\n"
+    exit
+}
+
+set audio_dev [lindex $argv 0]
+set module [lindex $argv 1]
+
+if { [info exists module] && $module == "module" } {
+    set module_flag "M"
+} else {
+    set module_flag "Y"
+}
 
 cd $src_root
 set timeout 300
@@ -80,7 +107,7 @@ while 1 {
             send "Y\r"
         }
 
-        -re "SoC I2S Audio for the ADI Blackfin chip.*SND_BF5XX_I2S.*\\\[.*]" {
+        -re "SoC I2S Audio for the ADI Blackfin chip.*SND_BF.XX_I2S.*\\\[.*]" {
             if { $audio_dev == "audio_ssm2603" || $audio_dev == "audio_ad73311" || [string match "audio_adau*" $audio_dev] } {
                 send "Y\r"
             } else {
@@ -90,7 +117,7 @@ while 1 {
 
         -re "SoC SSM2602 Audio Codec Add-On Card support.*SND_BF.XX_SOC_SSM2602.*\\\[.*]" {
             if { $audio_dev == "audio_ssm2603" } {
-                send "Y\r"
+                send "$module_flag\r"
             } else {
                 send "N\r"
             }
@@ -98,7 +125,7 @@ while 1 {
 
         -re "EVAL-ADAU1373 board on Blackfin.*SND_SOC_BFIN_EVAL_ADAU1373.*\\\[.*]" {
             if { $audio_dev == "audio_adau1373" } {
-                send "Y\r"
+                send "$module_flag\r"
             } else {
                 send "N\r"
             }
@@ -106,7 +133,7 @@ while 1 {
 
         -re "EVAL-ADAU1X61 board on Blackfin.*SND_SOC_BFIN_EVAL_ADAU1X61.*\\\[.*]" {
             if { [string match "audio_adau1*61" $audio_dev] } {
-                send "Y\r"
+                send "$module_flag\r"
             } else {
                 send "N\r"
             }
@@ -114,7 +141,7 @@ while 1 {
 
         -re "SoC AD73311.*Audio support for Blackfin.*SND_BF.XX_SOC_AD73311.*\\\[.*]" {
             if { $audio_dev == "audio_ad73311" } {
-                send "Y\r"
+                send "$module_flag\r"
             } else {
                 send "N\r"
             }
@@ -130,7 +157,7 @@ while 1 {
 
         -re "SoC AD1836 STAMP Daughter card support.*SND_BF.XX_SOC_AD1836.*\\\[.*]" {
             if { $audio_dev == "audio_ad1836" } {
-                send "Y\r"
+                send "$module_flag\r"
             } else {
                 send "N\r"
             }
@@ -138,13 +165,13 @@ while 1 {
 
         -re "SoC AD193X Audio support for Blackfin.*SND_BF.XX_SOC_AD193X.*\\\[.*]" {
             if { [string match "audio_ad193*" $audio_dev] } {
-                send "Y\r"
+                send "$module_flag\r"
             } else {
                 send "N\r"
             }
         }
 
-        -re "Set a SPORT for Sound chip.*SND_BF5XX_SPORT_NUM.*\\\[.*]" {
+        -re "Set a SPORT for Sound chip.*SND_BF.XX_SPORT_NUM.*\\\[.*]" {
             if { [string match "BF527-EZKIT*" $board_type] } {
                 send "1\r"
             } else {

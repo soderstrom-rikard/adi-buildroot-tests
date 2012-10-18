@@ -123,7 +123,7 @@ while 1 {
             send "Y\r"
         }
 
-        -re "SoC I2S Audio for the ADI Blackfin chip.*SND_BF5XX_I2S.*\\\[.*]" {
+        -re "SoC I2S Audio for the ADI Blackfin chip.*SND_BF.XX_I2S.*\\\[.*]" {
             if { $audio_dev == "audio_ssm2603" || $audio_dev == "audio_ad73311" || [string match "audio_adau*" $audio_dev] } {
                 send "Y\r"
             } else {
@@ -187,7 +187,7 @@ while 1 {
             }
         }
 
-        -re "Set a SPORT for Sound chip.*SND_BF5XX_SPORT_NUM.*\\\[.*]" {
+        -re "Set a SPORT for Sound chip.*SND_BF.XX_SPORT_NUM.*\\\[.*]" {
             if { [string match "BF527-EZKIT*" $board_type] } {
                 send "1\r"
             } else {
