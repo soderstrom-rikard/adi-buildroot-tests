@@ -27,7 +27,7 @@ set uart_port   "ttyBF1"
 
 incr case_num
 set timeout 15
-send "iwrap_boot -b /dev/$uart_port\r"
+send "dbus-daemon --system --nofork &\r"
 while 1 {
     expect {
         -re "(\[fF]ail|\[eE]rror).*$kernel_prompt" {
@@ -44,13 +44,68 @@ while 1 {
 }
 
 incr case_num
-send "hcid -n &\r"
+set timeout 15
+send "ps|grep dbus-daemon\r"
 while 1 {
     expect {
-        -re "(\[dD]one|\[fF]ail|\[eE]rror).*$kernel_prompt" {
+        -re "(\[fF]ail|\[eE]rror).*$kernel_prompt" {
             case_fail $case_num
         }
-        -re "Bluetooth HCI daemon" {
+        -re "dbus.*dbus-daemon.*nofork.*$kernel_prompt" {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
+
+incr case_num
+set timeout 15
+send "bluetoothd -n &\r"
+while 1 {
+    expect {
+        -re "Bluetooth Management interface initialized.*device" {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
+
+incr case_num
+set timeout 15
+send "ps |grep bluetoothd\r"
+while 1 {
+    expect {
+        -re "(\[fF]ail|\[eE]rror).*$kernel_prompt" {
+            case_fail $case_num
+        }
+        -re "bluetoothd -n.*$kernel_prompt" {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
+
+# If iwrap_boot utility is provided, use command "iwrap_boot -b /dev/ttyBF1" to set up tty;
+# Instead of using iwrap_boot utility, you can also setup tty and cat 'boot 1' into the serial tty device;
+incr case_num
+set timeout 15
+send "stty -F /dev/$uart_port ispeed 115200 ospeed 115200 cs8 -cstopb clocal -crtscts -parodd\r"
+send "echo \"boot 1\" > /dev/$uart_port\r"
+while 1 {
+    expect {
+        -re "(\[fF]ail|\[eE]rror).*$kernel_prompt" {
+            case_fail $case_num
+        }
+        -re $kernel_prompt {
             case_pass $case_num
             break
         }
@@ -68,7 +123,7 @@ while 1 {
         -re "(\[dD]one|\[fF]ail|\[eE]rror).*$kernel_prompt" {
             case_fail $case_num
         }
-        -re "Starting security manager" {
+        -re "hci0 has been enabled" {
             case_pass $case_num
             break
         }
@@ -86,7 +141,7 @@ while 1 {
         -re "(\[dD]one|\[fF]ail|DOWN|not found).*$kernel_prompt" {
             case_fail $case_num
         }
-        -re "hci0.*UART.*BD Address: (\[0-9A-F:]+) ACL MTU.*$kernel_prompt" {
+        -re "hci0.*UART.*BD Address: (\[0-9A-F:]+)  ACL MTU.*$kernel_prompt" {
             set MST_BD_ADDR $expect_out(1,string)
             send_user "Get BD Address $MST_BD_ADDR\r"
             case_pass $case_num
