@@ -17,12 +17,17 @@ cd $src_root/testsuites/common
 step "Make default config"
 source make_default_config.exp
 
-if [ catch { exec grep BR2_BFIN_FLAT=y $src_root/.config } ] {
-    set binary_flat 0
+if { $arch == "blackfin" } {
+    if [ catch { exec grep BR2_BFIN.*FLAT=y $src_root/.config } ] {
+        set binary_flat 0
+    } else {
+        set binary_flat 1
+    }
 } else {
-    set binary_flat 1
+    set binary_flat "NA"
 }
 send_user "\n#### binary_flat is $binary_flat. ####\n"
+
 
 step "Make kernel config"
 cd $src_root
@@ -76,6 +81,8 @@ while 1 {
         -re "Use libgettext.a instead of libgettext.so.*BR2_PACKAGE_GETTEXT_STATIC.*\\\[.*]" {
             if { $binary_flat == 1 } {
                 send "Y\r"
+            } elseif { $binary_flat == 0 } {
+                send "N\r"
             } else {
                 send "\r"
             }

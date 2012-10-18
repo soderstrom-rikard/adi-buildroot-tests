@@ -6,7 +6,7 @@
 #   ./build_bluetooth_kernel.exp board_type
 #
 # Example:
-#   ./build_bluetooth_kernel.exp BEAGLE
+#   ./build_bluetooth_kernel.exp BF609-EZKIT
 #
 
 source ../common/kernel_config.exp
@@ -18,12 +18,22 @@ step "Make default config"
 source make_default_config.exp
 
 cd $src_root/testsuites/common
-source config_cut_app.exp
-
-if [ catch { exec grep BR2_BFIN_FLAT=y $src_root/.config } ] {
-    set binary_flat 0
+step "Kernel config for specified usb host"
+if { $board_type == "BF537-STAMP" } {
+    # isp1362 has bug [#6870] with bluetooth usb
+    source_args config_usb.exp usbhost_sl811
 } else {
-    set binary_flat 1
+    source_args config_usb.exp musb
+}
+
+if { $arch == "blackfin" } {
+    if [ catch { exec grep BR2_BFIN.*FLAT=y $src_root/.config } ] {
+        set binary_flat 0
+    } else {
+        set binary_flat 1
+    }
+} else {
+    set binary_flat "NA"
 }
 send_user "\n#### binary_flat is $binary_flat. ####\n"
 
@@ -34,7 +44,7 @@ set timeout 300
 spawn make linux-config
 while 1 {
     expect {
-        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+        -nocase -re "\\\[\[^\r]*] (\\\(NEW\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
         }
 
@@ -79,65 +89,6 @@ while 1 {
             send "Y\r"
         }
 
-# USB support
-        -re "Flash device in physical memory map.*MTD_PHYSMAP.*\\\[.*]" {
-#CONFIG_MTD_PHYSMAP claims the entire Async. Memory Space
-#need to entirely disable it while using various U-Connector boards
-            send "N\r"
-        }
-
-        -re "Bank 3.*BANK_3.*\\\[.*]" {
-            if { $board_type == "BF537-STAMP" } {
-                send "0xAAC2\r"
-            } else {
-                send "\r"
-            }
-        }
-
-        -re "USB support.*USB_SUPPORT.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "Support for Host-side USB.*USB.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "Inventra Highspeed Dual Role Controller.*USB_MUSB_HDRC.*\\\[.*]" {
-            if { $board_type == "BF548-EZKIT" || [string match "BF527-EZKIT*" $board_type] || $board_type == "BF609-EZKIT" } {
-                send "Y\r"
-            } else {
-                send "\r"
-            }
-        }
-
-        -re "Platform Glue Layer \\\[.*]" {
-            send "Y\r"
-        }
-
-        -re " (\[0-9]+). Blackfin.*USB_MUSB_BLACKFIN.*\[cC]hoice.*\\\[.*]" {
-            if { $board_type == "BF548-EZKIT" || [string match "BF527-EZKIT*" $board_type] || $board_type == "BF609-EZKIT" } {
-                send "$expect_out(1,string)\r"
-            } else {
-                send "\r"
-            }
-        }
-
-        -re "ISP1362 HCD support \\\(USB_ISP1362_HCD\\\).*\\\[.*]" {
-            if { $board_type == "BF537-STAMP" } {
-                send "Y\r"
-            } else {
-                send "\r"
-            }
-        }
-
-        -re "SL811HS HCD support.*USB_SL811_HCD.*\\\[.*]" {
-            if { $board_type == "BF537-STAMP" } {
-                send "Y\r"
-            } else {
-                send "\r"
-            }
-        }
-
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
             send "\r"
         }
@@ -163,7 +114,7 @@ while 1 {
     }
 }
 
-step "user space config - need expat or libxml2 for DBUS and then bluez_utils"
+step "user space config for expat and static gettext"
 cd $src_root
 set timeout 300
 spawn make config
@@ -180,16 +131,14 @@ while 1 {
         -re "Use libgettext.a instead of libgettext.so.*BR2_PACKAGE_GETTEXT_STATIC.*\\\[.*]" {
             if { $binary_flat == 1 } {
                 send "Y\r"
+            } elseif { $binary_flat == 0 } {
+                send "N\r"
             } else {
                 send "\r"
             }
         }
 
         -re "expat \\\(BR2_PACKAGE_EXPAT\\\) \\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "libxml2 \\\(BR2_PACKAGE_LIBXML2\\\) \\\[.*]" {
             send "Y\r"
         }
 
