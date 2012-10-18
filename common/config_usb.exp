@@ -1,4 +1,20 @@
 #!/usr/bin/expect
+#
+# This file can't be indepently executed.
+# It needs to be included into build***kernel.exp scripts.
+#
+# Usage:
+# source_args config_usb.exp usb_driver
+#
+# Examples:
+# * config sl811 driver as built-in mode:
+#   source_args config_usb.exp usbhost_sl811
+#
+
+if { $argc < 1} {
+    send_user "\nconfig_usb.exp\nPlease input: usb_driver(usbhost_isp1362, usbhost_sl811, usbhost_isp1760 or musb)\n"
+    exit
+}
 
 set usb_driver [lindex $argv 0]
 

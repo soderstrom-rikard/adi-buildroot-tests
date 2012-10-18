@@ -1,4 +1,8 @@
 #!/usr/bin/expect
+#
+# This file can't be indepently executed.
+# It needs to be included into build***kernel.exp scripts.
+#
 
 cd $src_root
 set timeout 300
