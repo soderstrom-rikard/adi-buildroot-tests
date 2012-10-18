@@ -49,6 +49,10 @@ while 1 {
         }
 
 # Bluetooth driver
+        -re "Networking support \\\(NET\\\).*\\\[.*]" {
+            send "Y\r"
+        }
+
         -re "Bluetooth subsystem support.*BT.*\\\[.*]" {
             send "Y\r"
         }
@@ -108,7 +112,7 @@ while 1 {
         }
 
         timeout {
-            send_user "\n\nFATAL ERROR: config prompt timeout in make config"
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
             exit
         }
     }

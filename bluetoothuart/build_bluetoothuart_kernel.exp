@@ -17,13 +17,14 @@ cd $src_root/testsuites/common
 step "Make default config"
 source make_default_config.exp
 
-cd $src_root/testsuites/common
-source config_cut_app.exp
-
-if [ catch { exec grep BR2_BFIN_FLAT=y $src_root/.config } ] {
-    set binary_flat 0
+if { $arch == "blackfin" } {
+    if [ catch { exec grep BR2_BFIN.*FLAT=y $src_root/.config } ] {
+        set binary_flat 0
+    } else {
+        set binary_flat 1
+    }
 } else {
-    set binary_flat 1
+    set binary_flat "NA"
 }
 send_user "\n#### binary_flat is $binary_flat. ####\n"
 
@@ -55,23 +56,23 @@ while 1 {
             send "Y\r"
         }
 
-        -re "RFCOMM protocol support \\\(BT_RFCOMM\\\).*\\\[.*]" {
+        -re "RFCOMM protocol support.*BT_RFCOMM.*\\\[.*]" {
             send "Y\r"
         }
 
-        -re "RFCOMM TTY support \\\(BT_RFCOMM_TTY\\\).*\\\[.*]" {
+        -re "RFCOMM TTY support.*BT_RFCOMM_TTY.*\\\[.*]" {
             send "Y\r"
         }
 
-        -re "BNEP protocol support \\\(BT_BNEP\\\).*\\\[.*]" {
+        -re "BNEP protocol support.*BT_BNEP.*\\\[.*]" {
             send "Y\r"
         }
 
-        -re "Multicast filter support \\\(BT_BNEP_MC_FILTER\\\).*\\\[.*]" {
+        -re "Multicast filter support.*BT_BNEP_MC_FILTER.*\\\[.*]" {
             send "Y\r"
         }
 
-        -re "Protocol filter support \\\(BT_BNEP_PROTO_FILTER\\\).*\\\[.*]" {
+        -re "Protocol filter support.*BT_BNEP_PROTO_FILTER.*\\\[.*]" {
             send "Y\r"
         }
 
@@ -99,6 +100,10 @@ while 1 {
             send "Y\r"
         }
 
+        -re "($anomalous_option) \\\[\[^\]]+/.]" {
+            send "\r"
+        }
+
         "\\\(*) \\\[*]" {
             sleep .01
             send "\r"
@@ -120,7 +125,7 @@ while 1 {
     }
 }
 
-step "user space config - need expat or libxml2 for DBUS and then bluez_utils"
+step "user space config for expat and static gettext"
 cd $src_root
 set timeout 300
 spawn make config
@@ -137,16 +142,14 @@ while 1 {
         -re "Use libgettext.a instead of libgettext.so.*BR2_PACKAGE_GETTEXT_STATIC.*\\\[.*]" {
             if { $binary_flat == 1 } {
                 send "Y\r"
+            } elseif { $binary_flat == 0 } {
+                send "N\r"
             } else {
                 send "\r"
             }
         }
 
         -re "expat \\\(BR2_PACKAGE_EXPAT\\\) \\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "libxml2 \\\(BR2_PACKAGE_LIBXML2\\\) \\\[.*]" {
             send "Y\r"
         }
 
