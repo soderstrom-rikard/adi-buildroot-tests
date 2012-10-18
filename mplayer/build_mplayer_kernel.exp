@@ -37,9 +37,11 @@ while 1 {
         }
 
 # Large cache is required for video related test on bf609-ezkit
-        -re "Uncached DMA region.*(\[0-9]). Enable 32M DMA region.*DMA_UNCACHED_32M.*\[cC]hoice.*\\\[.*]" {
+        -re "Uncached DMA region.*(\[0-9]). Enable 32M DMA region.*(\[0-9]). Enable 2M DMA region.*\[cC]hoice.*\\\[.*]" {
             if { $board_type == "BF609-EZKIT" } {
                 send "$expect_out(1,string)\r"
+            } elseif { [string match "BF*" $board_type] } {
+                send "$expect_out(2,string)\r"
             } else {
                 send "\r"
             }
