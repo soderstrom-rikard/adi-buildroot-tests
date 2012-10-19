@@ -112,6 +112,10 @@ while 1 {
             send "Y\r"
         }
 
+        -re "play \\\(BR2_PACKAGE_PLAY\\\) \\\[.*]" {
+            send "Y\r"
+        }
+
         -re "linphone \\\(BR2_PACKAGE_LINPHONE\\\) \\\[.*]" {
             send "Y\r"
         }
