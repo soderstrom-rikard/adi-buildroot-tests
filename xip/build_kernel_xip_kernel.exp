@@ -137,7 +137,13 @@ while 1 {
         }
 
         -re "Kernel ROM Base.*ROM_BASE.*\\\[.*]" {
-            send "0xB0080040\r"
+            if { $board_type == "BF548-EZKIT" } {
+                send "0x20080040\r"
+            } elseif { $board_type == "BF609-EZKIT" } {
+                send "0xB0080040\r"
+            } else {
+                send "\r"
+            }
         }
 
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
