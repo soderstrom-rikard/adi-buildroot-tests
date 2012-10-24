@@ -75,6 +75,10 @@ while 1 {
             continue
         }
 
+        -re "Install ELF shared libraries.*BR2_BFIN_INSTALL_ELF_SHARED.*\\\[.*]" {
+            send -s "Y\r"
+        }
+
         -re "taskset.*USER_BUSYBOX_TASKSET.*\\\[.*]" {
             send  "Y\r"
         }

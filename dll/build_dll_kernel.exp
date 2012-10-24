@@ -79,6 +79,10 @@ while 1 {
             continue
         }
 
+        -re "Install ELF shared libraries.*BR2_BFIN_INSTALL_ELF_SHARED.*\\\[.*]" {
+            send -s "Y\r"
+        }
+
         "\\\(*) \\\[*]" {
             sleep .01
             send "\r"
