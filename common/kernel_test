@@ -109,7 +109,7 @@ AUTO_TESTCASE=( [0]="ethernet" [1]="bfindma" [2]="sd" [3]="usb_storage" [4]="aud
 
 AUTO_RUN_STATUS=( [0]="1" [1]="0" [2]="0" [3]="0" [4]="0" [5]="0" [6]="1" [7]="1" [8]="1" [9]="1" [10]="1" [11]="0" [12]="0"  [13]="1" [14]="1" [15]="1" [16]="1" [17]="1" [18]="1" [19]="1" [20]="1" [21]="1" [22]="1" [23]="1" [24]="0" [25]="1" [26]="1" [27]="1" [28]="1" [29]="0" [30]="0" [31]="1" [32]="1" [33]="1" [34]="0" [35]="1" [36]="1" [37]="1" [38]="0" [39]="1" [40]="1" [41]="1" [42]="1" [43]="0" [44]="0" [45]="0" [46]="1" [47]="0" [48]="0" [49]="0" [50]="0" [51]="0" [52]="0" [53]="0" [54]="0" [55]="0" [56]="1" [57]="1" [58]="0" [59]="0" [60]="0" [61]="1" [62]="0" [63]="0" [64]="0" [65]="0" [66]="0" [67]="1" [68]="0" [69]="0" [70]="1" [71]="1" [$((n+1))]="1" [$((n+2))]="1" [$((n+3))]="0" [$((n+4))]="0" [$((n+5))]="0" [$((n+6))]="0" [$((n+7))]="0" [$((n+8))]="0" [$((n+9))]="0" [$((n+10))]="0" [$((n+11))]="0" [$((n+12))]="1" )
 
-MANUAL_TESTCASE=( [0]="bluetooth" [1]="hdmi" [2]="sdio_wifi" [3]="touchscreen" [4]="irda" [5]="generic_gpio" [6]="pfbutton" [7]="video_decoder" [8]="video_encoder" [$((n+1))]="" )
+MANUAL_TESTCASE=( [0]="bluetooth" [1]="hdmi" [2]="sdio_wifi" [3]="touchscreen" [4]="irda" [5]="generic_gpio" [6]="pfbutton" [7]="video_decoder" [8]="video_encoder" [$((n+1))]="no" )
 
 MANUAL_RUN_STATUS=( [0]="0" [1]="0" [2]="0" [3]="1" [4]="1" [5]="1" [6]="1" [7]="0" [8]="0" [$((n+1))]="0" )
 
@@ -199,6 +199,9 @@ q1=${#MANUAL_TESTCASE[*]}
 p=${#testcase_list[*]}
 q=${#run_status_list[*]}
 
+echo "Auto testcase $p1 ,manual testcase $q1."
+echo "Testcase list $p ,run status list $q."
+t=0
 if [ $p -eq $q ] ; then
     echo "**********************************************"
     echo "All the testcases that run on this machine:"
@@ -207,9 +210,10 @@ if [ $p -eq $q ] ; then
     for i in `seq 0 $p`
     do
         if [ ! -z ${run_status_list[$i]} ] && [ ${run_status_list[$i]} == 1 ] ; then
-            if [ $i -eq $p1 ]; then
+            if [ $i -ge $p1 ] && [ $t != "1" ] ; then
                 echo
                 echo "*** Manual test *** "
+		t=1
             fi
             echo "${testcase_list[$i]}"
 
