@@ -215,7 +215,7 @@ if [ $p -eq $q ] ; then
                 echo "*** Manual test *** "
 		t=1
             fi
-            echo "${testcase_list[$i]}"
+            echo "$i ${testcase_list[$i]}"
 
         fi
     done
