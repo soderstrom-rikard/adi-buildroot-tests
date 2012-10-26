@@ -130,6 +130,9 @@ proc start_backlight {} {
             }
         }
     }
+
+    send "cd\r"
+    expect -re $kernel_prompt
 }
 
 
