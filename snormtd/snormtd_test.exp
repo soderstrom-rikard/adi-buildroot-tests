@@ -433,7 +433,9 @@ while 1 {
 #Copy a rootfs into flash partition.
 incr case_num
 set timeout 5
-send "mount -t jffs2 /dev/mtdblock$spi_rootfs_num /mnt\r"
+send "mkdir /mnt/rootfs\r"
+expect -re $kernel_prompt
+send "mount -t jffs2 /dev/mtdblock$spi_rootfs_num /mnt/rootfs\r"
 expect -re $kernel_prompt
 send "ifconfig eth0 $targetip up\r"
 expect -re $kernel_prompt
@@ -461,7 +463,7 @@ while 1 {
 
 incr case_num
 set timeout 600
-send "umount /mnt\r"
+send "umount /mnt/rootfs\r"
 while 1 {
     expect {
         -re "cannot umount.*$kernel_prompt" {
