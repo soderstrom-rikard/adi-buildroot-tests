@@ -29,6 +29,15 @@ while 1 {
             }
         }
 
+        -re "Detect flash chips by Common Flash Interface.*MTD_CFI.*\\\[.*]" {
+            #conflict with LCD on bf609-ezkit P3A port
+            if { $board_type == "BF609-EZKIT" } {
+                send "N\r"
+            } else {
+                send "\r"
+            }
+        }
+
         -re "Support for generic platform NAND driver.*MTD_NAND_PLATFORM.*\\\[.*]" {
             #conflict with some TFT LCD
             send "N\r"
