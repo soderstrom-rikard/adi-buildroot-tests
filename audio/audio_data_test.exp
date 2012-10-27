@@ -49,7 +49,7 @@ if { $audio_dev == "audio_ad1938" || $audio_dev == "audio_ad1836" || $audio_dev 
 }
 
 
-proc rec_at_pc { freq magnitude } {
+proc rec_at_pc { freq } {
     global case_num
     global kermit_spawn_id
     global host_spawn_id
@@ -62,12 +62,12 @@ proc rec_at_pc { freq magnitude } {
     global sample_rate
     global alsa_format
 
-#Generate sine wave at $freq with magnitude of $magnitude on target board.
+#Generate sine wave at $freq on target board.
     set spawn_id $kermit_spawn_id
 
     incr case_num
     set timeout 10
-    send "tone -s -m $magnitude $freq\n"
+    send "tone -s -m 255 $freq\n"
     while 1 {
         expect {
             -re "TONE: generating sine wave at (\[0-9])+ Hz" {
@@ -123,7 +123,7 @@ proc rec_at_pc { freq magnitude } {
     }
 }
 
-proc rec_from_pc { freq magnitude } {
+proc rec_from_pc { freq } {
     global case_num
     global kermit_spawn_id
     global host_spawn_id
@@ -137,15 +137,51 @@ proc rec_from_pc { freq magnitude } {
     global sample_rate
     global alsa_format
 
-#Generate sine wave at $freq with magnitude of $magnitude on PC.
+#Generate sine wave at $freq on PC.
     set spawn_id $host_spawn_id
 
     incr case_num
     set timeout 10
-    send "tone -s -m $magnitude $freq\n"
+    send "lsb_release -i\n"
+    while 1 {
+        expect {
+            -re "lsb_release:.*not found.*$sh_prompt" {
+                set linux_distribution suse
+                case_pass $case_num
+                break
+            }
+            -nocase -re "suse.*$sh_prompt" {
+                set linux_distribution suse
+                case_pass $case_num
+                break
+            }
+            -nocase -re "ubuntu.*$sh_prompt" {
+                set linux_distribution ubuntu
+                case_pass $case_num
+                break
+            }
+            timeout {
+                send "\3"
+                expect -re $sh_prompt
+                case_fail $case_num
+            }
+        }
+    }
+
+    incr case_num
+    set timeout 10
+    if { $linux_distribution == "ubuntu" } {
+        send "speaker-test -t sine -b 1000000 -f $freq\n"
+    } else {
+        send "tone -s -m 255 $freq\n"
+    }
     while 1 {
         expect {
             -re "TONE: generating sine wave at (\[0-9])+ Hz" {
+                case_pass $case_num
+                break
+            }
+            -re "Sine wave rate is (\[0-9])+\.0000Hz.*Front Left" {
                 case_pass $case_num
                 break
             }
@@ -292,21 +328,21 @@ if [ catch {exec mkdir -p $output_dir} ] {
     case_pass $case_num
 }
 
-rec_at_pc 100   255
-rec_at_pc 250   255
-rec_at_pc 440   255
-rec_at_pc 1000  255
-rec_at_pc 2000  255
-rec_at_pc 3000  255
+rec_at_pc 100
+rec_at_pc 250
+rec_at_pc 440
+rec_at_pc 1000
+rec_at_pc 2000
+rec_at_pc 3000
 
 sleep 5
 
-rec_from_pc 100   255
-rec_from_pc 250   255
-rec_from_pc 440   255
-rec_from_pc 1000  255
-rec_from_pc 2000  255
-rec_from_pc 3000  255
+rec_from_pc 100
+rec_from_pc 250
+rec_from_pc 440
+rec_from_pc 1000
+rec_from_pc 2000
+rec_from_pc 3000
 
 all_pass
 send_user "Ending $argv0\n"
