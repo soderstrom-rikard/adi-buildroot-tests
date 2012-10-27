@@ -162,15 +162,18 @@ set spawn_id $kermit_spawn_id
 sleep 3
 incr case_num
 set timeout 8
-send "getty 9600 /dev/ttyGS0\r"
+send "setsid getty 9600 /dev/ttyGS0\r"
 while 1 {
     expect {
-        -re $kernel_prompt {
+        -re "setsid:|error|fail" {
             case_fail $case_num
         }
-        timeout {
+        -re $kernel_prompt {
             case_pass $case_num
             break
+        }
+        timeout {
+            case_fail $case_num
         }
     }
 }
@@ -242,12 +245,13 @@ while 1 {
     }
 }
 
+sleep 5
 incr case_num
 set timeout 5
 send "lsz /file_in_target\r"
 while 1 {
     expect {
-        -re "Transfer complete" {
+        -re "Bytes received.*Transfer complete" {
             case_pass $case_num
             break
         }
@@ -336,7 +340,7 @@ set timeout 5
 send "send file_in_target.rcp\r"
 while 1 {
     expect {
-        -re "Transfer complete.*>" {
+        -re "Bytes Sent:.*Transfer complete.*>" {
             case_pass $case_num
             break
         }
