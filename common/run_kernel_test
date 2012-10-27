@@ -64,6 +64,7 @@ else
 fi
 
 cp $COMMON_TESTSCRIPTS/kernel_test_log $THIS_LOG
+cp $COMMON_TESTSCRIPTS/test_runtime_control_log $THIS_LOG
 
 $COMMON_TESTSCRIPTS/get_test_summary $THIS_LOG $BOARD_TYPE $BOARD_CONFIG
 
