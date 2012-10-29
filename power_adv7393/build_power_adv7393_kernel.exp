@@ -78,7 +78,7 @@ set timeout 300
 spawn make busybox-config
 while 1 {
     expect {
-        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+        -nocase -re "\\\[\[^\r]*] (\\\(NEW\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
         }
 
@@ -96,13 +96,13 @@ while 1 {
         }
 
         eof {
-            send_user "End of configuration"
+            send_user "\nEnd of configuration\n"
             break
         }
 
         timeout {
-            send_user "\n\nFATAL ERROR: config prompt timeout in make config"
-            break
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n\n"
+            exit
         }
     }
 }
@@ -113,7 +113,7 @@ set timeout 300
 spawn make config
 while 1 {
     expect {
-        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+        -nocase -re "\\\[\[^\r]*] (\\\(NEW\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
         }
 
