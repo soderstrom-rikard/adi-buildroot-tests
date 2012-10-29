@@ -11,13 +11,6 @@ if { $arch == "blackfin" } {
     }
 }
 
-# This step should be done after buildroot is cleaned
-if { $arch == "blackfin" } {
-    cd $src_root/testsuites/common
-    step "Restore kernel config of policy"
-    source restore_kernel_config.exp
-}
-
 cd $src_root/testsuites/common
 step "Make default config"
 source make_default_config.exp
@@ -28,4 +21,12 @@ source make_default_config.exp
 if { $arch == "blackfin" } {
     cd $src_root/testsuites/common
     source_args config_bfin-format.exp $bfin_format
+}
+
+# This step should be done after buildroot is cleaned
+# and user space config is configured.
+if { $arch == "blackfin" } {
+    cd $src_root/testsuites/common
+    step "Restore kernel config of policy"
+    source restore_kernel_config.exp
 }
