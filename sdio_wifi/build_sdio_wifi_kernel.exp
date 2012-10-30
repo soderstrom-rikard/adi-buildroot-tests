@@ -6,7 +6,7 @@
 #   ./build_sdio_wifi_kernel.exp board_type
 #
 # Example:
-#   ./build_sdio_wifi_kernel.exp BEAGLE
+#   ./build_sdio_wifi_kernel.exp BF548-EZKIT
 #
 
 source ../common/kernel_config.exp
@@ -17,25 +17,22 @@ cd $src_root/testsuites/common
 step "Make default config"
 source make_default_config.exp
 
-cd $src_root/testsuites/common
-source config_cut_app.exp
-
 step "Make kernel config"
 cd $src_root
 set timeout 300
 spawn make linux-config
 while 1 {
     expect {
-        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+        -nocase -re "\\\[\[^\r]*] (\\\(NEW\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
-        }
-
-        -re "($anomalous_option) \\\[\[^\]]+/.]" {
-            send "\r"
         }
 
         -re "SDIO card support \\\(MMC\\\) \\\[.*]" {
             send "M\r"
+        }
+
+        -re "($anomalous_option) \\\[\[^\]]+/.]" {
+            send "\r"
         }
 
         "\\\(*) \\\[*]" {
@@ -48,12 +45,12 @@ while 1 {
         }
 
         eof {
-            puts "End of configuration"
+            send_user "\nEnd of configuration\n"
             break
         }
 
         timeout {
-            send_user "\n\nFATAL ERROR: config prompt timeout in make config"
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
             exit
         }
     }
@@ -83,12 +80,12 @@ while 1 {
         }
 
         eof {
-            puts "End of configuration"
+            send_user "\nEnd of configuration\n"
             break
         }
 
         timeout {
-            send_user "\n\nFATAL ERROR: config prompt timeout in make config"
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
             exit
         }
     }

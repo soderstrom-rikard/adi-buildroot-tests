@@ -1,7 +1,6 @@
 #!/usr/bin/expect
 
 source ../common/kernel_config.exp
-source  ../common/board_info.exp
 log_file [log_file_name "$argv0"]
 send_user "Starting $argv0\n"
 
@@ -21,10 +20,6 @@ while 1 {
     expect {
         -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
-        }
-
-        -re "($anomalous_option) \\\[\[^\]]+/.]" {
-            send "\r"
         }
 
         -re "Re-program Clocks while Kernel boots.*BFIN_KERNEL_CLOCK.*\\\[.*]" {
@@ -113,6 +108,10 @@ while 1 {
 
         -re "NLS ISO 8859-1.*Latin 1.*Western European Languages.*NLS_ISO8859_1.*\\\[.*]" {
             send "Y\r"
+        }
+
+        -re "($anomalous_option) \\\[\[^\]]+/.]" {
+            send "\r"
         }
 
         "\\\(*) \\\[*]" {
@@ -261,4 +260,3 @@ source   copy_image.exp
 
 send_user "Ending $argv0\n"
 log_file
-
