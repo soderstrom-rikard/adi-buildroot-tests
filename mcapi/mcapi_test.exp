@@ -46,8 +46,6 @@ send -s "cat /tmp/* \; dmesg\r"
   }
 }
 
-set case_num 0
-
 send -s "cd /bin\r"
 while 1 {
    expect {
@@ -63,6 +61,11 @@ while 1 {
 send -s "echo 1 > /proc/sys/kernel/printk\r"
 
 #### Test two core case between linux and CCES. ####
+
+set case_num 0
+set corea_case_status  0
+set coreb_case_status  0
+set execption_count  0
 
 incr case_num
 if [ catch { exec rcp BF609_MCAPI_msg_Core1.dxe root@$targetip:/bin/. } ] {
