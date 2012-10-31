@@ -7,7 +7,7 @@
 #   ./build_qt_kernel.exp board_type
 #
 # Example:
-#   ./build_qt_kernel.exp BEAGLE
+#   ./build_qt_kernel.exp BF609-EZKIT
 #
 
 source ../common/kernel_config.exp
@@ -22,6 +22,10 @@ cd $src_root/testsuites/common
 step "Kernel config for tft lcd driver"
 source config_tftlcd.exp
 
+cd $src_root/testsuites/common
+step "Kernel config for specified usb host"
+source_args config_usb.exp musb
+
 step "Make kernel config"
 cd $src_root
 set timeout 300
@@ -30,6 +34,56 @@ while 1 {
     expect {
         -nocase -re "\\\[\[^\r]*] (\\\(NEW\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
+        }
+
+# configuration for usb mouse and keyboard in IPNUT and HID drivers;
+# USB has already been configured in previous script
+        -re "Generic input layer.*needed for keyboard, mouse.*INPUT.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Mouse interface.*INPUT_MOUSEDEV.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Horizontal screen resolution.*INPUT_MOUSEDEV_SCREEN_X.*\\\[.*]" {
+            if { $board_type == "BF548-EZKIT" } {
+                send "480\r"
+            } elseif { $board_type == "BF609-EZKIT" } {
+                send "800\r"
+            } else {
+                send "320\r"
+            }
+        }
+
+        -re "Vertical screen resolution.*INPUT_MOUSEDEV_SCREEN_Y.*\\\[.*]" {
+            if { $board_type == "BF548-EZKIT" } {
+                send "272\r"
+            } elseif { $board_type == "BF609-EZKIT" } {
+                send "480\r"
+            } else {
+                send "240\r"
+            }
+        }
+
+        -re "Event interface.*INPUT_EVDEV.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Keyboards.*INPUT_KEYBOARD.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Mice.*INPUT_MOUSE.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "HID bus support \\\(HID\\\) \\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "USB HID transport layer.*USB_HID.*\\\[.*]" {
+            send "Y\r"
         }
 
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
@@ -77,6 +131,35 @@ while 1 {
 
         -re "Compile and install demos and examples.*\\\(BR2_PACKAGE_QT_DEMOS\\\) \\\[.*]" {
             send "Y\r"
+        }
+
+        -re "Approve free license.*BR2_PACKAGE_QT_LICENSE_APPROVED.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "linux input.*BR2_PACKAGE_QT_MOUSE_LINUXINPUT.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "tslib.*BR2_PACKAGE_QT_MOUSE_TSLIB.*\\\[.*]" {
+            if { $board_type == "BF609-EZKIT" } {
+                send "Y\r"
+            } else {
+                send "N\r"
+            }
+        }
+
+        -re "linux input.*BR2_PACKAGE_QT_KEYBOARD_LINUXINPUT.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "libts.*The Touchscreen tslib Library.*BR2_PACKAGE_TSLIB.*\\\[.*]" {
+# Attention: tslib only supports fdpic format
+            if { $board_type == "BF609-EZKIT" } {
+                send "Y\r"
+            } else {
+                send "N\r"
+            }
         }
 
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
