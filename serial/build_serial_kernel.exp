@@ -17,9 +17,6 @@ cd $src_root/testsuites/common
 step "Make default config"
 source make_default_config.exp
 
-cd $src_root/testsuites/common
-source config_cut_app.exp
-
 step "Make kernel config"
 cd $src_root
 set timeout 300
