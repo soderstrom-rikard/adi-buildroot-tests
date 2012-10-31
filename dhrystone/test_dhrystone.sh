@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash 
 CC=bfin-uclinux-gcc
 CFLAGS=
 tmp=
