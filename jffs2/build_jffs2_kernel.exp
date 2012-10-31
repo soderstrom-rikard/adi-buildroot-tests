@@ -14,7 +14,8 @@ set HAVE_JFFS2_IMAGE 1
 # Following make specific configuration for this case.
 
 cd $src_root/testsuites/common
-source  make_cut_fs_config.exp
+source config_cut_app.exp
+source config_cut_kernel.exp
 
 cd $src_root/testsuites/common
 source  make_mtd_config.exp

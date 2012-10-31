@@ -52,7 +52,7 @@ source  make_default_config.exp
 
 # Following make specific configuration for this case.
 cd $src_root/testsuites/common
-source  make_cut_fs_config.exp
+source  config_cut_app.exp
 
 cd $src_root/testsuites/common
 source  make_mtd_config.exp
