@@ -1076,24 +1076,35 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
 	}
         if { $core_config == "SMP" } {
         incr case_num
+	set CPU1_NUM ""
+	set CPU0_NUM ""
+	set CUR_CPU ""
 	send "info thread\r"
 	expect {
-	  -re	"(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU1\\).*\[\r\n].*(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU0\\\)" {
-                set CPU1_NUM $expect_out(1,string) 
-                set CPU0_NUM $expect_out(2,string) 
-		expect {
-			"(gdb) " {
-                        case_pass $case_num
+	  -re	"(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU1\\\).*\[\r]" {
+	                set CPU1_NUM $expect_out(1,string)
+			if { [ string match *kgdb_test* $expect_out(0,string) ] > 0 } {
+	        	        set CUR_CPU $expect_out(1,string) 
 			}
-                        "to quit---" {
-                            send "\r"
-                            exp_continue
-                        }
+			exp_continue
 		}
+	  -re	"(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU0\\\).*\[\r]" {
+        	        set CPU0_NUM $expect_out(1,string)
+			if { [ string match *kgdb_test* $expect_out(0,string) ] > 0 } {
+	        	        set CUR_CPU $expect_out(1,string) 
+			}
+			exp_continue
 		}
 		"to quit---" {
 			send "\r"
 			exp_continue
+		}
+		"(gdb) " {
+			if { $CPU1_NUM == "" || $CPU0_NUM == "" || $CUR_CPU == ""} {
+				case_fail $case_num
+			} else {
+	                        case_pass $case_num
+			}
 		}
 		timeout {
                 clean_host_gdb
@@ -1102,9 +1113,16 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
 		}
 	}
         incr case_num
-	send "thread $CPU1_NUM\r"
+	if { $CUR_CPU == $CPU0_NUM } {
+		set CUR_CPU $CPU1_NUM
+		set CUR_CPU_MASK 0xe5040501
+	} else {
+		set CUR_CPU $CPU0_NUM
+		set CUR_CPU_MASK 0xe5040500
+	}
+	send "thread $CUR_CPU\r"
 	expect {
-	  -re	"Switching to thread $CPU1_NUM" {
+	  -re	"Switching to thread $CUR_CPU" {
                 case_pass $case_num
 		expect {
 			"(gdb) " {
@@ -1121,7 +1139,7 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
         # read cpu1 register
         send " x/1xw 0xffe05000\r"
         expect {
-           -re "0xffe05000:\[\x20\t]+0xe5040501" {
+           -re "0xffe05000:\[\x20\t]+$CUR_CPU_MASK" {
                 case_pass $case_num
                 expect {
                         "(gdb) " {
@@ -1135,9 +1153,16 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
                 }
         }
         incr case_num
-	send "thread $CPU0_NUM\r"
+	if { $CUR_CPU == $CPU0_NUM } {
+		set CUR_CPU $CPU1_NUM
+		set CUR_CPU_MASK 0xe5040501
+	} else {
+		set CUR_CPU $CPU0_NUM
+		set CUR_CPU_MASK 0xe5040500
+	}
+	send "thread $CUR_CPU\r"
 	expect {
-	  -re	"Switching to thread $CPU0_NUM" {
+	  -re	"Switching to thread $CUR_CPU" {
                 case_pass $case_num
 		expect {
 			"(gdb) " {
@@ -1154,7 +1179,7 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
         incr case_num
         send " x/1xw 0xffe05000\r"
         expect {
-           -re "0xffe05000:\[\x20\t]+0xe5040500" {
+           -re "0xffe05000:\[\x20\t]+$CUR_CPU_MASK" {
                 case_pass $case_num
                 expect {
                         "(gdb) " {
@@ -1168,9 +1193,16 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
                 }
         }
         incr case_num
-	send "thread $CPU1_NUM\r"
+	if { $CUR_CPU == $CPU0_NUM } {
+		set CUR_CPU $CPU1_NUM
+		set CUR_CPU_MASK 0xe5040501
+	} else {
+		set CUR_CPU $CPU0_NUM
+		set CUR_CPU_MASK 0xe5040500
+	}
+	send "thread $CUR_CPU\r"
 	expect {
-	  -re	"Switching to thread $CPU1_NUM" {
+	  -re	"Switching to thread $CUR_CPU" {
                 case_pass $case_num
 		expect {
 			"(gdb) " {
@@ -1356,24 +1388,35 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
         #########################################################
         if { $core_config == "SMP" } {
         incr case_num
+	set CPU1_NUM ""
+	set CPU0_NUM ""
+	set CUR_CPU ""
 	send "info thread\r"
 	expect {
-	  -re	"(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU1\\).*\[\r\n].*(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU0\\\)" {
-                set CPU1_NUM $expect_out(1,string) 
-                set CPU0_NUM $expect_out(2,string) 
-		expect {
-			"(gdb) " {
-                        case_pass $case_num
+	  -re	"(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU1\\\).*\[\r]" {
+	                set CPU1_NUM $expect_out(1,string)
+			if { [ string match *kgdb_test* $expect_out(0,string) ] > 0 } {
+	        	        set CUR_CPU $expect_out(1,string) 
 			}
-                        "to quit---" {
-                            send "\r"
-                            exp_continue
-                        }
+			exp_continue
 		}
+	  -re	"(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU0\\\).*\[\r]" {
+        	        set CPU0_NUM $expect_out(1,string)
+			if { [ string match *kgdb_test* $expect_out(0,string) ] > 0 } {
+	        	        set CUR_CPU $expect_out(1,string) 
+			}
+			exp_continue
 		}
 		"to quit---" {
 			send "\r"
 			exp_continue
+		}
+		"(gdb) " {
+			if { $CPU1_NUM == "" || $CPU0_NUM == "" || $CUR_CPU == ""} {
+				case_fail $case_num
+			} else {
+	                        case_pass $case_num
+			}
 		}
 		timeout {
                 clean_host_gdb
@@ -1382,9 +1425,14 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
 		}
 	}
         incr case_num
-	send "thread $CPU0_NUM\r"
+	if { $CUR_CPU == $CPU0_NUM } {
+		set CUR_CPU $CPU1_NUM
+	} else {
+		set CUR_CPU $CPU0_NUM
+	}
+	send "thread $CUR_CPU\r"
 	expect {
-                -re  "Switching to thread $CPU0_NUM" {
+                -re  "Switching to thread $CUR_CPU" {
                 case_pass $case_num
 		expect {
 			"(gdb) " {
@@ -1574,24 +1622,35 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
 
         if { $core_config == "SMP" } {
         incr case_num
+	set CPU1_NUM ""
+	set CPU0_NUM ""
+	set CUR_CPU ""
 	send "info thread\r"
 	expect {
-	  -re	"(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU1\\).*\[\r\n].*(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU0\\\)" {
-                set CPU1_NUM $expect_out(1,string) 
-                set CPU0_NUM $expect_out(2,string) 
-		expect {
-			"(gdb) " {
-                        case_pass $case_num
+	  -re	"(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU1\\\).*\[\r]" {
+	                set CPU1_NUM $expect_out(1,string)
+			if { [ string match *kgdb_test* $expect_out(0,string) ] > 0 } {
+	        	        set CUR_CPU $expect_out(1,string) 
 			}
-                        "to quit---" {
-                            send "\r"
-                            exp_continue
-                        }
+			exp_continue
 		}
+	  -re	"(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU0\\\).*\[\r]" {
+        	        set CPU0_NUM $expect_out(1,string)
+			if { [ string match *kgdb_test* $expect_out(0,string) ] > 0 } {
+	        	        set CUR_CPU $expect_out(1,string) 
+			}
+			exp_continue
 		}
 		"to quit---" {
 			send "\r"
 			exp_continue
+		}
+		"(gdb) " {
+			if { $CPU1_NUM == "" || $CPU0_NUM == "" || $CUR_CPU == ""} {
+				case_fail $case_num
+			} else {
+	                        case_pass $case_num
+			}
 		}
 		timeout {
                 clean_host_gdb
@@ -1600,9 +1659,16 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
 		}
 	}
         incr case_num
-	send "thread $CPU0_NUM\r"
+	if { $CUR_CPU == $CPU0_NUM } {
+		set CUR_CPU $CPU1_NUM
+		set CUR_CPU_MASK 0xe5040501
+	} else {
+		set CUR_CPU $CPU0_NUM
+		set CUR_CPU_MASK 0xe5040500
+	}
+	send "thread $CUR_CPU\r"
 	expect {
-	  -re	"Switching to thread $CPU0_NUM" {
+	  -re	"Switching to thread $CUR_CPU" {
                 case_pass $case_num
 		expect {
 			"(gdb) " {
@@ -1619,7 +1685,7 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
         # read cpu1 register
         send " x/1xw 0xffe05000\r"
         expect {
-           -re "0xffe05000:\[\x20\t]+0xe5040500" {
+           -re "0xffe05000:\[\x20\t]+$CUR_CPU_MASK" {
                 case_pass $case_num
                 expect {
                         "(gdb) " {
@@ -1633,9 +1699,16 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
                 }
         }
         incr case_num
-	send "thread $CPU1_NUM\r"
+	if { $CUR_CPU == $CPU0_NUM } {
+		set CUR_CPU $CPU1_NUM
+		set CUR_CPU_MASK 0xe5040501
+	} else {
+		set CUR_CPU $CPU0_NUM
+		set CUR_CPU_MASK 0xe5040500
+	}
+	send "thread $CUR_CPU\r"
 	expect {
-	  -re	"Switching to thread $CPU1_NUM" {
+	  -re	"Switching to thread $CUR_CPU" {
                 case_pass $case_num
 		expect {
 			"(gdb) " {
@@ -1652,7 +1725,7 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
         incr case_num
         send " x/1xw 0xffe05000\r"
         expect {
-           -re "0xffe05000:\[\x20\t]+0xe5040501" {
+           -re "0xffe05000:\[\x20\t]+$CUR_CPU_MASK" {
                 case_pass $case_num
                 expect {
                         "(gdb) " {
@@ -1666,9 +1739,16 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
                 }
         }
         incr case_num
-	send "thread $CPU0_NUM\r"
+	if { $CUR_CPU == $CPU0_NUM } {
+		set CUR_CPU $CPU1_NUM
+		set CUR_CPU_MASK 0xe5040501
+	} else {
+		set CUR_CPU $CPU0_NUM
+		set CUR_CPU_MASK 0xe5040500
+	}
+	send "thread $CUR_CPU\r"
 	expect {
-	  -re	"Switching to thread $CPU0_NUM" {
+	  -re	"Switching to thread $CUR_CPU" {
                 case_pass $case_num
 		expect {
 			"(gdb) " {
