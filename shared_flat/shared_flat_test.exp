@@ -10,10 +10,10 @@ source ../common/spawn_kermit.exp
 
 step "Reboot the kernel."
 # To add following line here to indicate that if the bootargs is different,
-# it could be set here. If the bootargs value is 0, it needn't be stated, 
+# it could be set here. If the bootargs value is 0, it needn't be stated,
 # for it is the default value.
-# set bootargs 	$bootargs_param0   
-source ../common/reboot_kernel.exp 
+# set bootargs 	$bootargs_param0
+source ../common/reboot_kernel.exp
 
 step "Start testing."
 set case_num 0
@@ -21,10 +21,10 @@ sleep 20
 
 set timeout 20
 incr case_num
-send "ls -l /bin/\r" 
+send "ls -l /bin/\r"
 while 1 {
     expect {
-        -re $kernel_prompt {        
+        -re $kernel_prompt {
             case_pass $case_num
             break
         }
@@ -42,10 +42,10 @@ expect -re $sh_prompt
 
 set timeout 20
 incr case_num
-send "ls\r" 
+send "ls\r"
 while 1 {
     expect {
-        -re "version\.gdb.*$sh_prompt" {        
+        -re "version\.gdb.*$sh_prompt" {
             case_pass $case_num
             break
         }
@@ -57,10 +57,10 @@ while 1 {
 
 set timeout 20
 incr case_num
-send "readelf -a version.gdb|grep shared\r" 
+send "readelf -a version.gdb|grep --color=never shared\r"
 while 1 {
     expect {
-        -re "shared_flat_init.*$sh_prompt" {        
+        -re "shared_flat_init.*$sh_prompt" {
             case_pass $case_num
             break
         }
