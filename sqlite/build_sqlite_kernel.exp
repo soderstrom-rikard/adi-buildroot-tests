@@ -88,9 +88,9 @@ while 1 {
             }
         }
 
-        -re "pkg-config.*PKG_CONFIG.*\\\[.*]" {
-            send "Y\r"
-        }
+   #     -re "pkg-config.*PKG_CONFIG.*\\\[.*]" {
+   #         send "Y\r"
+   #     }
 
         -re "sqlite \\\(BR2_PACKAGE_SQLITE\\\) \\\[.*]" {
             send "Y\r"
