@@ -1081,16 +1081,16 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
 	set CUR_CPU ""
 	send "info thread\r"
 	expect {
-	  -re	"(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU1\\\).*\[\r]" {
+	  -re	"(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU1\\\)\[^\r]*\[\r]" {
 	                set CPU1_NUM $expect_out(1,string)
-			if { [ string match *kgdb_test* $expect_out(0,string) ] > 0 } {
+			if { [ string first kgdb_test $expect_out(0,string) 0 ] > 0 } {
 	        	        set CUR_CPU $expect_out(1,string) 
 			}
 			exp_continue
 		}
-	  -re	"(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU0\\\).*\[\r]" {
+	  -re	"(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU0\\\)\[^\r]*\[\r]" {
         	        set CPU0_NUM $expect_out(1,string)
-			if { [ string match *kgdb_test* $expect_out(0,string) ] > 0 } {
+			if { [ string first kgdb_test $expect_out(0,string) 0 ] > 0 } {
 	        	        set CUR_CPU $expect_out(1,string) 
 			}
 			exp_continue
@@ -1393,16 +1393,16 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
 	set CUR_CPU ""
 	send "info thread\r"
 	expect {
-	  -re	"(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU1\\\).*\[\r]" {
+	  -re	"(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU1\\\)\[^\r]*\[\r]" {
 	                set CPU1_NUM $expect_out(1,string)
-			if { [ string match *kgdb_test* $expect_out(0,string) ] > 0 } {
+			if { [ string first kgdb_test $expect_out(0,string) 0 ] > 0 } {
 	        	        set CUR_CPU $expect_out(1,string) 
 			}
 			exp_continue
 		}
-	  -re	"(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU0\\\).*\[\r]" {
+	  -re	"(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU0\\\)\[^\r]*\[\r]" {
         	        set CPU0_NUM $expect_out(1,string)
-			if { [ string match *kgdb_test* $expect_out(0,string) ] > 0 } {
+			if { [ string first kgdb_test $expect_out(0,string) 0 ] > 0 } {
 	        	        set CUR_CPU $expect_out(1,string) 
 			}
 			exp_continue
@@ -1627,18 +1627,18 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
 	set CUR_CPU ""
 	send "info thread\r"
 	expect {
-	  -re	"(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU1\\\).*\[\r]" {
+	  -re	"(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU1\\\)\[^\r]*\[\r]" {
 	                set CPU1_NUM $expect_out(1,string)
-			if { [ string match *kgdb_test* $expect_out(0,string) ] > 0 } {
+			if { [ string first kgdb_test $expect_out(0,string) 0 ] > 0 } {
 	        	        set CUR_CPU $expect_out(1,string) 
 			}
 			exp_continue
 		}
-	  -re	"(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU0\\\).*\[\r]" {
+	  -re	"(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU0\\\)\[^\r]*\[\r]" {
         	        set CPU0_NUM $expect_out(1,string)
-			if { [ string match *kgdb_test* $expect_out(0,string) ] > 0 } {
+			if { [ string first kgdb_test $expect_out(0,string) 0 ] > 0 } {
 	        	        set CUR_CPU $expect_out(1,string) 
-			}
+			} 
 			exp_continue
 		}
 		"to quit---" {
