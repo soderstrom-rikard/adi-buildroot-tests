@@ -120,13 +120,13 @@ while 1 {
             send "1\r"
         }
 
-        -re "gettext \\\(BR2_PACKAGE_GETTEXT\\\) \\\[.*]" {
-            send "Y\r"
-        }
+#        -re "gettext \\\(BR2_PACKAGE_GETTEXT\\\) \\\[.*]" {
+#            send "Y\r"
+#        }
 
-        -re "Use libgettext.a instead of libgettext.so.*BR2_PACKAGE_GETTEXT_STATIC.*\\\[.*]" {
-            send "N\r"
-        }
+#        -re "Use libgettext.a instead of libgettext.so.*BR2_PACKAGE_GETTEXT_STATIC.*\\\[.*]" {
+#            send "N\r"
+#        }
 
         -re "expat \\\(BR2_PACKAGE_EXPAT\\\) \\\[.*]" {
             send "Y\r"

@@ -26,16 +26,16 @@ if { $board_type == "BF537-STAMP" } {
     source_args config_usb.exp musb
 }
 
-if { $arch == "blackfin" } {
-    if [ catch { exec grep BR2_BFIN.*FLAT=y $src_root/.config } ] {
-        set binary_flat 0
-    } else {
-        set binary_flat 1
-    }
-} else {
-    set binary_flat "NA"
-}
-send_user "\n#### binary_flat is $binary_flat. ####\n"
+#if { $arch == "blackfin" } {
+#    if [ catch { exec grep BR2_BFIN.*FLAT=y $src_root/.config } ] {
+#        set binary_flat 0
+#    } else {
+#        set binary_flat 1
+#    }
+#} else {
+#    set binary_flat "NA"
+#}
+#send_user "\n#### binary_flat is $binary_flat. ####\n"
 
 
 step "Make kernel config"
