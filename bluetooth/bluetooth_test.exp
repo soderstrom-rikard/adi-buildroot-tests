@@ -6,7 +6,7 @@
 #   ./bluetooth_test.exp board_type
 #
 # Example:
-#   ./bluetooth_test.exp BEAGLE
+#   ./bluetooth_test.exp BF537-STAMP
 #
 
 source ../common/kernel_config.exp
@@ -24,7 +24,7 @@ step "Start testing"
 sleep 5
 set case_num 0
 set timeout 10
-set SLV_BD_ADDR "00:15:83:44:C2:E7"
+set SLV_BD_NAME "linux58-mmc-usblan-btuart"
 
 send "hciconfig hci0 up\r"
 expect -re $kernel_prompt
@@ -61,7 +61,8 @@ while 1 {
         -re "Inquiry failed: Success" {
             case_fail $case_num
         }
-        -re "$SLV_BD_ADDR.*$kernel_prompt" {
+        -re "\t(\[0-9A-F:]+)\t$SLV_BD_NAME.*$kernel_prompt" {
+            set SLV_BD_ADDR $expect_out(1,string)
             case_pass $case_num
             break
         }
@@ -70,26 +71,6 @@ while 1 {
         }
         timeout {
             send_user "timeout: scan device\r"
-            case_fail $case_num
-        }
-    }
-}
-
-sleep 2
-set timeout 10
-incr case_num
-send "agent 0000 &\r"
-while 1 {
-    expect {
-        -re "No such.*$kernel_prompt" {
-            case_pass $case_num
-            break
-        }
-        -re $kernel_prompt {
-            case_pass $case_num
-            break
-        }
-        timeout {
             case_fail $case_num
         }
     }
