@@ -91,7 +91,7 @@ while 1 {
 incr case_num
 step "Get ip address for eth1"
 set timeout 30
-send "udhcpc eth1 &\r"
+send "udhcpc -i eth1 &\r"
 while 1 {
    expect {
       -re $kernel_prompt {
@@ -145,14 +145,28 @@ while 1 {
    }
 }
 
+step "Unplug network wire from target board"
+send_user "make sure only wifi is available, if ok, press \"y\"\n"
+set timeout 30
+while 1 {
+    expect_user {
+        -re "\[yY]" {
+            break
+        }
+        timeout {
+            send_user "Fail to unplug network wire, test result may be inaccurate\n"
+            break
+        }
+    }
+}
+
 step "begin test"
+set timeout 30
 incr case_num
-send "ping $ping_ipaddr\r"
-sleep 5
-send "\03\r"
+send "ping -c 10 $ping_ipaddr\r"
 while 1 {
    expect {
-      -re ".* 0% packet loss.*>" {
+      -re ".* 0% packet loss.*$kernel_prompt" {
          send_user "\nping remote host: pass\n"
          case_pass $case_num
          break
