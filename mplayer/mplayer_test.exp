@@ -12,7 +12,7 @@
 source ../common/kernel_config.exp
 log_file [log_file_name "$argv0"]
 send_user "Starting $argv0\n"
-set TITLE "[title "$argv0"]"
+set TITLE [title "$argv0"]
 
 step "Start kermit"
 source ../common/spawn_kermit.exp
@@ -23,91 +23,127 @@ step "Boot kernel"
 # set bootargs $bootargs_param1
 source ../common/kernel_boot.exp
 
-step "Start testing."
+
+proc start_backlight {} {
+    global case_num
+    global kernel_prompt
+
+    incr case_num
+    send "cd /sys/class/gpio; ls\r"
+    while 1 {
+        expect {
+            -re "(\[eE]rror|\[fF]ail|No such).*$kernel_prompt" {
+                case_fail $case_num
+            }
+            -re "gpiochip112.*$kernel_prompt" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    incr case_num
+    send "echo 112 > export; ls\r"
+    while 1 {
+        expect {
+            -re "(\[eE]rror|\[fF]ail|No such).*$kernel_prompt" {
+                case_fail $case_num
+            }
+            -re "gpio112.*$kernel_prompt" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    incr case_num
+    send "cd gpio112; ls\r"
+    while 1 {
+        expect {
+            -re "(\[eE]rror|\[fF]ail|No such).*$kernel_prompt" {
+                case_fail $case_num
+            }
+            -re "direction.*$kernel_prompt" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    incr case_num
+    send "cat direction; cat value\r"
+    while 1 {
+        expect {
+            -re "(\[eE]rror|\[fF]ail|No such).*$kernel_prompt" {
+                case_fail $case_num
+            }
+            -re "in.*0.*$kernel_prompt" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    # After this step, backlight should be light up.
+    incr case_num
+    send "echo high > direction\r"
+    while 1 {
+        expect {
+            -re "(\[eE]rror|\[fF]ail|No such).*$kernel_prompt" {
+                case_fail $case_num
+            }
+            -re $kernel_prompt {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    incr case_num
+    send "cat direction; cat value\r"
+    while 1 {
+        expect {
+            -re "(\[eE]rror|\[fF]ail|No such).*$kernel_prompt" {
+                case_fail $case_num
+            }
+            -re "out.*1.*$kernel_prompt" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    send "cd\r"
+    expect -re $kernel_prompt
+}
+
+
+step "Start testing"
 set case_num 0
 
 set timeout 10
-sleep 15
+expect -re $kernel_prompt
 send "\r"
 expect -re $kernel_prompt
 
-if { $board_type == "BF548-EZKIT" } {
-    set video_module "bf54x_lq043fb"
-    set audio_module "snd_ssm2602"
-} elseif {$board_type == "BF527-EZKIT" } {
-    set video_module "bfin_t350mcqb_fb"
-    set audio_module "snd_ssm2602"
-} elseif {$board_type == "BF527-EZKIT-V2" } {
-    set video_module "bfin_lq035q1_fb"
-    set audio_module "snd_ssm2602"
-} elseif {$board_type == "BF537-STAMP" } {
-    set video_module "bf537_lq035"
-    set audio_module "snd_ad73311"
-}
-
-incr case_num
-send "modprobe $video_module\r"
-while 1 {
-    expect {
-        -re "(modprobe:|\[fF]ail|\[eE]rror).*$kernel_prompt" {
-            case_fail $case_num
-        }
-        -re "initializ.*$kernel_prompt" {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
-
-incr case_num
-send "lsmod\r"
-while 1 {
-    expect {
-        -re "$video_module.*$kernel_prompt" {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
-
-if 0 {
-incr case_num
-send "modprobe $audio_module\r"
-while 1 {
-    expect {
-        -re "(modprobe:|\[fF]ail|\[eE]rror).*$kernel_prompt" {
-            case_fail $case_num
-        }
-        -re "mapping ok.*$kernel_prompt" {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
-
-incr case_num
-send "lsmod\r"
-while 1 {
-    expect {
-        -re "$audio_module.*$kernel_prompt" {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
-}
 
 set timeout 30
 incr case_num
@@ -119,10 +155,14 @@ if [ catch {exec rcp video.avi root@$targetip:/} ] {
     case_pass $case_num
 }
 
+if { $board_type == "BF609-EZKIT" } {
+    start_backlight
+}
+
 sleep 5
 set timeout 300
 incr case_num
-send "mplayer video.avi\r"
+send "mplayer -nodouble video.avi\r"
 while 1 {
     expect {
         -re "Exiting.*End of file.*$kernel_prompt" {
