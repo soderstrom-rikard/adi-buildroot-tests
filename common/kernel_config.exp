@@ -141,6 +141,7 @@ if {$board_type == "BEAGLE" || $board_type == "PANDA" || $board_type == "BF537-S
     set bootargs_param6 "root=/dev/mtdblock0 rw mem=124M max_mem=128M icc_l2_mem=0x8000 earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
     #bootargs_param7 is reserved for serial uart test
     set bootargs_param9 "root=/dev/mtdblock0 rw ip=$targetip earlyprintk=serial,uart0,$baud_rate console=tty0 console=\$\{console\}"
+    set bootargs_param10 "root=/dev/mtdblock0 rw earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=ttyBFJC0,$baud_rate"
 }
 
 set compressed_kernel_only_image  vmImage
