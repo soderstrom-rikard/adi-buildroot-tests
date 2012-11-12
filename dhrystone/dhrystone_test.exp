@@ -43,7 +43,7 @@ while 1 {
 }
 
 set result_flag NA
-set timeout 4500
+set timeout 5000
 incr case_num
 send "time ./test_dhrystone.sh $targetip $src_root\r"
 while 1 {
