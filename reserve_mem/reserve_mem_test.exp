@@ -29,7 +29,7 @@ incr case_num
 send "dmesg|head -n 20\r"
 while 1 {
     expect {
-        -re "Board Memory: ${max_mem}MB.*Kernel Managed Memory: ${res_mem}MB.*0x\[0-9a-f]+-$res_mem_addr\r\n\[A-Z]" {
+        -re "Board Memory: ${max_mem}MB.*Kernel Managed Memory: ${res_mem}MB" {
             expect -re $kernel_prompt
             case_pass $case_num
             break

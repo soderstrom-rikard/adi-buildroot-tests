@@ -106,7 +106,7 @@ if { $board_type == "BEAGLE" } {
 
     set max_mem 128
     set res_mem 64
-    set res_mem_addr 0x04000000
+   # set res_mem_addr 0x04000000
 
     set console_def "$def_uart_port,$baud_rate"
     set console_null "null"
