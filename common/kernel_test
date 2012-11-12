@@ -418,6 +418,8 @@ do
             TESTCASE_DIR=linphone
         elif [ `echo ${AUTO_TESTCASE[$i]}|grep audio_` ] ; then
             TESTCASE_DIR=audio
+        elif [ `echo ${AUTO_TESTCASE[$i]}|grep ide` ] ; then
+            TESTCASE_DIR=ide
         elif [ ${AUTO_TESTCASE[$i]} == "jffs2_fs" ] ; then
             TESTCASE_DIR=jffs2
         elif [ ${AUTO_TESTCASE[$i]} == "kgdb_uart" ] ; then
