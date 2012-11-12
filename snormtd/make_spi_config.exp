@@ -21,7 +21,7 @@ while 1 {
         }
 
         -re "SPI controller driver for ADI Blackfin5xx.*SPI_BFIN5XX.*\\\[.*]" {
-            if { [string match "BF5" $board_type] } {
+            if { [string match "BF5*" $board_type] } {
                 send "Y\r"
             } else {
                 send "N\r"
