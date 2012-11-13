@@ -14,7 +14,6 @@ log_file [log_file_name "$argv0"]
 send_user "Starting $argv0\n"
 set TITLE [title "$argv0"]
 
-set argc [llength $argv]
 if { $argc < 3} {
    puts "Usage:  $argv0  board_type  essid  key  ping_ipaddr"
    puts ""

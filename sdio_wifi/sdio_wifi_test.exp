@@ -6,7 +6,7 @@
 #   ./sdio_wifi_test.exp  board_type  essid  ping_ipaddr
 #
 # Example:
-#   ./sdio_wifi_test.exp  BF5548-EZKIT linksys 192.168.1.1
+#   ./sdio_wifi_test.exp  BF5548-EZKIT linksys 1234567890 192.168.1.1
 #
 
 source ../common/kernel_config.exp
@@ -14,13 +14,14 @@ log_file [log_file_name "$argv0"]
 send_user "Starting $argv0\n"
 set TITLE [title "$argv0"]
 
-if { $argc < 2} {
-   puts "Usage:  $argv0 essid ping_ipaddr"
+if { $argc < 3} {
+   puts "Usage:  $argv0  board_type  essid  key  ping_ipaddr"
    puts ""
    exit
 }
 set essid [lindex $argv 1]
-set ping_ipaddr [lindex $argv 2]
+set key   [lindex $argv 2]
+set ping_ipaddr [lindex $argv 3]
 
 step "Start kermit"
 source ../common/spawn_kermit.exp
@@ -53,24 +54,8 @@ while 1 {
 
 step "Load Module libertas"
 incr case_num
-set timeout 10
-send "modprobe libertas\r"
-while 1 {
-    expect {
-        -re "IEEE802.11 drivers.*$kernel_prompt" {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            send_user "FAIL: install module libertas\n"
-            case_fail $case_num
-        }
-    }
-}
-
-incr case_num
-set timeout 10
-send "modprobe libertas_sdio helper_name=sd8686_helper.bin fw_name=sd8686.bin\r"
+set timeout 20
+send "modprobe libertas_sdio\r"
 while 1 {
     expect {
         -re "Libertas SDIO driver.*Marvell WLAN 802\.11 adapter" {
@@ -137,7 +122,7 @@ while 1 {
 
 incr case_num
 set timeout 5
-send "iwconfig wlan0 essid $essid\r"
+send "iwconfig wlan0 essid $essid key $key\r"
 while 1 {
    expect {
        -re $kernel_prompt {
