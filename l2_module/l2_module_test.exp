@@ -5,6 +5,12 @@ log_file [log_file_name "$argv0"]
 send_user "Starting $argv0\n"
 set TITLE [title "$argv0"]
 
+if { $board_type == "BF561-EZKIT" } {
+    set l2_addr feb0
+} elseif { $board_type == "BF609-EZKIT" } {
+    set l2_addr c808
+}
+
 step "Start kermit."
 source ../common/spawn_kermit.exp
 
@@ -106,9 +112,9 @@ while 1 {
    }
 }
 
-set insert_hello_output      "code function addr = 0xc808\[0-9a-f]\[0-9a-f]\[0-9a-f]\[0-9a-f].*\[\r\n]"
-append insert_hello_output ".*data variable addr = 0xc808\[0-9a-f]\[0-9a-f]\[0-9a-f]\[0-9a-f], data value is 0.*\[\r\n]"
-append insert_hello_output ".*bss  variable addr = 0xc808\[0-9a-f]\[0-9a-f]\[0-9a-f]\[0-9a-f], bss value is 0"
+set insert_hello_output      "code function addr = 0x$l2_addr\[0-9a-f]\[0-9a-f]\[0-9a-f]\[0-9a-f].*\[\r\n]"
+append insert_hello_output ".*data variable addr = 0x$l2_addr\[0-9a-f]\[0-9a-f]\[0-9a-f]\[0-9a-f], data value is 0.*\[\r\n]"
+append insert_hello_output ".*bss  variable addr = 0x$l2_addr\[0-9a-f]\[0-9a-f]\[0-9a-f]\[0-9a-f], bss value is 0"
 
 set spawn_id $kermit_spawn_id
 send "insmod hello.ko\r" 
