@@ -138,10 +138,10 @@ while 1 {
 step "Make volume "
 incr case_num
 set timeout 180
-send -s "ubimkvol /dev/ubi0 -s 20MiB -N ubifs0\r"
+send -s "ubimkvol /dev/ubi0 -s 20000 -N ubifs0; ls /dev\r"
 while 1 {
     expect {
-        -re "Volume ID 0.*ubifs0.*$kernel_prompt" {
+        -re "ubi0_0.*$kernel_prompt" {
             case_pass $case_num
             break
         }
@@ -311,13 +311,13 @@ while 1 {
 step "Make volume "
 incr case_num
 set timeout 180
-send -s "ubimkvol /dev/ubi0 -s 20MiB -N ubifs1\r"
+send -s "ubimkvol /dev/ubi0 -s 20000 -N ubifs1; ls /dev\r"
 while 1 {
     expect {
         -re "(\[fF]ail|\[eE]rror|No).*$kernel_prompt" {
             case_fail $case_num
         }
-        -re "Volume ID .*ubifs.*$kernel_prompt" {
+        -re "ubi0_1.*$kernel_prompt" {
             case_pass $case_num
             break
         }
