@@ -26,6 +26,34 @@ if { $argv0 == "./build_policy_kernel.exp" } {
     }
 }
 
+if { $board_type == "BEAGLE" } {
+    set arch "arm"
+    set board_defconfig "beagleboard_defconfig"
+
+} elseif { $board_type == "PANDA" } {
+    set arch "arm"
+    set board_defconfig "pandaboard_defconfig"
+
+} elseif { $board_type == "BF537-STAMP" } {
+    set arch "blackfin"
+    set board_defconfig "bf537-stamp_defconfig"
+
+} elseif { $board_type == "BF561-EZKIT" } {
+    set arch "blackfin"
+    set board_defconfig "bf561-ezkit_defconfig"
+
+} elseif { $board_type == "BF609-EZKIT" } {
+    set arch "blackfin"
+    set board_defconfig "bf609-ezkit_defconfig"
+    if { [info exists binary_format] && $binary_format == "flat" } {
+        set board_defconfig "bf609-ezkit-flat_defconfig"
+    }
+
+} else {
+    puts "Please input right board type : board_type."
+    exit
+}
+
 if { $board_type == "BF537-STAMP" } {
     set uboot_size 0x40000
     set kernel_size 0x180000

@@ -9,6 +9,12 @@ send_user "Starting $argv0\n"
 
 set TITLE [title "$argv0"]
 
+if { $board_type == "BF561-EZKIT" } {
+    set board BF561
+} elseif { $board_type == "BF609-EZKIT" } {
+    set board BF609
+}
+
 step "Spawn kermit"
 source ../common/spawn_kermit.exp
 
@@ -44,7 +50,7 @@ while 1 {
 }
 
 step "Build test program\n"
-spawn make
+spawn make CFLAGS=-D$board
 while 1 {
    expect {
 
