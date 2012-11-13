@@ -126,102 +126,102 @@ set timeout 240
 }	
 ############################################################################################################	
 	
-expect ">"
-send -s "tftp 0x1000000 $jffs2_rootfs_image\r"
-while 1 {
-expect {
-	
-	"done" {
-		set tftp_flag SUCCESS
-	
-	}
-	
-	-re "Bytes transferred = \[0-9]+ \\\((\[0-9a-fA-F]+) hex\\\)" {
-	
-		set image_size $expect_out(1,string)
-		send_user "Image size is $image_size\n"
-		break
-	}
-	
-	timeout {
-		send_user "ERROR: Uboot locked up during tftp\n"
-		
-		break
-	}
-}
-}
-
-if { [ expr 0x$image_size ] < $rootfs_size } {
-
-set timeout 80
-send -s "protect off $rootfs_start_addr $rootfs_end_addr\r"
-while 1 {
-		expect {
-
-		"Un-Protected" {
-				
-				send_user "  unprotect success\n"
-			}
-	
-		">" {
-				break
-			}
-	
-		timeout {
-				send_user "ERROR:  unprotect failed\n"
-				
-				break
-			}
-		}
-	}
-	
-
-set timeout 240	
-		
-send -s "erase $rootfs_start_addr $rootfs_end_addr\r"
-	while 1 {
-	expect {
-	
-		"Erased" {
-			send_user " erase success\n"
-			break
-		}
-				
-		timeout {
-		send_user "ERROR:  erase failed\n"
-		
-		break
-		}
-	}
-	}
-	
-set timeout 500
-
-send -s "cp.b 0x1000000 $rootfs_start_addr 0x$image_size\r"
-while 1 {
-expect {
-
-	"done" {
-		send_user " cp success\n"
-                case_pass $case_num 
-		break
-	}
-	
-
-	
-	timeout {
-	send_user "ERROR:  cp failed\n"
-	case_fail $case_num
-	break
-	}
-}
-}
-
-} else {
-    send_user "Rootfs image size is bigger than flash partition size $rootfs_size $image_size\n  "
-    case_fail $case_num
-}
-
+#expect ">"
+#send -s "tftp 0x1000000 $jffs2_rootfs_image\r"
+#while 1 {
+#expect {
+#	
+#	"done" {
+#		set tftp_flag SUCCESS
+#	
+#	}
+#	
+#	-re "Bytes transferred = \[0-9]+ \\\((\[0-9a-fA-F]+) hex\\\)" {
+#	
+#		set image_size $expect_out(1,string)
+#		send_user "Image size is $image_size\n"
+#		break
+#	}
+#	
+#	timeout {
+#		send_user "ERROR: Uboot locked up during tftp\n"
+#		
+#		break
+#	}
+#}
+#}
+#
+#if { [ expr 0x$image_size ] < $rootfs_size } {
+#
+#set timeout 80
+#send -s "protect off $rootfs_start_addr $rootfs_end_addr\r"
+#while 1 {
+#		expect {
+#
+#		"Un-Protected" {
+#				
+#				send_user "  unprotect success\n"
+#			}
+#	
+#		">" {
+#				break
+#			}
+#	
+#		timeout {
+#				send_user "ERROR:  unprotect failed\n"
+#				
+#				break
+#			}
+#		}
+#	}
+#	
+#
+#set timeout 240	
+#		
+#send -s "erase $rootfs_start_addr $rootfs_end_addr\r"
+#	while 1 {
+#	expect {
+#	
+#		"Erased" {
+#			send_user " erase success\n"
+#			break
+#		}
+#				
+#		timeout {
+#		send_user "ERROR:  erase failed\n"
+#		
+#		break
+#		}
+#	}
+#	}
+#	
+#set timeout 500
+#
+#send -s "cp.b 0x1000000 $rootfs_start_addr 0x$image_size\r"
+#while 1 {
+#expect {
+#
+#	"done" {
+#		send_user " cp success\n"
+#                case_pass $case_num 
+#		break
+#	}
+#	
+#
+#	
+#	timeout {
+#	send_user "ERROR:  cp failed\n"
+#	case_fail $case_num
+#	break
+#	}
+#}
+#}
+#
+#} else {
+#    send_user "Rootfs image size is bigger than flash partition size $rootfs_size $image_size\n  "
+#    case_fail $case_num
+#}
+#
 set timeout 500
 
 send -s "tftp 0x1000000 vmImage\r"
