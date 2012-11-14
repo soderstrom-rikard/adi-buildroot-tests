@@ -20,7 +20,7 @@ while 1 {
             continue
         }
 
-        # The following two conflicting items could have already been unselected by make_cut_fs_config.exp.
+        # The following two conflicting items could have already been unselected by config_cut_app.exp.
         -re "SPI support.*SPI.*\\\[.*]" {
             if { $board_type == "BF518F-EZBRD" } {
                 send -s "N\r"

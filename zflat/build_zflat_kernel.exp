@@ -24,7 +24,7 @@ source_args make_bfin-format.exp flat
 
 cd $src_root/testsuites/common
 step "Make config to remove some needless items."
-source  make_cut_fs_config.exp
+source  config_cut_app.exp
 
 step "Make kernel config"
 cd $src_root

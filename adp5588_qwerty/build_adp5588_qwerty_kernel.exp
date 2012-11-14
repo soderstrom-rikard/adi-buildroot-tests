@@ -59,10 +59,6 @@ while 1 {
             send "M\r"
         }
 
-        -re "Input event device test.*EVENT_TEST.*\\\[.*]" {
-            send "Y\r"
-        }
-
         "\\\(*) \\\[*]" {
             sleep .01
             send "\r"
@@ -95,6 +91,10 @@ while 1 {
 
         -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
+        }
+
+        -re "event test.*BR2_PACKAGE_EVENT_TEST.*\\\[.*]" {
+            send "Y\r"
         }
 
         "\\\(*) \\\[*]" {
