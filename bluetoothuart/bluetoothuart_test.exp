@@ -21,78 +21,10 @@ step "Boot kernel"
 source ../common/kernel_boot.exp
 
 step "Start testing"
+sleep 5
 set case_num 0
-set SLV_BD_ADDR	"00:15:83:44:C2:E7"
+set SLV_BD_NAME "linux58-mmc-usblan-btuart"
 set uart_port   "ttyBF1"
-
-incr case_num
-set timeout 15
-send "dbus-daemon --system --nofork &\r"
-while 1 {
-    expect {
-        -re "(\[fF]ail|\[eE]rror).*$kernel_prompt" {
-            case_fail $case_num
-        }
-        -re $kernel_prompt {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
-
-incr case_num
-set timeout 15
-send "ps|grep dbus-daemon\r"
-while 1 {
-    expect {
-        -re "(\[fF]ail|\[eE]rror).*$kernel_prompt" {
-            case_fail $case_num
-        }
-        -re "dbus.*dbus-daemon.*nofork.*$kernel_prompt" {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
-
-incr case_num
-set timeout 15
-send "bluetoothd -n &\r"
-while 1 {
-    expect {
-        -re "Bluetooth Management interface initialized.*device" {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
-
-incr case_num
-set timeout 15
-send "ps |grep bluetoothd\r"
-while 1 {
-    expect {
-        -re "(\[fF]ail|\[eE]rror).*$kernel_prompt" {
-            case_fail $case_num
-        }
-        -re "bluetoothd -n.*$kernel_prompt" {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
 
 # If iwrap_boot utility is provided, use command "iwrap_boot -b /dev/ttyBF1" to set up tty;
 # Instead of using iwrap_boot utility, you can also setup tty and cat 'boot 1' into the serial tty device;
@@ -123,7 +55,7 @@ while 1 {
         -re "(\[dD]one|\[fF]ail|\[eE]rror).*$kernel_prompt" {
             case_fail $case_num
         }
-        -re "hci0 has been enabled" {
+        -re "hci0 has been enabled|Device setup complete" {
             case_pass $case_num
             break
         }
@@ -133,31 +65,15 @@ while 1 {
     }
 }
 
+sleep 5
+set timeout 10
 incr case_num
-set timeout 5
-send "hciconfig\r"
-while 1 {
-    expect {
-        -re "(\[dD]one|\[fF]ail|DOWN|not found).*$kernel_prompt" {
-            case_fail $case_num
-        }
-        -re "hci0.*UART.*BD Address: (\[0-9A-F:]+)  ACL MTU.*$kernel_prompt" {
-            set MST_BD_ADDR $expect_out(1,string)
-            send_user "Get BD Address $MST_BD_ADDR\r"
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
-
-incr case_num
-set timeout 5
 send "hciconfig hci0 up\r"
 while 1 {
     expect {
+        -nocase -re "(no such|hciconfig:).*$kernel_prompt" {
+            case_fail $case_num
+        }
         -re $kernel_prompt {
             case_pass $case_num
             break
@@ -169,57 +85,81 @@ while 1 {
 }
 
 sleep 2
-
+set timeout 5
 incr case_num
-set timeout 300
+send "hciconfig\r"
+while 1 {
+    expect {
+        -nocase -re "(down|not found).*$kernel_prompt" {
+            case_fail $case_num
+        }
+        -re "BD Address.*$kernel_prompt" {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            send_user "hci0 not up\r"
+            case_fail $case_num
+        }
+    }
+}
+
+sleep 2
+set timeout 60
+incr case_num
 send "hcitool scan\r"
 while 1 {
     expect {
-        -re "Inquiry failed: Success|not found" {
+        -re "(Inquiry failed:|not found).*$kernel_prompt" {
             case_fail $case_num
         }
-        -re "$SLV_BD_ADDR.*$kernel_prompt" {
+        -re "\t(\[0-9A-F:]+)\t$SLV_BD_NAME.*$kernel_prompt" {
+            set SLV_BD_ADDR $expect_out(1,string)
             case_pass $case_num
             break
         }
         timeout {
+            send_user "timeout: scan device\r"
             case_fail $case_num
         }
     }
 }
 
-incr case_num
-set timeout 30
-send "hcitool -i hci0 info $SLV_BD_ADDR\r"
 sleep 2
+set timeout 30
+incr case_num
+send "hcitool -i hci0 info $SLV_BD_ADDR\r"
 while 1 {
     expect {
-        -re "not found" {
+        -re "not found.*$kernel_prompt" {
             case_fail $case_num
         }
-        -re "$SLV_BD_ADDR.*$kernel_prompt" {
+        -re "BD Address.*$SLV_BD_ADDR.*$kernel_prompt" {
             case_pass $case_num
             break
         }
         timeout {
+            send_user "timeout: get info\r"
             case_fail $case_num
         }
     }
 }
 
+sleep 2
+set timeout 30
 incr case_num
-set timeout 20
-send "l2ping -i hci0 -c 50 -f $SLV_BD_ADDR\r"
+send "l2ping -c 50 -i hci0 -f $SLV_BD_ADDR\r"
 while 1 {
     expect {
-        -re "not found|Can't connect:" {
+        -re "(not found|Can't connect:).*$kernel_prompt" {
             case_fail $case_num
         }
-        -re "50 sent, 50 received, 0% loss" {
+        -re "50 sent, 50 received, 0% loss\r\n$kernel_prompt" {
             case_pass $case_num
             break
         }
         timeout {
+            send_user "timeout: ping bluetooth device\r"
             case_fail $case_num
         }
     }

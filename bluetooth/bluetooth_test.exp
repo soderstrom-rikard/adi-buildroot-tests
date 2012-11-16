@@ -23,11 +23,25 @@ source ../common/kernel_boot.exp
 step "Start testing"
 sleep 5
 set case_num 0
-set timeout 10
 set SLV_BD_NAME "linux58-mmc-usblan-btuart"
 
+set timeout 10
+incr case_num
 send "hciconfig hci0 up\r"
-expect -re $kernel_prompt
+while 1 {
+    expect {
+        -nocase -re "(no such|hciconfig:).*$kernel_prompt" {
+            case_fail $case_num
+        }
+        -re $kernel_prompt {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
 
 sleep 2
 set timeout 5
@@ -35,15 +49,12 @@ incr case_num
 send "hciconfig\r"
 while 1 {
     expect {
-        -re "DOWN" {
+        -nocase -re "(down|not found).*$kernel_prompt" {
             case_fail $case_num
         }
         -re "BD Address.*$kernel_prompt" {
             case_pass $case_num
             break
-        }
-        -re "not found" {
-            case_fail $case_num
         }
         timeout {
             send_user "hci0 not up\r"
@@ -53,21 +64,18 @@ while 1 {
 }
 
 sleep 2
-set timeout 20
+set timeout 60
 incr case_num
 send "hcitool scan\r"
 while 1 {
     expect {
-        -re "Inquiry failed: Success" {
+        -re "(Inquiry failed:|not found).*$kernel_prompt" {
             case_fail $case_num
         }
         -re "\t(\[0-9A-F:]+)\t$SLV_BD_NAME.*$kernel_prompt" {
             set SLV_BD_ADDR $expect_out(1,string)
             case_pass $case_num
             break
-        }
-        -re "not found" {
-            case_fail $case_num
         }
         timeout {
             send_user "timeout: scan device\r"
@@ -82,12 +90,12 @@ incr case_num
 send "hcitool -i hci0 info $SLV_BD_ADDR\r"
 while 1 {
     expect {
+        -re "not found.*$kernel_prompt" {
+            case_fail $case_num
+        }
         -re "BD Address.*$SLV_BD_ADDR.*$kernel_prompt" {
             case_pass $case_num
             break
-        }
-        -re "not found" {
-            case_fail $case_num
         }
         timeout {
             send_user "timeout: get info\r"
@@ -99,18 +107,15 @@ while 1 {
 sleep 2
 set timeout 30
 incr case_num
-send "l2ping -c 100 -i hci0 -f $SLV_BD_ADDR\r"
+send "l2ping -c 50 -i hci0 -f $SLV_BD_ADDR\r"
 while 1 {
     expect {
-        -re "100 sent, 100 received, 0% loss\r\n$kernel_prompt" {
+        -re "(not found|Can't connect:).*$kernel_prompt" {
+            case_fail $case_num
+        }
+        -re "50 sent, 50 received, 0% loss\r\n$kernel_prompt" {
             case_pass $case_num
             break
-        }
-        -re "Can't connect:" {
-            case_fail $case_num
-        }
-        -re "not found" {
-            case_fail $case_num
         }
         timeout {
             send_user "timeout: ping bluetooth device\r"
