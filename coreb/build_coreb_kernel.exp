@@ -75,6 +75,9 @@ while 1 {
             continue
         }
 
+        -re "Core B support tools.*BR2_PACKAGE_COREBLD.*\\\[.*]" {
+            send "Y\r"
+        }
 
         "\\\(*) \\\[*]" {
             sleep .01
