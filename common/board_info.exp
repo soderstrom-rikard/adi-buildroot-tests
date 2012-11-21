@@ -34,9 +34,41 @@ if { $board_type == "BEAGLE" } {
     set arch "arm"
     set board_defconfig "pandaboard_defconfig"
 
+} elseif { $board_type == "BF518F-EZBRD" } {
+    set arch "blackfin"
+    set board_defconfig "bf518-ezbrd_defconfig"
+
+} elseif { $board_type == "BF526-EZBRD" } {
+    set arch "blackfin"
+    set board_defconfig "bf526-ezbrd_defconfig"
+
+} elseif { $board_type == "BF527-EZKIT" } {
+    set arch "blackfin"
+    set board_defconfig "bf527-ezkit_defconfig"
+
+} elseif { $board_type == "BF527-EZKIT-V2" } {
+    set arch "blackfin"
+    set board_defconfig "bf527-ezkit-v2_defconfig"
+
+} elseif { $board_type == "BF533-EZKIT" } {
+    set arch "blackfin"
+    set board_defconfig "bf533-ezkit_defconfig"
+
+} elseif { $board_type == "BF533-STAMP" } {
+    set arch "blackfin"
+    set board_defconfig "bf533-stamp_defconfig"
+
 } elseif { $board_type == "BF537-STAMP" } {
     set arch "blackfin"
     set board_defconfig "bf537-stamp_defconfig"
+
+} elseif { $board_type == "BF538-EZKIT" } {
+    set arch "blackfin"
+    set board_defconfig "bf538-ezkit_defconfig"
+
+} elseif { $board_type == "BF548-EZKIT" } {
+    set arch "blackfin"
+    set board_defconfig "bf548-ezkit_defconfig"
 
 } elseif { $board_type == "BF561-EZKIT" } {
     set arch "blackfin"
