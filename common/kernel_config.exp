@@ -34,6 +34,7 @@ set count  30
 set PING_COUNT  1999
 set login_user "root"
 set password "blackfin"
+set console_null "null"
 set send_slow {1 .1}
 set bootaddr_low 0x1000000
 set bootaddr_high 0x2000000
@@ -51,20 +52,24 @@ if { $arch == "arm" } {
     set baud_rate "115200"
     set def_uart_port ttyO2
 
-    set console_def "$def_uart_port,${baud_rate}n8"
-    set console_null "null"
-    set console_args $console_def
+    set console_args "$def_uart_port,${baud_rate}n8"
 } elseif { $arch == "blackfin" } {
 
     set eth_dev "eth0"
     set usb_eth_dev "eth1"
-    set baud_rate "57600"
-    set def_uart_port ttyBF0
 
-    set console_def "$def_uart_port,$baud_rate"
-    set console_null "null"
-    set console_args $console_def 
-    set bootargs "root=/dev/mtdblock0 rw ip=$targetip earlyprintk=serial,uart0,$baud_rate console=\$\{console\}"
+    if { [ catch { set def_uart_port_num [  exec grep  CONFIG_SERIAL_BFIN_UART.*=y $kernel_root/arch/blackfin/configs/$board_type\_defconfig | head -1 | awk  -F= {{print $1}}  ]  } ] } {
+        set def_uart_port_num 0
+        puts "$board_type\_defconfig not found. Set def_uart_port_num to 0.\n"
+    } else {
+        set def_uart_port_num [ string index $def_uart_port_num end ]
+        puts "$board_type\_defconfig is found. Set def_uart_port_num to $def_uart_port_num.\n"
+    }
+
+    set baud_rate "57600"
+    set def_uart_port ttyBF$def_uart_port_num
+    set console_args "$def_uart_port,$baud_rate"
+    set bootargs "root=/dev/mtdblock0 rw ip=$targetip earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
 }
 
 if { $board_type == "BEAGLE" } {
@@ -89,14 +94,6 @@ if { $board_type == "BEAGLE" } {
 
 }
 
-
-if { [ catch { set def_uart_port_num [  exec grep  CONFIG_SERIAL_BFIN_UART.*=y $kernel_root/arch/blackfin/configs/$board_type\_defconfig | head -1 | awk  -F= {{print $1}}  ]  } ] } {
-    set def_uart_port_num 0
-    puts "$board_type\_defconfig not found. Set def_uart_port_num to 0.\n"
-} else {
-    set def_uart_port_num [ string index $def_uart_port_num end ]
-    puts "$board_type\_defconfig is found. Set def_uart_port_num to $def_uart_port_num.\n"
-}
 
 if {$board_type == "BEAGLE" || $board_type == "PANDA" || $board_type == "BF537-STAMP" || $board_type == "BF609-EZKIT" } {
     set bootargs_param1 "root=/dev/mtdblock0 rw mem=${res_mem}M max_mem=${max_mem}M console=$console_args"
