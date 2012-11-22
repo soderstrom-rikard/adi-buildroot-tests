@@ -62,13 +62,10 @@ while 1 {
          }
      }
 }
-for {set i 0} {$i < 2 } {incr i} {
+for {set i 0} {$i < 1 } {incr i} {
 
 if { $i == 0 } {
-set ptp_cmd "ptpd -z linux_hw"
-set year "2011"
-} elseif { $i == 1 } {
-set ptp_cmd "ptpd2 -d"
+set ptp_cmd "ptp4l -i eth0 -q -v"
 set year "2012"
 }
 
@@ -115,7 +112,7 @@ while 1 {
 send -s "ps | grep ptpd | grep -v grep | head -1\r" 
 while 1 {
    expect {
-      -re " (\[0-9]+) +root.*ptpd.*$kernel_prompt" {
+      -re " (\[0-9]+) +root.*ptp4l.*$kernel_prompt" {
          set process_id $expect_out(1,string)
                 case_pass $case_num
 	 break
@@ -173,12 +170,54 @@ while 1 {
          }
      }
 }
-incr case_num
-
-send -s "$ptp_cmd -f log.master\r" 
+send -s "testptp -g\r" 
 while 1 {
    expect {
       -re "$kernel_prompt" { 
+                case_pass $case_num
+         break
+      }
+
+      timeout {                           
+                case_fail $case_num
+      exit
+         }
+     }
+}
+send -s "testptp -s\r" 
+while 1 {
+   expect {
+      -re "set time okay.*$kernel_prompt" { 
+                case_pass $case_num
+         break
+      }
+
+      timeout {                           
+                case_fail $case_num
+      exit
+         }
+     }
+}
+send -s "testptp -g \r" 
+while 1 {
+   expect {
+      -re "$year.*$kernel_prompt" { 
+                case_pass $case_num
+         break
+      }
+
+      timeout {                           
+                case_fail $case_num
+      exit
+         }
+     }
+}
+incr case_num
+
+send -s "$ptp_cmd \r" 
+while 1 {
+   expect {
+      -re "selected .* as PTP clock.*$kernel_prompt" { 
                 case_pass $case_num
          break
       }
@@ -195,7 +234,7 @@ incr case_num
 send -s "ps \r" 
 while 1 {
    expect {
-      -re " (\[0-9]+) +root.*ptpd.*$kernel_prompt" {
+      -re " (\[0-9]+) +root.*ptp4l.*$kernel_prompt" {
          set process_id $expect_out(1,string)
 	#send_user "\nprocess_id: $process_id"
                 case_pass $case_num
@@ -260,10 +299,10 @@ while 1 {
 }
 incr case_num
 
-send -s "$ptp_cmd -g -f log.slave\r" 
+send -s "$ptp_cmd -s\r" 
 while 1 {
    expect {
-      -re "$kernel_prompt" { 
+      -re "selected .* as PTP clock.*$kernel_prompt" { 
                 case_pass $case_num
          break
       }
@@ -275,13 +314,27 @@ while 1 {
      }
 }
 
+send -s "phc2sys -s /dev/ptp0\r" 
+while 1 {
+   expect {
+      -re "phc.*$kernel_prompt" { 
+                case_pass $case_num
+         break
+      }
+
+      timeout {                           
+                case_fail $case_num
+      exit
+         }
+     }
+}
 sleep 60
 incr case_num
 
 send -s "ps \r" 
 while 1 {
    expect {
-      -re " (\[0-9]+) +root.*ptpd.*$kernel_prompt" {
+      -re " (\[0-9]+) +root.*ptp4l.*$kernel_prompt" {
          set process_id $expect_out(1,string)
 	#send_user "\nprocess_id: $process_id"
                 case_pass $case_num
@@ -311,28 +364,10 @@ while 1 {
      }
 }
 
-send -s "cat log.slave \r" 
+send -s "ps | grep ptp4l | grep -v grep | head -1\r" 
 while 1 {
    expect {
-      -re "ptpd info.*$kernel_prompt" { 
-                case_pass $case_num
-         break
-      }
-
-#      -re "\[Ee]rror" {                           
-#                case_fail $case_num
-#      exit
-#         }
-
-      timeout {                           
-         break
-       }
-     }
-}
-send -s "ps | grep ptpd | grep -v grep | head -1\r" 
-while 1 {
-   expect {
-      -re " (\[0-9]+) +root.*ptpd.*$kernel_prompt" {
+      -re " (\[0-9]+) +root.*ptp4l.*$kernel_prompt" {
          set process_id $expect_out(1,string)
                 case_pass $case_num
 	 break
