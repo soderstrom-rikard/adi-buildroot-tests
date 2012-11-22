@@ -28,15 +28,23 @@ while 1 {
             send "\r"
         }
 
+        -re "Enable eventpoll support.*EPOLL.*\\\[.*]" {
+            send -s "Y\r"
+        }
+
         -re "Networking support.*NET.*\\\[.*]" {
             send -s "Y\r"
         }
 
-        -re "Packet socket.*PACKET.*\\\[.*]" {
+        -re "Timestamping in PHY devices.*NETWORK_PHY_TIMESTAMPING.*\\\[.*]" {
             send -s "Y\r"
         }
 
-        -re "Network packet filtering framework.*NETFILTER.*\\\[.*]" {
+        -re "PPS support.*PPS.*\\\[.*]" {
+            send -s "Y\r"
+        }
+
+        -re "PTP clock support.*PTP_1588_CLOCK.*\\\[.*]" {
             send -s "Y\r"
         }
 
@@ -44,20 +52,62 @@ while 1 {
             send -s "Y\r"
         }
 
+        ####### Configs for BF518F-EZBRD ####################
+         -re "Ethernet .*10 or 100Mbit.*NET_ETHERNET.*\\\[.*]" {
+           if { $board_type == "BF518F-EZBRD" } {
+                send -s "Y\r"
+            } else {
+                send -s "\r"
+            }
+        }
+
+         -re "Blackfin on-chip MAC support.*BFIN_MAC.*\\\[.*]" {
+           if { $board_type == "BF518F-EZBRD" } {
+                send -s "Y\r"
+            } else {
+                send -s "\r"
+            }
+        }
+
+        -re "Use IEEE 1588 hwstamp.*BFIN_MAC_USE_HWSTAMP.*\\\[.*]" {
+           if { $board_type == "BF518F-EZBRD" } {
+                send -s "Y\r"
+            } else {
+                send -s "\r"
+            }
+        }
+
+        ####### Configs for BF609-EZKIT ####################
          -re "STMicroelectronics devices.*NET_VENDOR_STMICRO.*\\\[.*]" {
-            send -s "Y\r"
+           if { $board_type == "BF609-EZKIT" } {
+                send -s "Y\r"
+            } else {
+                send -s "\r"
+            }
         }
 
          -re "STMicroelectronics 10/100/1000 Ethernet driver.*STMMAC_ETH.*\\\[.*]" {
-            send -s "Y\r"
+           if { $board_type == "BF609-EZKIT" } {
+                send -s "Y\r"
+            } else {
+                send -s "\r"
+            }
         }
 
         -re "STMMAC platform bus support.*STMMAC_PLATFORM.*\\\[.*]" {
-             send -s "Y\r"
+           if { $board_type == "BF609-EZKIT" } {
+                send -s "Y\r"
+            } else {
+                send -s "\r"
+            }
         }
 
         -re "STMMAC ieee1588 hw timestamp support.*STMMAC_IEEE1588.*\\\[.*]" {
-             send -s "Y\r"
+           if { $board_type == "BF609-EZKIT" } {
+                send -s "Y\r"
+            } else {
+                send -s "\r"
+            }
         }
 
 
@@ -82,37 +132,6 @@ while 1 {
     }
 }
 
-step "Make busybox config"
-cd $src_root
-set timeout 300
-spawn make busybox-config
-while 1 {
-    expect {
-
-        -re "udhcp client.*UDHCPC.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        "\\\(*) \\\[*]" {
-            sleep .01
-            send "\r"
-        }
-
-        -re "\[cC]hoice\\\[.*]:" {
-            send "\r"
-        }
-
-        eof {
-            send_user "End of configuration"
-            break
-        }
-
-        timeout {
-            send_user "\n\nFATAL ERROR: config prompt timeout in make config"
-            break
-        }
-    }
-}
 cd $src_root
 set timeout 300
 set baud_rate_done_flag 0
@@ -126,11 +145,7 @@ while 1 {
             continue
         }
 
-        -re "ptpd v1.*BR2_PACKAGE_PTPD.*\\\[.*]" {
-              send -s "Y\r"
-        }
-
-        -re "ptpd v2.*BR2_PACKAGE_PTPD2.*\\\[.*]" {
+        -re "linuxptp.*BR2_PACKAGE_LINUXPTP.*\\\[.*]" {
               send -s "Y\r"
         }
 
