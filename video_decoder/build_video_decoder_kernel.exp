@@ -3,19 +3,21 @@
 # Build script for video decoder driver test.
 #
 # Usage:
-#   ./build_video_decoder_kernel.exp board_type video_dev
-# video_dev: adv7393, adv7842
+#   ./build_video_decoder_kernel.exp board_type
 #
 # Example:
-#   ./build_video_decoder_kernel.exp BF609-EZKIT adv7842
+#   ./build_video_decoder_kernel.exp BF609-EZKIT
 #
 
 source ../common/kernel_config.exp
 
-if { $argc == 2} {
-    set video_dev [lindex $argv 1]
-} else {
+if { $board_type == "BF561-EZKIT" } {
+    set video_dev adv7183
+} elseif { $board_type == "BF609-EZKIT" } {
     set video_dev adv7842
+} else {
+    puts "Wrong board type, only BF561-EZKIT and BF609-EZKIT support this test\r"
+    exit
 }
 
 set log_name build_video_decoder_${video_dev}_kernel_log
@@ -24,9 +26,25 @@ log_file $log_name
 send_user "Starting $argv0\n"
 send_user "\n#### build kernel for $video_dev\n"
 
+# Command source_args can pass arguments while running source.
+# Send bfin binary formats as argument for make_bfin-format.exp,
+# and change to the specified bfin binary formats.
+# It won't change formats for arm.
+# make clean and source make_default_config.exp are already included.
 cd $src_root/testsuites/common
-step "Make default config"
-source make_default_config.exp
+step "Make config for specified bfin format"
+source_args make_bfin-format.exp fdpic
+
+if { $board_type == "BF561-EZKIT" } {
+    cd $src_root/testsuites/common
+    step "Make config to cut app"
+    source config_cut_app.exp
+
+    cd $src_root/testsuites/common
+    step "Make config to release L1 size"
+    source config_release_L1.exp
+}
+
 
 step "Make kernel config"
 cd $src_root
@@ -48,14 +66,28 @@ while 1 {
             send "Y\r"
         }
 
+        -re "GPIO-based bitbanging I2C.*I2C_GPIO.*\\\[.*]" {
+            if { $board_type == "BF561-EZKIT" } {
+                send "Y\r"
+            } else {
+                send "\r"
+            }
+        }
+
         -re "Blackfin TWI I2C support.*I2C_BLACKFIN_TWI.*\\\[.*]" {
-            send "Y\r"
+            if { $board_type == "BF609-EZKIT" } {
+                send "Y\r"
+            } else {
+                send "\r"
+            }
         }
 
 # Large cache is required
-        -re "Uncached DMA region.*(\[0-9]). Enable 32M DMA region.*DMA_UNCACHED_32M.*\[cC]hoice.*\\\[.*]" {
+        -re "(\[0-9]). Enable 32M DMA.*DMA_UNCACHED_32M.*(\[0-9]). Enable 4M DMA.*DMA_UNCACHED_4M.*\[cC]hoice.*\\\[.*]" {
             if { $board_type == "BF609-EZKIT" } {
                 send "$expect_out(1,string)\r"
+            } elseif { $board_type == "BF561-EZKIT" } {
+                send "$expect_out(2,string)\r"
             } else {
                 send "\r"
             }
@@ -63,7 +95,11 @@ while 1 {
 
 # Need high system clock 125 MHz for bf609-ezkit
         -re "Re-program Clocks while Kernel boots.*BFIN_KERNEL_CLOCK.*\\\[.*]" {
-            send "Y\r"
+            if { $board_type == "BF609-EZKIT" } {
+                send "Y\r"
+            } else {
+                send "\r"
+            }
         }
 
         -re "System Clock Divider.*SCLK_DIV.*\\\[.*]" {
@@ -80,7 +116,11 @@ while 1 {
         }
 
         -re "Media Controller API.*MEDIA_CONTROLLER.*\\\[.*]" {
-            send "Y\r"
+            if { $board_type == "BF609-EZKIT" } {
+                send "Y\r"
+            } else {
+                send "\r"
+            }
         }
 
         -re "Video For Linux.*VIDEO_DEV.*\\\[.*]" {
@@ -91,8 +131,20 @@ while 1 {
             send "Y\r"
         }
 
+        -re "Analog Devices ADV7183 decoder.*VIDEO_ADV7183.*\\\[.*]" {
+            if { $board_type == "BF561-EZKIT" } {
+                send "Y\r"
+            } else {
+                send "N\r"
+            }
+        }
+
         -re "Analog Devices ADV7842 decoder.*VIDEO_ADV7842.*\\\[.*]" {
-            send "Y\r"
+            if { $board_type == "BF609-EZKIT" } {
+                send "Y\r"
+            } else {
+                send "N\r"
+            }
         }
 
         -re "V4L platform devices.*V4L_PLATFORM_DRIVERS.*\\\[.*]" {
@@ -136,6 +188,15 @@ while 1 {
     expect {
         -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
+        }
+
+# ffmpeg needs fdpic format
+        -re "(\[0-9]). FDPIC.*BFIN_FDPIC.*\[cC]hoice.*\\\[.*]" {
+            send "$expect_out(1,string)\r"
+        }
+
+        -re "ffmpeg \\\(BR2_PACKAGE_FFMPEG\\\) \\\[.*]" {
+            send "Y\r"
         }
 
         -re "V4L2 video test program.*BR2_PACKAGE_V4L2_VIDEO_TEST.*\\\[.*]" {
