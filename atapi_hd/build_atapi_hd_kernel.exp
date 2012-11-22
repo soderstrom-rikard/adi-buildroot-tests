@@ -59,11 +59,17 @@ while 1 {
 # Toolchain configuration has changed, so better to make clean
 # before kernel configuration.
 cd $src_root/testsuites/common
-step "Make clean."
+step "Make clean"
 if { [source make_clean.exp] != 0 } {
     send_user "\n\nFail to make clean. Exit!\n\n"
     exit
 }
+
+# This step should be done after buildroot is cleaned
+# and user space config is configured.
+cd $src_root/testsuites/common
+step "Restore kernel config of policy"
+source restore_kernel_config.exp
 
 cd $src_root/testsuites/common
 step "Release L1 space in kernel"
