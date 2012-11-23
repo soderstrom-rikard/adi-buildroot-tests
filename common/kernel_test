@@ -105,13 +105,13 @@ BUILD_POLICY=1
 
 n=120
 
-AUTO_TESTCASE=( [0]="ethernet" [1]="bfindma" [2]="video_decoder" [3]="NA" [4]="spimmc" [5]="qt" [6]="lmbench" [7]="nbench" [8]="dhrystone" [9]="whetstone" [10]="edn" [11]="dmacopy" [12]="earlyprintk" [13]="l1_module" [14]="l1_app" [15]="erestart" [16]="pthread" [17]="traps" [18]="module" [19]="boot_addr" [20]="strace" [21]="ramfs" [22]="stress" [23]="kgdb" [24]="sdiommc" [25]="null_point" [26]="watchdog" [27]="malloc_perf" [28]="fixed_code" [29]="l2_app" [30]="l2_module" [31]="sqlite" [32]="g729" [33]="mem_fragment" [34]="bfincrc" [35]="ethernet_in_buffer" [36]="reserve_mem" [37]="mmap" [38]="gptimer" [39]="nfs" [40]="smbfs" [41]="shared_flat"  [42]="string" [43]="usb_camera" [44]="audio_adau1761" [45]="pound" [46]="dll" [47]="linphone_adau1761" [48]="linkport" [49]="bluetooth" [50]="pnormtd" [51]="jffs2" [52]="jffs2_fs" [53]="camera" [54]="canbus" [55]="ptp"  [56]="change_cpufreq" [57]="reprogram_clock" [58]="crypto_bfincrc" [59]="icc" [60]="mcapi" [61]="sram_alloc" [62]="power_ethernet" [63]="power_sdiommc" [64]="kgdb_uart" [65]="power_usbhost" [66]="power_audio" [67]="zflat" [68]="audio_ssm2603" [69]="power_usbdev" [70]="sigqueue" [71]="scratchpad_app_stack" [72]="rtc"  [73]="uart_wakeup"  [74]="xenomai" [75]="multichannel" [76]="debug_mmrs" [77]="spi_net" [78]="ethernet_wakeup" [79]="cfcard" [80]="ide_cdrom"  [81]="ide_harddisk" [82]="nand" [83]="adxl_i2c" [84]="adxl_spi" [85]="jtag_console" [86]="usbhost_1362" [87]="usbhost_176x" [88]="directfb"  [89]="i2ctwi"  [90]="microwin"  [91]="mpu" [92]="tftlcd" [93]="otpmem" [94]="atapi_hd" [95]="mplayer" [96]="linphone_ssm2603" [97]="coreb" [98]="kgdb_uart" [99]="usb_net" [100]="nmi"  [101]="bluetoothuart" [102]="spi_coexistence" [103]="spimmc_interrupt" [104]="usbnet" [$((n+1))]="serial" [$((n+2))]="ltp" [$((n+3))]="ethernet_usb" [$((n+4))]="timer" [$((n+5))]="usbdev" [$((n+6))]="snormtd" [$((n+7))]="usbhost" [$((n+8))]="usbotg"  [$((n+9))]="serial_uart" [$((n+10))]="snormtd_ext" [$((n+11))]="xip" [$((n+12))]="oprofile" [$((n+13))]="audio_ad1836" [$((n+14))]="power" [$((n+15))]="no" [$((n+16))]="snormtd_dma" [$((n+17))]="video_adv7393" [$((n+18))]="camera" [$((n+19))]="audio_adau1373" [$((n+20))]="snormtd_df" [$((n+21))]="audio_ad73311"  [$((n+22))]="no" [$((n+23))]="audio_ad1938" [$((n+24))]="power_usbhost" [$((n+25))]="usbhost_bf5xx" )
+AUTO_TESTCASE=( [0]="ethernet" [1]="bfindma" [2]="video_decoder" [3]="NA" [4]="spimmc" [5]="qt" [6]="lmbench" [7]="nbench" [8]="dhrystone" [9]="whetstone" [10]="edn" [11]="dmacopy" [12]="earlyprintk" [13]="l1_module" [14]="l1_app" [15]="erestart" [16]="pthread" [17]="traps" [18]="module" [19]="boot_addr" [20]="strace" [21]="ramfs" [22]="stress" [23]="kgdb" [24]="sdiommc" [25]="null_point" [26]="watchdog" [27]="malloc_perf" [28]="fixed_code" [29]="l2_app" [30]="l2_module" [31]="sqlite" [32]="g729" [33]="mem_fragment" [34]="bfincrc" [35]="ethernet_in_buffer" [36]="reserve_mem" [37]="mmap" [38]="gptimer" [39]="nfs" [40]="smbfs" [41]="shared_flat"  [42]="string" [43]="usb_camera" [44]="audio_adau1761" [45]="pound" [46]="dll" [47]="linphone_adau1761" [48]="linkport" [49]="bluetooth" [50]="pnormtd" [51]="jffs2" [52]="jffs2_fs" [53]="camera" [54]="canbus" [55]="ptp"  [56]="change_cpufreq" [57]="reprogram_clock" [58]="crypto_bfincrc" [59]="icc" [60]="mcapi" [61]="sram_alloc" [62]="power_ethernet" [63]="power_sdiommc" [64]="kgdb_uart" [65]="power_usbhost" [66]="power_audio" [67]="zflat" [68]="audio_ssm2603" [69]="power_usbdev" [70]="sigqueue" [71]="scratchpad_app_stack" [72]="rtc"  [73]="uart_wakeup"  [74]="xenomai" [75]="multichannel" [76]="debug_mmrs" [77]="spi_net" [78]="ethernet_wakeup" [79]="cfcard" [80]="ide_cdrom"  [81]="ide_harddisk" [82]="nand" [83]="adxl_i2c" [84]="adxl_spi" [85]="jtag_console" [86]="usbhost_1362" [87]="usbhost_176x" [88]="directfb"  [89]="i2ctwi"  [90]="microwin"  [91]="mpu" [92]="tftlcd" [93]="otpmem" [94]="atapi_hd" [95]="mplayer" [96]="linphone_ssm2603" [97]="coreb" [98]="kgdb_uart" [99]="usb_net" [100]="nmi"  [101]="bluetoothuart" [102]="spi_coexistence" [103]="spimmc_interrupt" [104]="usbnet" [105]="audio_ad1836" [106]="linphone_ad1836" [$((n+1))]="serial" [$((n+2))]="ltp" [$((n+3))]="ethernet_usb" [$((n+4))]="timer" [$((n+5))]="usbdev" [$((n+6))]="snormtd" [$((n+7))]="usbhost" [$((n+8))]="usbotg"  [$((n+9))]="serial_uart" [$((n+10))]="snormtd_ext" [$((n+11))]="xip" [$((n+12))]="oprofile" [$((n+13))]="NA" [$((n+14))]="power" [$((n+15))]="no" [$((n+16))]="snormtd_dma" [$((n+17))]="video_adv7393" [$((n+18))]="camera" [$((n+19))]="audio_adau1373" [$((n+20))]="snormtd_df" [$((n+21))]="NA"  [$((n+22))]="no" [$((n+23))]="audio_ad1938" [$((n+24))]="power_usbhost" [$((n+25))]="usbhost_bf5xx" )
 
-AUTO_RUN_STATUS=( [0]="1" [1]="0" [2]="0" [3]="0" [4]="0" [5]="0" [6]="1" [7]="1" [8]="1" [9]="1" [10]="1" [11]="0" [12]="0"  [13]="1" [14]="1" [15]="1" [16]="1" [17]="1" [18]="1" [19]="1" [20]="1" [21]="1" [22]="1" [23]="1" [24]="0" [25]="1" [26]="1" [27]="1" [28]="1" [29]="0" [30]="0" [31]="1" [32]="1" [33]="1" [34]="0" [35]="1" [36]="1" [37]="1" [38]="0" [39]="1" [40]="1" [41]="1" [42]="1" [43]="0" [44]="0" [45]="0" [46]="1" [47]="0" [48]="0" [49]="0" [50]="1" [51]="1" [52]="0" [53]="0" [54]="0" [55]="0" [56]="1" [57]="1" [58]="0" [59]="0" [60]="0" [61]="1" [62]="0" [63]="0" [64]="0" [65]="0" [66]="0" [67]="1" [68]="0" [69]="0" [70]="1" [71]="1" [72]="0" [73]="0" [74]="0" [75]="0" [76]="0" [77]="0" [78]="0"  [79]="0" [80]="0" [81]="0" [82]="0" [83]="0" [84]="0"  [85]="0" [86]="0" [87]="0" [88]="0" [89]="0" [90]="0"  [91]="0" [92]="0" [93]="0" [94]="0" [95]="0" [96]="0" [97]="0" [98]="0" [99]="0" [100]="0" [101]="0" [102]="0" [103]="0" [104]="0" [$((n+1))]="1" [$((n+2))]="1" [$((n+3))]="0" [$((n+4))]="1" [$((n+5))]="0" [$((n+6))]="0" [$((n+7))]="0" [$((n+8))]="0" [$((n+9))]="0" [$((n+10))]="0" [$((n+11))]="0" [$((n+12))]="1" [$((n+13))]="0"  [$((n+14))]="0" [$((n+15))]="0"  [$((n+16))]="0" [$((n+17))]="0" [$((n+18))]="0" [$((n+19))]="0" [$((n+20))]="0" [$((n+21))]="0" [$((n+22))]="0"  [$((n+23))]="0" [$((n+24))]="0" [$((n+25))]="0" )
+AUTO_RUN_STATUS=( [0]="1" [1]="0" [2]="0" [3]="0" [4]="0" [5]="0" [6]="1" [7]="1" [8]="1" [9]="1" [10]="1" [11]="0" [12]="0"  [13]="1" [14]="1" [15]="1" [16]="1" [17]="1" [18]="1" [19]="1" [20]="1" [21]="1" [22]="1" [23]="1" [24]="0" [25]="1" [26]="1" [27]="1" [28]="1" [29]="0" [30]="0" [31]="1" [32]="1" [33]="1" [34]="0" [35]="1" [36]="1" [37]="1" [38]="0" [39]="1" [40]="1" [41]="1" [42]="1" [43]="0" [44]="0" [45]="0" [46]="1" [47]="0" [48]="0" [49]="0" [50]="1" [51]="1" [52]="0" [53]="0" [54]="0" [55]="0" [56]="1" [57]="1" [58]="0" [59]="0" [60]="0" [61]="1" [62]="0" [63]="0" [64]="0" [65]="0" [66]="0" [67]="1" [68]="0" [69]="0" [70]="1" [71]="1" [72]="0" [73]="0" [74]="0" [75]="0" [76]="0" [77]="0" [78]="0"  [79]="0" [80]="0" [81]="0" [82]="0" [83]="0" [84]="0"  [85]="0" [86]="0" [87]="0" [88]="0" [89]="0" [90]="0"  [91]="0" [92]="0" [93]="0" [94]="0" [95]="0" [96]="0" [97]="0" [98]="0" [99]="0" [100]="0" [101]="0" [102]="0" [103]="0" [104]="0" [105]="0" [106]="0" [$((n+1))]="1" [$((n+2))]="1" [$((n+3))]="0" [$((n+4))]="1" [$((n+5))]="0" [$((n+6))]="0" [$((n+7))]="0" [$((n+8))]="0" [$((n+9))]="0" [$((n+10))]="0" [$((n+11))]="0" [$((n+12))]="1" [$((n+13))]="0"  [$((n+14))]="0" [$((n+15))]="0"  [$((n+16))]="0" [$((n+17))]="0" [$((n+18))]="0" [$((n+19))]="0" [$((n+20))]="0" [$((n+21))]="0" [$((n+22))]="0"  [$((n+23))]="0" [$((n+24))]="0" [$((n+25))]="0" )
 
-MANUAL_TESTCASE=( [0]="bluetooth" [1]="hdmi" [2]="sdio_wifi" [3]="touchscreen" [4]="irda" [5]="generic_gpio" [6]="pfbutton" [7]="video_decoder" [8]="video_encoder" [9]="adp5520" [10]="awg"  [11]="ndso"  [12]="bluetoothalsa" [13]="canbus" [14]="cap_touch" [15]="i2ctwi" [16]="linphone_ad1836" [17]="netaudio" [18]="ppifcd"  [19]="sport_uart" [20]="wireless" [21]="bfinppi" [22]="sport_spi" [23]="ad5258" [24]="adp5588_qwerty" [25]="adp8860" [26]="rts_cts"  [27]="keypad" [28]="rotary" [29]="dsa" [$((n+1))]="no" )
+MANUAL_TESTCASE=( [0]="bluetooth" [1]="hdmi" [2]="sdio_wifi" [3]="touchscreen" [4]="irda" [5]="generic_gpio" [6]="pfbutton" [7]="video_decoder" [8]="video_encoder" [9]="adp5520" [10]="awg"  [11]="ndso"  [12]="bluetoothalsa" [13]="canbus" [14]="cap_touch" [15]="i2ctwi" [16]="NA" [17]="netaudio" [18]="ppifcd"  [19]="sport_uart" [20]="wireless" [21]="bfinppi" [22]="sport_spi" [23]="ad5258" [24]="adp5588_qwerty" [25]="adp8860" [26]="rts_cts"  [27]="keypad" [28]="rotary" [29]="dsa" [30]="audio_ad73311" [$((n+1))]="no" )
 
-MANUAL_RUN_STATUS=( [0]="0" [1]="0" [2]="0" [3]="1" [4]="1" [5]="1" [6]="1" [7]="0" [8]="0" [9]="0" [10]="0"  [11]="0" [12]="0" [13]="0" [14]="0" [15]="0" [16]="0" [17]="0" [18]="0" [19]="0" [20]="0"  [21]="0" [22]="0" [23]="0" [24]="0" [25]="0" [26]="0" [27]="0" [28]="0" [29]="0" [$((n+1))]="0" )
+MANUAL_RUN_STATUS=( [0]="0" [1]="0" [2]="0" [3]="1" [4]="1" [5]="1" [6]="1" [7]="0" [8]="0" [9]="0" [10]="0"  [11]="0" [12]="0" [13]="0" [14]="0" [15]="0" [16]="0" [17]="0" [18]="0" [19]="0" [20]="0"  [21]="0" [22]="0" [23]="0" [24]="0" [25]="0" [26]="0" [27]="0" [28]="0" [29]="0" [30]="0" [$((n+1))]="0" )
 
 
 #################### Secific BOARD_CONFIG definition ####################
@@ -132,7 +132,7 @@ elif [ $BOARD_CONFIG = "BF537-STAMP-ORIGIN" ] ; then
     BOARD_TYPE=BF537-STAMP
 
     AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[38]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[76]="1"; AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+14))]="1";
-    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[16]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";
+    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";
 
 elif [ $BOARD_CONFIG = "BF537-STAMP-BASE" ] ; then
     BOARD_TYPE=BF537-STAMP
@@ -155,20 +155,20 @@ elif [ $BOARD_CONFIG = "BF518F-EZBRD-STD" ] ; then
 elif [ $BOARD_CONFIG = "BF533-STAMP-AD1836" ] ; then
     BOARD_TYPE=BF533-STAMP
 
-    AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[4]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[76]="1"; AUTO_RUN_STATUS[78]="0"; AUTO_RUN_STATUS[$((n+6))]="1"; AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+12))]="1"; AUTO_RUN_STATUS[$((n+13))]="1"; AUTO_RUN_STATUS[$((n+14))]="1"; AUTO_RUN_STATUS[$((n+21))]="1";
-    MANUAL_RUN_STATUS[0]="0";MANUAL_RUN_STATUS[2]="1";MANUAL_RUN_STATUS[3]="1";MANUAL_RUN_STATUS[4]="1";MANUAL_RUN_STATUS[5]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1"; MANUAL_RUN_STATUS[12]="0";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[16]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";MANUAL_RUN_STATUS[19]="1";MANUAL_RUN_STATUS[21]="1"; MANUAL_RUN_STATUS[22]="1";
+    AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[4]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[76]="1"; AUTO_RUN_STATUS[78]="0"; AUTO_RUN_STATUS[105]="1"; AUTO_RUN_STATUS[106]="1"; AUTO_RUN_STATUS[$((n+6))]="1"; AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+12))]="1"; AUTO_RUN_STATUS[$((n+14))]="1";
+    MANUAL_RUN_STATUS[0]="0";MANUAL_RUN_STATUS[2]="1";MANUAL_RUN_STATUS[3]="1";MANUAL_RUN_STATUS[4]="1";MANUAL_RUN_STATUS[5]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1"; MANUAL_RUN_STATUS[12]="0";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";MANUAL_RUN_STATUS[19]="1";MANUAL_RUN_STATUS[21]="1"; MANUAL_RUN_STATUS[22]="1"; MANUAL_RUN_STATUS[30]="1";
 
 elif [ $BOARD_CONFIG = "BF533-STAMP-ELF" ] ; then
     BOARD_TYPE=BF533-STAMP
 
-    AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[4]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[76]="1"; AUTO_RUN_STATUS[78]="0"; AUTO_RUN_STATUS[$((n+6))]="1"; AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+12))]="1"; AUTO_RUN_STATUS[$((n+13))]="1"; AUTO_RUN_STATUS[$((n+14))]="1"; AUTO_RUN_STATUS[$((n+21))]="1";
-    MANUAL_RUN_STATUS[0]="0";MANUAL_RUN_STATUS[2]="1";MANUAL_RUN_STATUS[3]="1";MANUAL_RUN_STATUS[4]="1";MANUAL_RUN_STATUS[5]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1"; MANUAL_RUN_STATUS[12]="0";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[16]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";MANUAL_RUN_STATUS[19]="1";MANUAL_RUN_STATUS[21]="1"; MANUAL_RUN_STATUS[22]="1";
+    AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[4]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[76]="1"; AUTO_RUN_STATUS[78]="0"; AUTO_RUN_STATUS[$((n+6))]="1"; AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+12))]="1"; AUTO_RUN_STATUS[$((n+14))]="1";
+    MANUAL_RUN_STATUS[0]="0"; MANUAL_RUN_STATUS[2]="1"; MANUAL_RUN_STATUS[3]="1"; MANUAL_RUN_STATUS[4]="1"; MANUAL_RUN_STATUS[5]="1"; MANUAL_RUN_STATUS[9]="1"; MANUAL_RUN_STATUS[10]="1"; MANUAL_RUN_STATUS[11]="1"; MANUAL_RUN_STATUS[12]="0"; MANUAL_RUN_STATUS[13]="1"; MANUAL_RUN_STATUS[14]="1"; MANUAL_RUN_STATUS[15]="1"; MANUAL_RUN_STATUS[17]="1"; MANUAL_RUN_STATUS[18]="1"; MANUAL_RUN_STATUS[19]="1"; MANUAL_RUN_STATUS[21]="1"; MANUAL_RUN_STATUS[22]="1";
 
 elif [ $BOARD_CONFIG = "BF533-STAMP-STD" ] ; then
     BOARD_TYPE=BF533-STAMP
 
-    AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[4]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[76]="1"; AUTO_RUN_STATUS[78]="0"; AUTO_RUN_STATUS[$((n+6))]="1"; AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+12))]="1"; AUTO_RUN_STATUS[$((n+13))]="1"; AUTO_RUN_STATUS[$((n+14))]="1"; AUTO_RUN_STATUS[$((n+21))]="1";
-    MANUAL_RUN_STATUS[0]="0";MANUAL_RUN_STATUS[2]="1";MANUAL_RUN_STATUS[3]="1";MANUAL_RUN_STATUS[4]="1";MANUAL_RUN_STATUS[5]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1"; MANUAL_RUN_STATUS[12]="0";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[16]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";MANUAL_RUN_STATUS[19]="1";MANUAL_RUN_STATUS[21]="1"; MANUAL_RUN_STATUS[22]="1";
+    AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[4]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[76]="1"; AUTO_RUN_STATUS[78]="0"; AUTO_RUN_STATUS[$((n+6))]="1"; AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+12))]="1"; AUTO_RUN_STATUS[$((n+14))]="1";
+    MANUAL_RUN_STATUS[0]="0";MANUAL_RUN_STATUS[2]="1";MANUAL_RUN_STATUS[3]="1";MANUAL_RUN_STATUS[4]="1";MANUAL_RUN_STATUS[5]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1"; MANUAL_RUN_STATUS[12]="0";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";MANUAL_RUN_STATUS[19]="1";MANUAL_RUN_STATUS[21]="1"; MANUAL_RUN_STATUS[22]="1";
 
 elif [ $BOARD_CONFIG = "BF533-EZKIT-STD" ] ; then
     BOARD_TYPE=BF533-EZKIT
@@ -252,73 +252,73 @@ elif [ $BOARD_CONFIG = "BF537-STAMP-MPU" ] ; then
     BOARD_TYPE=BF537-STAMP
 
     AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[76]="1"; AUTO_RUN_STATUS[91]="1"; AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+14))]="1";
-    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[16]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";
+    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";
 
 elif [ $BOARD_CONFIG = "BF537-STAMP-ADXL" ] ; then
     BOARD_TYPE=BF537-STAMP
 
-    AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[76]="1";  AUTO_RUN_STATUS[78]="1"; AUTO_RUN_STATUS[84]="1"; AUTO_RUN_STATUS[$((n+11))]="1";  AUTO_RUN_STATUS[$((n+13))]="1"; AUTO_RUN_STATUS[$((n+14))]="1";
-    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[16]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";
+    AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[76]="1";  AUTO_RUN_STATUS[78]="1"; AUTO_RUN_STATUS[84]="1"; AUTO_RUN_STATUS[$((n+11))]="1";  AUTO_RUN_STATUS[$((n+14))]="1";
+    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";
 
 elif [ $BOARD_CONFIG = "BF537-STAMP-AD1938" ] ; then
     BOARD_TYPE=BF537-STAMP
 
     AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[75]="1"; AUTO_RUN_STATUS[76]="1"; AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+14))]="1";  AUTO_RUN_STATUS[$((n+23))]="1";
-    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[16]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";
+    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";
 
 elif [ $BOARD_CONFIG = "BF537-STAMP-AD73311" ] ; then
     BOARD_TYPE=BF537-STAMP
 
-    AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[76]="1";  AUTO_RUN_STATUS[88]="1"; AUTO_RUN_STATUS[89]="1"; AUTO_RUN_STATUS[90]="1";  AUTO_RUN_STATUS[92]="1"; AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+14))]="1"; AUTO_RUN_STATUS[$((n+21))]="1"; 
-    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[16]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";
+    AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[76]="1";  AUTO_RUN_STATUS[88]="1"; AUTO_RUN_STATUS[89]="1"; AUTO_RUN_STATUS[90]="1";  AUTO_RUN_STATUS[92]="1"; AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+14))]="1";
+    MANUAL_RUN_STATUS[0]="1"; MANUAL_RUN_STATUS[9]="1"; MANUAL_RUN_STATUS[10]="1"; MANUAL_RUN_STATUS[11]="1"; MANUAL_RUN_STATUS[12]="1"; MANUAL_RUN_STATUS[13]="1"; MANUAL_RUN_STATUS[14]="1"; MANUAL_RUN_STATUS[15]="1"; MANUAL_RUN_STATUS[17]="1"; MANUAL_RUN_STATUS[18]="1"; MANUAL_RUN_STATUS[30]="1";
 
 elif [ $BOARD_CONFIG = "BF537-STAMP-SNORMTD" ] ; then
     BOARD_TYPE=BF537-STAMP
 
     AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[76]="1"; AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+14))]="1"; AUTO_RUN_STATUS[$((n+20))]="1";
-    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[16]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";
+    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";
 
 elif [ $BOARD_CONFIG = "BF537-STAMP-MMC" ] ; then
     BOARD_TYPE=BF537-STAMP
 
     AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[4]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[76]="1"; AUTO_RUN_STATUS[78]="1"; AUTO_RUN_STATUS[101]="1"; AUTO_RUN_STATUS[102]="1"; AUTO_RUN_STATUS[103]="1"; AUTO_RUN_STATUS[104]="1"; AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+14))]="1";
-    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[16]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";MANUAL_RUN_STATUS[19]="1";MANUAL_RUN_STATUS[21]="1";MANUAL_RUN_STATUS[22]="1";MANUAL_RUN_STATUS[23]="1";MANUAL_RUN_STATUS[24]="1";MANUAL_RUN_STATUS[25]="1" ;MANUAL_RUN_STATUS[26]="1"
+    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";MANUAL_RUN_STATUS[19]="1";MANUAL_RUN_STATUS[21]="1";MANUAL_RUN_STATUS[22]="1";MANUAL_RUN_STATUS[23]="1";MANUAL_RUN_STATUS[24]="1";MANUAL_RUN_STATUS[25]="1" ;MANUAL_RUN_STATUS[26]="1"
 
 elif [ $BOARD_CONFIG = "BF537-STAMP-STD" ] ; then
     BOARD_TYPE=BF537-STAMP
 
-    AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[76]="1"; AUTO_RUN_STATUS[78]="1"; AUTO_RUN_STATUS[84]="1"; AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+13))]="1"; AUTO_RUN_STATUS[$((n+14))]="1";
-    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[16]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";MANUAL_RUN_STATUS[19]="1";MANUAL_RUN_STATUS[21]="1";MANUAL_RUN_STATUS[22]="1";MANUAL_RUN_STATUS[23]="1";MANUAL_RUN_STATUS[24]="1";MANUAL_RUN_STATUS[25]="1" ;MANUAL_RUN_STATUS[26]="1"
+    AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[76]="1"; AUTO_RUN_STATUS[78]="1"; AUTO_RUN_STATUS[84]="1"; AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+14))]="1";
+    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";MANUAL_RUN_STATUS[19]="1";MANUAL_RUN_STATUS[21]="1";MANUAL_RUN_STATUS[22]="1";MANUAL_RUN_STATUS[23]="1";MANUAL_RUN_STATUS[24]="1";MANUAL_RUN_STATUS[25]="1" ;MANUAL_RUN_STATUS[26]="1"
 
 elif [ $BOARD_CONFIG = "BF537-STAMP-AD1836" ] ; then
     BOARD_TYPE=BF537-STAMP
 
-    AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[38]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[64]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[75]="1"; AUTO_RUN_STATUS[76]="1"; AUTO_RUN_STATUS[$((n+9))]="1" ; AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+13))]="1"; AUTO_RUN_STATUS[$((n+14))]="1";
-    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[16]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";MANUAL_RUN_STATUS[19]="1";MANUAL_RUN_STATUS[20]="1"
+    AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[38]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[64]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[75]="1"; AUTO_RUN_STATUS[76]="1"; AUTO_RUN_STATUS[105]="1"; AUTO_RUN_STATUS[106]="1"; AUTO_RUN_STATUS[$((n+9))]="1" ; AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+14))]="1";
+    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1"; MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";MANUAL_RUN_STATUS[19]="1";MANUAL_RUN_STATUS[20]="1"
 
 elif [ $BOARD_CONFIG = "BF537-STAMP-SPINET" ] ; then
     BOARD_TYPE=BF537-STAMP
 
     AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[38]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[76]="1"; AUTO_RUN_STATUS[77]="1"; AUTO_RUN_STATUS[78]="1"; AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+14))]="1";
-    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[16]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";MANUAL_RUN_STATUS[19]="1";MANUAL_RUN_STATUS[21]="1";MANUAL_RUN_STATUS[22]="1";MANUAL_RUN_STATUS[23]="1";MANUAL_RUN_STATUS[24]="1";MANUAL_RUN_STATUS[25]="1" ;MANUAL_RUN_STATUS[26]="1"
+    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";MANUAL_RUN_STATUS[19]="1";MANUAL_RUN_STATUS[21]="1";MANUAL_RUN_STATUS[22]="1";MANUAL_RUN_STATUS[23]="1";MANUAL_RUN_STATUS[24]="1";MANUAL_RUN_STATUS[25]="1" ;MANUAL_RUN_STATUS[26]="1"
 
 elif [ $BOARD_CONFIG = "BF537-STAMP-ADV7393" ] ; then
     BOARD_TYPE=BF537-STAMP
 
     AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[76]="1"; AUTO_RUN_STATUS[85]="1"; AUTO_RUN_STATUS[86]="1";  AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+14))]="1";AUTO_RUN_STATUS[$((n+17))]="1";
-    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[16]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";
+    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";
 
 elif [ $BOARD_CONFIG = "BF537-STAMP-CF" ] ; then
     BOARD_TYPE=BF537-STAMP
 
     AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[76]="1"; AUTO_RUN_STATUS[79]="1"; AUTO_RUN_STATUS[80]="1"; AUTO_RUN_STATUS[81]="1"; AUTO_RUN_STATUS[82]="1"; AUTO_RUN_STATUS[$((n+6))]="1"; AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+14))]="1"; AUTO_RUN_STATUS[$((n+16))]="1";
-    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[16]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";MANUAL_RUN_STATUS[19]="1";MANUAL_RUN_STATUS[20]="1"
+    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";MANUAL_RUN_STATUS[19]="1";MANUAL_RUN_STATUS[20]="1"
 
 elif [ $BOARD_CONFIG = "BF537-STAMP-USB176x" ] ; then
     BOARD_TYPE=BF537-STAMP
 
     AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[76]="1"; AUTO_RUN_STATUS[87]="1"; AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+14))]="1"; AUTO_RUN_STATUS[$((n+18))]="1"; AUTO_RUN_STATUS[$((n+19))]="1";
-    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[16]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";
+    MANUAL_RUN_STATUS[0]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1";MANUAL_RUN_STATUS[12]="1";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";
 
 elif [ $BOARD_CONFIG = "BF609-EZKIT-STD" ] ; then
     BOARD_TYPE=BF609-EZKIT
@@ -534,18 +534,21 @@ do
         fi
         cd $TESTSUITES_DIR/$TESTCASE_DIR
 
+        if [ ${AUTO_RUN_STATUS[44]} -eq 1  ] ; then
+            audio_dev="audio_adau1761"
+        elif [ ${AUTO_RUN_STATUS[68]} -eq 1  ] ; then
+            audio_dev="audio_ssm2603"
+        elif [ ${AUTO_RUN_STATUS[105]} -eq 1  ] ; then
+            audio_dev="audio_ad1836"
+        fi
+
         if [ ${AUTO_TESTCASE[$i]} == "ethernet_in_buffer" ] ; then
             ./build_ethernet_kernel.exp $BOARD_TYPE in_buffer >/dev/null 2>&1
-        elif [ ${AUTO_TESTCASE[$i]} == "linphone_adau1761" ] ; then
-            ./build_linphone_kernel.exp $BOARD_TYPE audio_adau1761 >/dev/null 2>&1
         elif [ `echo ${AUTO_TESTCASE[$i]}|grep audio_` ] ; then
             ./build_audio_kernel.exp $BOARD_TYPE ${AUTO_TESTCASE[$i]} >/dev/null 2>&1
+        elif [ `echo ${AUTO_TESTCASE[$i]}|grep linphone` ] ; then
+            ./build_linphone_kernel.exp $BOARD_TYPE $audio_dev >/dev/null 2>&1
         elif [ ${AUTO_TESTCASE[$i]} == "power_audio" ] ; then
-            if [ ${AUTO_RUN_STATUS[44]} -eq 1  ] ; then
-                audio_dev="audio_adau1761"
-            elif [ ${AUTO_RUN_STATUS[68]} -eq 1  ] ; then
-                audio_dev="audio_ssm2603"
-            fi
             ./build_power_audio_kernel.exp $BOARD_TYPE $audio_dev > /dev/null 2>&1
         elif [ ${AUTO_TESTCASE[$i]} == "kgdb_uart" ] ; then
             ./build_kgdb_kernel.exp $BOARD_TYPE uart >/dev/null 2>&1
@@ -575,8 +578,8 @@ do
 
             if [ ${AUTO_TESTCASE[$i]} == "ethernet_in_buffer" ] ; then
                 ./ethernet_test.exp $BOARD_TYPE in_buffer >/dev/null 2>&1
-            elif [ ${AUTO_TESTCASE[$i]} == "linphone_adau1761" ] ; then
-                ./linphone_test.exp $BOARD_TYPE audio_adau1761 >/dev/null 2>&1
+            elif [ `echo ${AUTO_TESTCASE[$i]}|grep linphone` ] ; then
+                ./linphone_test.exp $BOARD_TYPE $audio_dev >/dev/null 2>&1
             elif [ `echo ${AUTO_TESTCASE[$i]}|grep audio_` ] ; then
                 ./audio_test.exp $BOARD_TYPE ${AUTO_TESTCASE[$i]} >/dev/null 2>&1
                 if [ $RESET_BOARD -eq 1 ] ; then
@@ -1279,9 +1282,20 @@ do
 
         echo  "Start testing ${MANUAL_TESTCASE[$i]}..."
 
-        cd $TESTSUITES_DIR/${MANUAL_TESTCASE[$i]}
+        if [ `echo ${MANUAL_TESTCASE[$i]}|grep linphone` ] ; then
+            TESTCASE_DIR=linphone
+        elif [ `echo ${MANUAL_TESTCASE[$i]}|grep audio_` ] ; then
+            TESTCASE_DIR=audio
+        else
+            TESTCASE_DIR=${MANUAL_TESTCASE[$i]}
+        fi
+        cd $TESTSUITES_DIR/$TESTCASE_DIR
 
-        ./build_${MANUAL_TESTCASE[$i]}_kernel.exp $BOARD_TYPE > /dev/null 2>&1
+        if [ `echo ${MANUAL_TESTCASE[$i]}|grep audio_` ] ; then
+            ./build_audio_kernel.exp $BOARD_TYPE ${MANUAL_TESTCASE[$i]} >/dev/null 2>&1
+        else
+            ./build_${MANUAL_TESTCASE[$i]}_kernel.exp $BOARD_TYPE > /dev/null 2>&1
+        fi
 
         if [ ! -f $IMAGE_DIR/uImage ]
         then
@@ -1290,7 +1304,7 @@ do
         fi
 
         copy_image_config "${MANUAL_TESTCASE[$i]}"
-        mv $TESTSUITES_DIR/${MANUAL_TESTCASE[$i]}/*_log  $THIS_LOG
+        mv $TESTSUITES_DIR/$TESTCASE_DIR/*_log  $THIS_LOG
 
     fi
 
