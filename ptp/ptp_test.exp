@@ -20,6 +20,74 @@ set ptp_board_targetip 10.100.4.51
 
 set first_target_id $spawn_id
 
+proc clean_previous_pid { } {
+
+global kernel_prompt
+global case_num
+
+send -s "ps | grep ptp4l | grep -v grep | head -1\r" 
+while 1 {
+   expect {
+      -re " (\[0-9]+) +root.*ptp4l.*$kernel_prompt" {
+         set process_id $expect_out(1,string)
+                case_pass $case_num
+	 break
+	}
+
+      timeout {                          
+         break 
+         }
+     }
+}
+
+if { [ info exists process_id ] } {
+send_user "\nprocess_id: $process_id \n"
+send -s  "kill -9 $process_id\r"
+while 1 {
+         expect {
+         -re "$kernel_prompt" {
+                break
+         }
+
+         timeout {
+                exit
+         }
+         }
+}
+}
+
+send -s "ps | grep phc2sys | grep -v grep | head -1\r" 
+while 1 {
+   expect {
+      -re " (\[0-9]+) +root.*phc2sys.*$kernel_prompt" {
+         set process_id $expect_out(1,string)
+                case_pass $case_num
+	 break
+	}
+
+      timeout {                          
+         break 
+         }
+     }
+}
+
+if { [ info exists process_id ] } {
+send_user "\nprocess_id: $process_id \n"
+send -s  "kill -9 $process_id\r"
+while 1 {
+         expect {
+         -re "$kernel_prompt" {
+                break
+         }
+
+         timeout {
+                exit
+         }
+         }
+}
+}
+}
+
 incr case_num
 send -s "ifconfig eth0 $ptp_board_targetip \r" 
 while 1 {
@@ -109,36 +177,6 @@ while 1 {
          }
      }
 }
-send -s "ps | grep ptpd | grep -v grep | head -1\r" 
-while 1 {
-   expect {
-      -re " (\[0-9]+) +root.*ptp4l.*$kernel_prompt" {
-         set process_id $expect_out(1,string)
-                case_pass $case_num
-	 break
-	}
-
-      timeout {                          
-         break 
-         }
-     }
-}
-
-if { [ info exists process_id ] } {
-send_user "\nprocess_id: $process_id \n"
-send -s  "kill -9 $process_id\r"
-while 1 {
-         expect {
-         -re "$kernel_prompt" {
-                break
-         }
-
-         timeout {
-                exit
-         }
-         }
-}
-}
 
 incr case_num
 send -s "date -s $year.11.14-17:15:10\r" 
@@ -159,7 +197,7 @@ while 1 {
 send -s "date \r" 
 while 1 {
    expect {
-      -re "$kernel_prompt" { 
+      -re "$year.*$kernel_prompt" { 
                 case_pass $case_num
          break
       }
@@ -214,10 +252,10 @@ while 1 {
 }
 incr case_num
 
-send -s "$ptp_cmd \r" 
+send -s "$ptp_cmd & \r" 
 while 1 {
    expect {
-      -re "selected .* as PTP clock.*$kernel_prompt" { 
+      -re "selected .* as PTP clock" { 
                 case_pass $case_num
          break
       }
@@ -299,10 +337,10 @@ while 1 {
 }
 incr case_num
 
-send -s "$ptp_cmd -s\r" 
+send -s "$ptp_cmd -s &\r" 
 while 1 {
    expect {
-      -re "selected .* as PTP clock.*$kernel_prompt" { 
+      -re "selected .* as PTP clock" { 
                 case_pass $case_num
          break
       }
@@ -314,10 +352,12 @@ while 1 {
      }
 }
 
-send -s "phc2sys -s /dev/ptp0\r" 
+sleep 3
+
+send -s "phc2sys -s /dev/ptp0 &\r" 
 while 1 {
    expect {
-      -re "phc.*$kernel_prompt" { 
+      -re "phc" { 
                 case_pass $case_num
          break
       }
@@ -347,15 +387,16 @@ while 1 {
          }
      }
 }
-incr case_num
 
-send -s "date \r" 
+send -s "ps \r" 
 while 1 {
    expect {
-      -re "$year.*$kernel_prompt" { 
+      -re " (\[0-9]+) +root.*phc2sys.*$kernel_prompt" {
+         set process_id $expect_out(1,string)
+	#send_user "\nprocess_id: $process_id"
                 case_pass $case_num
-         break
-      }
+	 break
+	}
 
       timeout {                           
                 case_fail $case_num
@@ -363,37 +404,43 @@ while 1 {
          }
      }
 }
+spawn /bin/bash
 
-send -s "ps | grep ptp4l | grep -v grep | head -1\r" 
 while 1 {
-   expect {
-      -re " (\[0-9]+) +root.*ptp4l.*$kernel_prompt" {
-         set process_id $expect_out(1,string)
+        send -s "telnet $ptp_board_targetip\r"
+        expect {
+                "login:" { }
+                timeout { send_user "Failed first return\n"
+                break }
+        }
+        send -s "root\r"
+        expect {
+                ">" {  }
+                timeout { send_user "Failed inital telnet\n"
+                exit }
+        }
+        send -s "\r"
+        expect {
+                ">" { }
+                timeout { send_user "Failed first return\n"
+                exit }
+        }
+        send -s "date\r"
+        expect {
+           -re  "$year.*$kernel_prompt" {
                 case_pass $case_num
-	 break
-	}
-
-      timeout {                           
-	 break
-         }
-     }
-}
-
-if { [ info exists process_id ] } {
-send_user "\nprocess_id: $process_id \n"
-send -s  "kill -9 $process_id\r"
-while 1 {
-         expect {
-         -re "$kernel_prompt" {
                 break
-         }
+                 }
+                timeout { 
+                case_fail $case_num
+                exit }
+        }
+}
 
-         timeout {
-                exit
-         }
-         }
-}
-}
+incr case_num
+
+clean_previous_pid
+
 }
 
 all_pass
