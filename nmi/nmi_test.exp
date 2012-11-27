@@ -19,7 +19,7 @@ incr case_num
 set timeout 8
 set flag 0
 
-send -s "modprobe nmi_wdt_test\r"
+send -s "insmod /lib/modules/nmi_wdt_test.ko\r"
 while 1 {
    expect {
      -re "$kernel_prompt" {

@@ -112,7 +112,7 @@ while 1 {
             continue
         }
 
-         -re "nmi_wdt test.*NMI_WDT_TEST.*\\\[.*]" {
+         -re "nmi wdt test.*BR2_PACKAGE_NMI_WDT_TEST.*\\\[.*]" {
             send "Y\r"
         }
 
@@ -135,49 +135,6 @@ while 1 {
         }
     }
 }
-# Following make specific configuration for this case.
-
-cd $src_root
-set timeout 300
-set baud_rate_done_flag 0
-spawn make config
-
-#puts "Begin the interactive process of configuration"
-while 1 {
-    expect {
-
-        -re "Customize Kernel Settings.*DEFAULTS_KERNEL.*\\\[.*]" {
-            send "y\r"
-        }
-
-        -re "Customize Application/Library Settings.*DEFAULTS_VENDOR.*\\\[.*]" {
-            send "y\r"
-        }
-
-        -nocase -re "\\\[\[^\r]*] (\[ymn])|choice\\\[.*]: \[0-9]+\r" {
-            continue
-        }
-
-        "\\\(*) \\\[*]" {
-            sleep .01
-            send "\r"
-        }
-
-        -re "\[cC]hoice\\\[.*]:" {
-            send "\r"
-        }
-
-        eof {
-            puts "End of configuration"
-            break
-        }
-
-        timeout {
-            puts "\n\nFATAL ERROR: config prompt timeout in make config"
-            break
-        }
-    }
-}
 
 cd $src_root/testsuites/common
 
@@ -190,7 +147,7 @@ cd $src_root
 step "Edit inittab file."
 
 set timeout 2
-spawn ex romfs/etc/inittab
+spawn ex output/target/etc/inittab
 expect {
     "Entering Ex mode*Normal mode." { }
 
@@ -211,7 +168,7 @@ expect eof
 step "Make images again."
 
 cd $src_root
-spawn make image
+spawn make 
 set timeout 1200
 set bfin_make_status failure
 while 1 {
