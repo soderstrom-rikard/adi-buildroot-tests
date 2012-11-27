@@ -25,6 +25,11 @@ source_args make_bfin-format.exp fdpic
 cd $src_root/testsuites/common
 source config_cut_app.exp
 
+cd $src_root/testsuites/common
+step "Kernel config for specified usb host"
+source_args config_usb.exp musb dma
+
+
 step "Make kernel config"
 cd $src_root
 set timeout 300
@@ -79,31 +84,6 @@ while 1 {
 
         -re "USB Video Class.*USB_VIDEO_CLASS.*\\\[.*]" {
             send "Y\r"
-        }
-
-# USB support
-        -re "USB support.*USB_SUPPORT.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "Support for Host-side USB.*USB.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "USB device class-devices.*USB_DEVICE_CLASS.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "Inventra Highspeed Dual Role Controller.*USB_MUSB_HDRC.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "Platform Glue Layer \\\[.*]" {
-            send "Y\r"
-        }
-
-        -re " (\[0-9]+). Blackfin.*USB_MUSB_BLACKFIN.*\[cC]hoice.*\\\[.*]" {
-            send "$expect_out(1,string)\r"
         }
 
 #Virtual terminal & frame buffer

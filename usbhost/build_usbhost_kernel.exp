@@ -3,28 +3,50 @@
 # Build Kernel for USB host test
 #
 # Usage:
-#   ./build_usbhost_kernel.exp board_type musb_mode
+#   ./build_usbhost_kernel.exp board_type usb_driver musb_mode
 #
 # Example:
-#   ./build_usbhost_kernel.exp BF609-EZKIT dma
+#   ./build_usbhost_kernel.exp BF537-STAMP usbhost_isp1362
+#   ./build_usbhost_kernel.exp BF609-EZKIT musb dma
 #
 
 source ../common/kernel_config.exp
 
 if { $argc < 2} {
-    puts "Please input: board_type, musb_mode(pio or dma)"
+    puts "Please input: board_type, usb_driver(usbhost_isp1362, usbhost_sl811, usbhost_isp1760 or musb)\n"
+    puts "If musb is used, please also input: musb_mode(dma or pio)\n"
     exit
 }
-set musb_mode [lindex $argv 1]
-set log_name build_usbhost_${musb_mode}_kernel_log
+set usb_driver [lindex $argv 1]
+
+if { $usb_driver == "musb" } {
+    if { $argc > 2 } {
+        set musb_mode [lindex $argv 2]
+    } else {
+        set musb_mode "dma"
+    }
+    set log_name build_usbhost_musb_${musb_mode}_kernel_log
+} else {
+    set log_name build_${usb_driver}_kernel_log
+}
+
 
 log_file $log_name
 send_user "Starting $argv0\n"
-send_user "\n#### Build kernel in $musb_mode mode. ####\n"
+send_user "\n#### Build kernel with $usb_driver. ####\n"
 
 cd $src_root/testsuites/common
 step "Make default config"
 source make_default_config.exp
+
+cd $src_root/testsuites/common
+step "Kernel config for specified usb host"
+if [ info exists musb_mode ] {
+    source_args config_usb.exp $usb_driver $musb_mode
+} else {
+    source_args config_usb.exp $usb_driver
+}
+
 
 step "Make kernel config"
 cd $src_root
@@ -41,64 +63,18 @@ while 1 {
         }
 
         -re "SCSI device support \\\(SCSI\\\).*\\\[.*]" {
-            if { [string match "BF527-EZKIT*" $board_type] } {
-                send "Y\r"
-            } else {
-                send "\r"
-            }
+            send "Y\r"
         }
 
         -re "SCSI disk support.*BLK_DEV_SD.*\\\[.*]" {
             send "Y\r"
         }
 
-# USB support
-        -re "USB support.*USB_SUPPORT.*\\\[.*]" {
+        -re "Probe all LUNs on each SCSI device.*SCSI_MULTI_LUN.*\\\[.*]" {
             send "Y\r"
         }
 
-        -re "Support for Host-side USB.*USB.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "Inventra Highspeed Dual Role Controller.*USB_MUSB_HDRC.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "Platform Glue Layer \\\[.*]" {
-            send "Y\r"
-        }
-
-        -re " (\[0-9]+). Blackfin.*USB_MUSB_BLACKFIN.*\[cC]hoice.*\\\[.*]" {
-            send "$expect_out(1,string)\r"
-        }
-
-        -re " (\[0-9]+). Inventra.*USB_INVENTRA_DMA.* (\[0-9]+). Disable DMA.*MUSB_PIO_ONLY.*\[cC]hoice.*\\\[.*]" {
-            if { $musb_mode == "dma" } {
-                send "$expect_out(1,string)\r"
-            } elseif { $musb_mode == "pio" } {
-                send "$expect_out(2,string)\r"
-            } else {
-                send "\r"
-            }
-        }
-
-        -re "USB Gadget Support.*USB_GADGET.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "Inventra HDRC USB Peripheral.*USB_GADGET_MUSB_HDRC.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "USB Gadget Drivers \\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "USB Gadget Drivers.* (\[0-9]+). Gadget Zero.*USB_ZERO.*\[cC]hoice\\\[.*]" {
-            send "$expect_out(1,string)\r"
-        }
-
+# USB support: musb config has most been done in config_usb.exp
         -re "USB Mass Storage support.*USB_STORAGE.*\\\[.*]" {
             send "Y\r"
         }

@@ -27,6 +27,10 @@ cd $src_root/testsuites/common
 step "Make default config"
 source make_default_config.exp
 
+cd $src_root/testsuites/common
+step "Kernel config for specified usb host"
+source_args config_usb.exp musb $musb_mode
+
 step "Make kernel config"
 cd $src_root
 set timeout 300
@@ -37,53 +41,7 @@ while 1 {
             continue
         }
 
-# USB support
-        -re "USB support.*USB_SUPPORT.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "Support for Host-side USB.*USB.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "USB device class-devices.*USB_DEVICE_CLASS.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "Inventra Highspeed Dual Role Controller.*USB_MUSB_HDRC.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "Platform Glue Layer \\\[.*]" {
-            send "Y\r"
-        }
-
-        -re " (\[0-9]+). Blackfin.*USB_MUSB_BLACKFIN.*\[cC]hoice.*\\\[.*]" {
-            send "$expect_out(1,string)\r"
-        }
-
-        -re " (\[0-9]+). Inventra.*USB_INVENTRA_DMA.* (\[0-9]+). Disable DMA.*MUSB_PIO_ONLY.*\[cC]hoice.*\\\[.*]" {
-            if { $musb_mode == "dma" } {
-                send "$expect_out(1,string)\r"
-            } elseif { $musb_mode == "pio" } {
-                send "$expect_out(2,string)\r"
-            } else {
-                send "\r"
-            }
-        }
-
-        -re "USB Gadget Support.*USB_GADGET.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "USB Peripheral Controller \\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "USB Peripheral Controller.*(\[0-9]+). Inventra HDRC USB Peripheral.*USB_GADGET_MUSB_HDRC.*\[cC]hoice\\\[.*]" {
-            send "$expect_out(1,string)\r"
-        }
-
+# USB support: musb config has most been done in config_usb.exp
         -re "USB Gadget Drivers \\\[.*]" {
             send "M\r"
         }
@@ -190,11 +148,11 @@ while 1 {
             continue
         }
 
-        -re "getty.*CONFIG_GETTY.*\\\[.*]" {
+        -re "getty \\\(GETTY\\\) \\\[.*]" {
             send "Y\r"
         }
 
-        -re "login.*CONFIG_LOGIN.*\\\[.*]" {
+        -re "login \\\(LOGIN\\\) \\\[.*]" {
             send "Y\r"
         }
 

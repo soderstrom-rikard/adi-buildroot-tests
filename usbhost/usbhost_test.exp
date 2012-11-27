@@ -1,29 +1,45 @@
 #!/usr/bin/expect
 #
 # USB host test with a usb memory card
-# Testing driver is musb.
+# USB host driver includes ISP1362, SL811, ISP1760 and musb.
 #
 # Usage:
-#   ./usbhost_test.exp board_type musb_mode
+#   ./usbhost_test.exp board_type usb_driver musb_mode
 #
 # Example:
+#   ./usbhost_test.exp BF537-STAMP usbhost_1362
 #   ./usbhost_test.exp BF609-EZKIT dma
 #
 
 source ../common/kernel_config.exp
 
 if { $argc < 2} {
-    puts "Please input: board_type, musb_mode(pio or dma)"
+    puts "Please input: board_type, usb_driver(usbhost_isp1362, usbhost_sl811, usbhost_isp1760 or musb)\n"
+    puts "If musb is used, please also input: musb_mode(dma or pio)\n"
     exit
 }
-set musb_mode [lindex $argv 1]
+set usb_driver [lindex $argv 1]
+
+if { $usb_driver == "musb" } {
+    if { $argc > 2 } {
+        set musb_mode [lindex $argv 2]
+    } else {
+        set musb_mode "dma"
+    }
+    set log_name usbhost_musb_${musb_mode}_test_log
+} else {
+    set log_name ${usb_driver}_test_log
+}
+
 set TITLE [title "$argv0"]
-append TITLE " ($musb_mode)"
-set log_name usbhost_${musb_mode}_test_log
+append TITLE " ($usb_driver)"
+if [ info exists musb_mode ] {
+    append TITLE " ($musb_mode)"
+}
 
 log_file $log_name
 send_user "Starting $argv0\n"
-send_user "\n#### musb_mode is $musb_mode. ####\n"
+send_user "\n#### Testing usb driver is $usb_driver. ####\n"
 
 
 step "Start kermit"
@@ -43,17 +59,14 @@ expect "Attached SCSI removable disk"
 send "\r"
 expect -re $kernel_prompt
 
-if { [string match "BF527-EZKIT*" $board_type] || $board_type == "BF609-EZKIT" } {
-    set usb_dev sda
-    set usb_dev1 sda1
-    set usb_dev2 sda2
-} elseif { $board_type == "BF548-EZKIT" } {
+if { $board_type == "BF548-EZKIT" } {
     set usb_dev sdb
     set usb_dev1 sdb1
     set usb_dev2 sdb2
 } else {
-    send_user "Board type error, exit!"
-    exit
+    set usb_dev sda
+    set usb_dev1 sda1
+    set usb_dev2 sda2
 }
 
 incr case_num
