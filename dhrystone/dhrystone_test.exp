@@ -45,7 +45,7 @@ while 1 {
 set result_flag NA
 set timeout 10000
 incr case_num
-send "time ./test_dhrystone.sh $targetip $src_root\r\n;ls\r\n"
+send "time ./test_dhrystone.sh $targetip $src_root\r\n"
 while 1 {
     expect {
         -re "(rcp:|No such).*$sh_prompt" {

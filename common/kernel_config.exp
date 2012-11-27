@@ -69,7 +69,7 @@ if { $arch == "arm" } {
     set baud_rate "57600"
     set def_uart_port ttyBF$def_uart_port_num
     set console_args "$def_uart_port,$baud_rate"
-    set bootargs "root=/dev/mtdblock0 rw ip=$targetip earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
+    set bootargs "root=/dev/mtdblock0 rw ip=$targetip earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=\$\{console\}"
 }
 
 if { $board_type == "BEAGLE" } {
