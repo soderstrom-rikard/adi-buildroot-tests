@@ -55,6 +55,9 @@ if { $arch == "arm" } {
     set console_args "$def_uart_port,${baud_rate}n8"
 } elseif { $arch == "blackfin" } {
 
+    set max_mem 64
+    set res_mem 60
+
     set eth_dev "eth0"
     set usb_eth_dev "eth1"
 
@@ -94,18 +97,15 @@ if { $board_type == "BEAGLE" } {
 
 }
 
-
-if {$board_type == "BEAGLE" || $board_type == "PANDA" || $board_type == "BF537-STAMP" || $board_type == "BF609-EZKIT" } {
-    set bootargs_param1 "root=/dev/mtdblock0 rw mem=${res_mem}M max_mem=${max_mem}M console=$console_args"
-    set bootargs_param2 "root=/dev/nfs rw nfsroot=$serverip:/tftpboot/romfs,tcp,nfsvers=3 rootdelay=1 earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
-    set bootargs_param3 "rw rootfstype=jffs2 earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
-    set bootargs_param4 "root=/dev/mtdblock$pnor_rootfs_num rw rootfstype=jffs2 earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
-    set bootargs_param5 "root=/dev/mtdblock$pnor_rootfs_num ro rootfstype=romfs earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
-    set bootargs_param6 "root=/dev/mtdblock0 rw mem=124M max_mem=128M icc_l2_mem=0x8000 earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
-    #bootargs_param7 is reserved for serial uart test
-    set bootargs_param9 "root=/dev/mtdblock0 rw ip=$targetip earlyprintk=serial,uart0,$baud_rate console=tty0 console=\$\{console\}"
-    set bootargs_param10 "root=/dev/mtdblock0 rw earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=ttyBFJC0,$baud_rate"
-}
+set bootargs_param1 "root=/dev/mtdblock0 rw mem=${res_mem}M max_mem=${max_mem}M console=$console_args"
+set bootargs_param2 "root=/dev/nfs rw nfsroot=$serverip:/tftpboot/romfs,tcp,nfsvers=3 rootdelay=1 earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
+set bootargs_param3 "rw rootfstype=jffs2 earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
+set bootargs_param4 "root=/dev/mtdblock$pnor_rootfs_num rw rootfstype=jffs2 earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
+set bootargs_param5 "root=/dev/mtdblock$pnor_rootfs_num ro rootfstype=romfs earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
+set bootargs_param6 "root=/dev/mtdblock0 rw mem=124M max_mem=128M icc_l2_mem=0x8000 earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
+#bootargs_param7 is reserved for serial uart test
+set bootargs_param9 "root=/dev/mtdblock0 rw ip=$targetip earlyprintk=serial,uart0,$baud_rate console=tty0 console=\$\{console\}"
+set bootargs_param10 "root=/dev/mtdblock0 rw earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=ttyBFJC0,$baud_rate"
 
 set compressed_kernel_only_image  vmImage
 set kernel_and_ext2_image   linux.ext2
