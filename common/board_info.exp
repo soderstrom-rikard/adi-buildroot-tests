@@ -15,6 +15,8 @@ if { $argv0 == "./build_policy_kernel.exp" } {
 
     set binary_format  fdpic 
     set xenomai        off
+    set smp            off
+    set mpu            off
 
     if { $argc >= 2} {
         set binary_format       [lindex $argv 1]
@@ -22,7 +24,15 @@ if { $argv0 == "./build_policy_kernel.exp" } {
     }
     if { $argc >= 3} {
         set xenomai             [lindex $argv 2]
-        send_log "\n#### XENOMAI is $xenomai\n"
+        send_log "\n#### xenomai is $xenomai\n"
+    }
+    if { $argc >= 4} {
+        set smp                 [lindex $argv 3]
+        send_log "\n#### smp is $smp\n"
+    }
+    if { $argc >= 5} {
+        set mpu                 [lindex $argv 4]
+        send_log "\n#### mpu is $mpu\n"
     }
 }
 

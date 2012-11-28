@@ -7,17 +7,21 @@ BOARD_TYPE=BEAGLE
 ARCH_TYPE=arm
 BINARY_FORMAT=flat
 XENOMAI=off
+SMP=off
+MPU=off
 THIS_LOG=$WORKSPACE_ROOT/log/$BOARD_CONFIG
 
 if [ $# -lt 1 ] ; then
-    echo "Please input [ BOARD_CONFIG BOARD_TYPE ARCH_TYPE BINARY_FORMAT XENOMAI THIS_LOG ]:"
+    echo "Please input [ BOARD_CONFIG BOARD_TYPE ARCH_TYPE BINARY_FORMAT WORKSPACE_ROOT THIS_LOG XENOMAI SMP MPU ]:"
     echo
     echo "BOARD_CONFIG :  BEAGLE-STD, PANDA-STD etc"
     echo "BOARD_TYPE :    BEAGLE, PANDA, etc"
     echo "ARCH_TYPE :     arm, blackfin, etc"
     echo "BINARY_FORMAT : flat, elf, shared-flat"
     echo "XENOMAI :       on, off"
-    echo "Example: ./kernel_test $BOARD_CONFIG $BOARD_TYPE $ARCH_TYPE $BINARY_FORMAT $WORKSPACE_ROOT $THIS_LOG $XENOMAI"
+    echo "SMP :           on, off"
+    echo "MPU :           on, off"
+    echo "Example: ./kernel_test $BOARD_CONFIG $BOARD_TYPE $ARCH_TYPE $BINARY_FORMAT $WORKSPACE_ROOT $THIS_LOG $XENOMAI $SMP $MPU"
     exit 1
 fi
 
@@ -49,6 +53,14 @@ if [ -n "$7" ] ; then
     XENOMAI=$7
 fi
 
+if [ -n "$8" ] ; then
+    SMP=$8
+fi
+
+if [ -n "$9" ] ; then
+    MPU=$9
+fi
+
 SRC_ROOT=$WORKSPACE_ROOT/src/kernel/label/$BOARD_CONFIG
 TESTSUITES_DIR=$SRC_ROOT/testsuites
 OUTPUT_DIR=$SRC_ROOT/output
@@ -64,6 +76,8 @@ echo -e "# Test environment variables:
 # SRC_ROOT=$SRC_ROOT
 # THIS_LOG=$THIS_LOG
 # XENOMAI=$XENOMAI
+# SMP=$SMP
+# MPU=$MPU
 "
 
 cat <<EOF
@@ -465,8 +479,8 @@ if [ $BUILD_POLICY -eq 1  ] ; then
     echo "Running build policy"
 
     cd $TESTSUITES_DIR/policy
-    echo "./build_policy_kernel.exp $BOARD_TYPE $BINARY_FORMAT $XENOMAI >/dev/null  2>&1"
-    ./build_policy_kernel.exp $BOARD_TYPE $BINARY_FORMAT $XENOMAI >/dev/null  2>&1
+    echo "./build_policy_kernel.exp $BOARD_TYPE $BINARY_FORMAT $XENOMAI $SMP $MPU >/dev/null  2>&1"
+    ./build_policy_kernel.exp $BOARD_TYPE $BINARY_FORMAT $XENOMAI $SMP $MPU >/dev/null  2>&1
 
     # Back up image, configs and log to current log directory
     copy_image_config "policy"

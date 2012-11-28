@@ -6,3 +6,4 @@ ARCH_TYPE=blackfin
 BINARY_FORMAT=flat
 XENOMAI=off
 SMP=on
+MPU=off
