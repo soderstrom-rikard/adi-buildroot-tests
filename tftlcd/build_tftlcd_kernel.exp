@@ -57,6 +57,10 @@ while 1 {
             }
         }
 
+        -re "Virtual terminal.*VT.*\\\[.*]" {
+            send "N\r"
+        }
+
 # LCD on bf609-ezkit depends on touchscreen setting of AD7879 
         -re "Touchscreens.*INPUT_TOUCHSCREEN.*\\\[.*]" {
             if { $board_type == "BF609-EZKIT" } {
