@@ -80,7 +80,7 @@ while 1 {
 }
 
 incr case_num
-set timeout 10
+set timeout 20
 send "cd $src_root/testsuites/usbdev\r"
 expect "#"
 send "lsmod |grep usbtest\r"
@@ -96,6 +96,26 @@ while 1 {
                 expect {
                     -re "modprobe:|\[eE]rror|\[fF]ail" {
                         case_fail $case_num
+                    }
+                    -re "Module usbtest not found.*#" {
+                        send "sudo insmod $src_root/dl/usbtest.ko\r"
+                        while 1 {
+                            expect {
+                                -re "insmod:|\[eE]rror|\[fF]ail" {
+                                    case_fail $case_num
+                                }
+                                -re "#" {
+                                    case_pass $case_num
+                                    break
+                                }
+                                timeout {
+                                    send "\3"
+                                    expect "#"
+                                    case_fail $case_num
+                                }
+                            }
+                        }
+                        break
                     }
                     -re "#" {
                         case_pass $case_num
@@ -248,12 +268,32 @@ for {set count 1} {$count <= $Total_Count} {incr count} {
 }
 
 incr case_num
-set timeout 5
+set timeout 20
 send "sudo modprobe -r usbtest\r"
 while 1 {
     expect {
         -re "modprobe:|\[eE]rror|\[fF]ail" {
             case_fail $case_num
+        }
+        -re "Module usbtest not found.*#" {
+            send "sudo rmmod $src_root/dl/usbtest.ko\r"
+            while 1 {
+                expect {
+                    -re "rmmod:|\[eE]rror|\[fF]ail" {
+                        case_fail $case_num
+                    }
+                    -re "#" {
+                        case_pass $case_num
+                        break
+                    }
+                    timeout {
+                        send "\3"
+                        expect "#"
+                        case_fail $case_num
+                    }
+                }
+            }
+            break
         }
         -re "#" {
             case_pass $case_num
