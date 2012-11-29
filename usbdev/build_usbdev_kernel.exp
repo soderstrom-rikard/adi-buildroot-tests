@@ -117,6 +117,12 @@ while 1 {
             send "Y\r"
         }
 
+# Because app usb is compiled by bfin-linux-uclibc-gcc in host PC,
+# so need BR2_BFIN_INSTALL_ELF_SHARED for proper running.
+        -re "Install ELF shared libraries.*BR2_BFIN_INSTALL_ELF_SHARED.*\\\[.*]" {
+            send "Y\r"
+        }
+
         "\\\(*) \\\[*]" {
             sleep .01
             send "\r"
