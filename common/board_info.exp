@@ -106,12 +106,14 @@ if { $board_type == "BF537-STAMP" || $board_type == "BF533-STAMP" } {
     set kernel_size 0x180000
     set rootfs_size 0x240000
     set pnor_rootfs_num 2
+    set mtd_base_addr 0x20000000
 } elseif { $board_type == "BF561-EZKIT" || $board_type == "BF561-EZKIT-SMP" } {
 
     set uboot_size 0x40000
     set kernel_size 0x1c0000
     set rootfs_size 0x5f0000
     set pnor_rootfs_num 2
+    set mtd_base_addr 0x20000000
 
 } elseif { $board_type == "BF548-EZKIT" } {
     set uboot_size 0x80000
@@ -122,6 +124,7 @@ if { $board_type == "BF537-STAMP" || $board_type == "BF533-STAMP" } {
     set pnor_rootfs_num 2
     set spi_rootfs_num 6
     set nand_rootfs_num 9
+    set mtd_base_addr 0x20000000
 
 } elseif { $board_type == "BF518F-EZBRD" } {
     set uboot_size 0x40000
@@ -151,6 +154,7 @@ if { $board_type == "BF537-STAMP" || $board_type == "BF533-STAMP" } {
     set pnor_rootfs_num 2
     set spi_rootfs_num 1
     set nand_rootfs_num 4
+    set mtd_base_addr 0x20000000
 
 } elseif { $board_type == "BF609-EZKIT" } {
     set uboot_size 0x80000
@@ -168,9 +172,7 @@ if { $board_type == "BF537-STAMP" || $board_type == "BF533-STAMP" } {
     set mtd_base_addr 0xB0000000
 }
 
-if { $board_type == "BF537-STAMP" || $board_type == "BF609-EZKIT" } {
     set kernel_start_addr [format "%08x" [expr $mtd_base_addr + $uboot_size]]
     set kernel_end_addr [format "%08x" [expr $mtd_base_addr + $uboot_size + $kernel_size - 1]]
     set rootfs_start_addr [format "%08x" [expr $mtd_base_addr +$uboot_size + $kernel_size]]
     set rootfs_end_addr [format "%08x" [expr $mtd_base_addr + $uboot_size + $kernel_size + $rootfs_size - 1]]
-}
