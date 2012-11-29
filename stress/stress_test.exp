@@ -40,11 +40,11 @@ while 1 {
    log_file
   
    set timeout 40
-   spawn ./ftp_test.exp $targetip
+   spawn ./ftp_test.exp $board_type $targetip
    set ftp_test_id $spawn_id
    expect "Ftp is tested"
  
-   spawn ./telnet_test.exp $targetip
+   spawn ./telnet_test.exp $board_type $targetip
    set telnet_test_id $spawn_id
    expect "Telnet is tested"
    
