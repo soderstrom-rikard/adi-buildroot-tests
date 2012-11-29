@@ -5,7 +5,7 @@ log_file [log_file_name "$argv0"]
 send_user "Starting $argv0\n"
 set TITLE [title "$argv0"]
 
-if { $board_type == "BF561-EZKIT" } {
+if { $board_type == "BF561-EZKIT"  || $board_type == "BF548-EZKIT" } {
     set l2_addr feb0
 } elseif { $board_type == "BF609-EZKIT" } {
     set l2_addr c808
