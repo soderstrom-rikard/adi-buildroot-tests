@@ -3,10 +3,10 @@
 # Build kernel before all tests start.
 #
 # Usage:
-#   ./build_policy_kernel.exp board_type BINARY_FORMAT XENOMAI
+#   ./build_policy_kernel.exp board_type binary_format xenomai smp mpu
 #
 # Example:
-#   ./build_policy_kernel.exp BEAGLE flat off
+#   ./build_policy_kernel.exp BF537-STAMP flat off off off
 #
 
 source  ../common/kernel_config.exp
@@ -59,6 +59,16 @@ while 1 {
 #            send "Y\r"
 #        }
 
+        -re "Xenomai.*BR2_PACKAGE_XENOMAI.*\\\[.*]" {
+            if { $xenomai == "on" } {
+                send "Y\r"
+            } elseif { $xenomai == "off" } {
+                send "N\r"
+            } else {
+                send "\r"
+            }
+        }
+
         "\\\(*) \\\[*]" {
             sleep .05
             send "\r"
@@ -88,6 +98,26 @@ while 1 {
     expect {
         -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
+        }
+
+        -re "Symmetric multi-processing support.*SMP.*\\\[.*]" {
+            if { $smp == "on" } {
+                send "Y\r"
+            } elseif { $smp == "off" } {
+                send "N\r"
+            } else {
+                send "\r"
+            }
+        }
+
+        -re "Enable the memory protection unit.*MPU.*\\\[.*]" {
+            if { $mpu == "on" } {
+                send "Y\r"
+            } elseif { $mpu == "off" } {
+                send "N\r"
+            } else {
+                send "\r"
+            }
         }
 
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
