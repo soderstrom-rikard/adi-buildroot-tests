@@ -40,39 +40,67 @@ if [ $# -lt 1 ] ; then
 fi
 
 if [ -n "$1" ] ; then
-    BOARD_CONFIG=$1
+    WORKSPACE_ROOT=$1
 fi
 
 if [ -n "$2" ] ; then
-    BOARD_TYPE=$2
+    BOARD_CONFIG=$2
 fi
 
 if [ -n "$3" ] ; then
-    ARCH_TYPE=$3
+    BOARD_TYPE=$3
 fi
 
 if [ -n "$4" ] ; then
-    BINARY_FORMAT=$4
+    ARCH_TYPE=$4
 fi
 
 if [ -n "$5" ] ; then
-    WORKSPACE_ROOT=$5
+    CPU=$5
 fi
 
 if [ -n "$6" ] ; then
-    THIS_LOG=$6
+    REVISION=$6
 fi
 
 if [ -n "$7" ] ; then
-    XENOMAI=$7
+    BINARY_FORMAT=$7
 fi
 
 if [ -n "$8" ] ; then
-    SMP=$8
+    ALLOCATOR=$8
 fi
 
 if [ -n "$9" ] ; then
-    MPU=$9
+    ICACHE=$9
+fi
+
+if [ -n "${10}" ] ; then
+    DCACHE=${10}
+fi
+
+if [ -n "${11}" ] ; then
+    POLICY=${11}
+fi
+
+if [ -n "${12}" ] ; then
+    UART_MODE=${12}
+fi
+
+if [ -n "${13}" ] ; then
+    SMP=${13}
+fi
+
+if [ -n "${14}" ] ; then
+    MPU=${14}
+fi
+
+if [ -n "${15}" ] ; then
+    XENOMAI=${15}
+fi
+
+if [ -n "${16}" ] ; then
+    THIS_LOG=${16}
 fi
 
 SRC_ROOT=$WORKSPACE_ROOT/src/kernel/label/$BOARD_CONFIG
@@ -83,15 +111,23 @@ KERNEL_CUSTOM_DIR=$OUTPUT_DIR/build/linux-custom
 IMAGE_DIR=$OUTPUT_DIR/images
 
 echo -e "# Test environment variables:
+# WORKSPACE_ROOT=$WORKSPACE_ROOT
 # BOARD_CONFIG=$BOARD_CONFIG
 # BOARD_TYPE=$BOARD_TYPE
+# ARCH_TYPE=$ARCH_TYPE
+# CPU=$CPU
+# REVISION=$REVISION
 # BINARY_FORMAT=$BINARY_FORMAT
-# WORKSPACE_ROOT=$WORKSPACE_ROOT
-# SRC_ROOT=$SRC_ROOT
-# THIS_LOG=$THIS_LOG
+# ALLOCATOR=$ALLOCATOR
+# ICACHE=$ICACHE
+# DCACHE=$DCACHE
+# POLICY=$POLICY
+# UART_MODE=$UART_MODE
 # XENOMAI=$XENOMAI
 # SMP=$SMP
 # MPU=$MPU
+# SRC_ROOT=$SRC_ROOT
+# THIS_LOG=$THIS_LOG
 "
 
 cat <<EOF
