@@ -14,11 +14,27 @@ step "Reboot the kernel."
 if { $board_type == "BF537-STAMP" || $board_type == "BF561-EZKIT" || $board_type == "BF548-EZKIT" || [string match "BF527-EZKIT*" $board_type] || $board_type == "BF609-EZKIT" } {
     set bootargs  $bootargs_param4
 }
-
-source ../common/reboot_kernel.exp
+set boot_image vmImage
+#source ../common/reboot_kernel.exp
 
 step "Starting test."
 set case_num 0
+
+incr case_num
+send -s "ifconfig eth0 $targetip \r"
+while 1 {
+   expect {
+     -re "$kernel_prompt" {
+         puts "ifconfig success.\n"
+         case_pass $case_num
+         break
+      }
+
+      timeout {
+         break
+         }
+     }
+}
 
 incr case_num
 send "cd /bin\r"
@@ -34,8 +50,21 @@ while 1 {
     }
 }
 
+#if [ catch { exec find  ../../output/build/file_operation_test-HEAD/ -name f*test -exec rcp {}  root@$targetip:/bin/ \; } ] {}
 set timeout 500
 expect "root:/bin>"
+set path [exec pwd]
+send_user " $path"
+
+cd ../../output/build/file_operation_test-HEAD
+incr case_num
+if [ catch { exec find . -maxdepth 2 -type f -perm +100 -name *\\\[^gdb\]  -exec rcp \{\}  root@$targetip:/bin/  \; } ] {
+    send_user "\nFAIL: Copy file test to target board\n"
+    send_user "$errorInfo\n"
+    case_fail $case_num
+} else {
+    send_user "\nPASS: Copy file test to target board\n"
+}
 
 send -s  "./fs_test.sh\r"
 while 1 {

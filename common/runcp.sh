@@ -15,7 +15,12 @@ done
 
 mkdir /mnt/rootfs/mnt
 mkdir /mnt/rootfs/proc
+mkdir /mnt/rootfs/tmp
 mkdir /mnt/rootfs/sys
 mkdir /mnt/rootfs/usr
+
+cp -ar /usr/libexec/ /mnt/rootfs/usr
+cp -ar /usr/bin/ /mnt/rootfs/usr
+chmod 777 /usr/libexec/rshd /usr/bin/rcp /usr/bin/rsh
 
 echo "copy rootfs done"
