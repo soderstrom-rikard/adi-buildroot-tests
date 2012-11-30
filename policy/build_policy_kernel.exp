@@ -60,7 +60,11 @@ while 1 {
 #        }
 
         -re "Target CPU revision.*BR2_GCC_TARGET_CPU_REVISION.*\\\[.*]" {
-            send "$revision\r"
+            if { $allocator == "default" } {
+                send  "\r"
+            } else {
+                send "$revision\r"
+            }
         }
 
         -re "Xenomai.*BR2_PACKAGE_XENOMAI.*\\\[.*]" {
