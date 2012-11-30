@@ -2,26 +2,40 @@
 
 #################### Set up variables ####################
 WORKSPACE_ROOT=/home/test/workspace
-BOARD_CONFIG=BEAGLE-STD
-BOARD_TYPE=BEAGLE
-ARCH_TYPE=arm
+BOARD_CONFIG=BF537-STAMP-STD
+BOARD_TYPE=BF537-STAMP
+ARCH_TYPE=blackfin
+CPU=BF537
+REVISION=0.2
 BINARY_FORMAT=flat
-XENOMAI=off
+ALLOCATOR=slab
+ICACHE=on
+DCACHE=on
+POLICY=write_back
+UART_MODE=dma
 SMP=off
 MPU=off
+XENOMAI=off
 THIS_LOG=$WORKSPACE_ROOT/log/$BOARD_CONFIG
 
 if [ $# -lt 1 ] ; then
-    echo "Please input [ BOARD_CONFIG BOARD_TYPE ARCH_TYPE BINARY_FORMAT WORKSPACE_ROOT THIS_LOG XENOMAI SMP MPU ]:"
+    echo "Please input [ WORKSPACE_ROOT BOARD_CONFIG BOARD_TYPE ARCH_TYPE CPU REVISION BINARY_FORMAT ALLOCATOR ICACHE DCACHE POLICY UART_MODE SMP MPU XENOMAI THIS_LOG ]:"
     echo
-    echo "BOARD_CONFIG :  BEAGLE-STD, PANDA-STD etc"
-    echo "BOARD_TYPE :    BEAGLE, PANDA, etc"
+    echo "BOARD_CONFIG :  BF537-STAMP-STD, BF537-STAMP-IDE,etc."
+    echo "BOARD_TYPE :    BF537-STAMP, BF533-STAMP, etc"
     echo "ARCH_TYPE :     arm, blackfin, etc"
-    echo "BINARY_FORMAT : flat, elf, shared-flat"
-    echo "XENOMAI :       on, off"
+    echo "CPU :           BF537, BF533, etc"
+    echo "REVISION:       default, 0.2, 0.3, etc"
+    echo "BINARY_FORMAT : flat, fdpic, shared-flat"
+    echo "ALLOCATOR:      slab, slob, slub"
+    echo "ICACHE :        on, off"
+    echo "DCACHE :        on, off"
+    echo "POLICY :        write_back, write_through"
+    echo "UART_MODE :     dma, pio"
     echo "SMP :           on, off"
     echo "MPU :           on, off"
-    echo "Example: ./kernel_test $BOARD_CONFIG $BOARD_TYPE $ARCH_TYPE $BINARY_FORMAT $WORKSPACE_ROOT $THIS_LOG $XENOMAI $SMP $MPU"
+    echo "XENOMAI :       on, off"
+    echo "Example: ./kernel_test $WORKSPACE_ROOT $BOARD_CONFIG $BOARD_TYPE $ARCH_TYPE $CPU $REVISION $BINARY_FORMAT $ALLOCATOR $ICACHE $DCACHE $POLICY $UART_MODE $SMP $MPU $XENOMAI $THIS_LOG"
     exit 1
 fi
 
@@ -479,8 +493,8 @@ if [ $BUILD_POLICY -eq 1  ] ; then
     echo "Running build policy"
 
     cd $TESTSUITES_DIR/policy
-    echo "./build_policy_kernel.exp $BOARD_TYPE $BINARY_FORMAT $XENOMAI $SMP $MPU >/dev/null  2>&1"
-    ./build_policy_kernel.exp $BOARD_TYPE $BINARY_FORMAT $XENOMAI $SMP $MPU >/dev/null  2>&1
+    echo "./build_policy_kernel.exp $BOARD_TYPE $CPU $REVISION $BINARY_FORMAT $ALLOCATOR $ICACHE $DCACHE $POLICY $UART_MODE $SMP $MPU $XENOMAI >/dev/null  2>&1"
+    ./build_policy_kernel.exp $BOARD_TYPE $CPU $REVISION $BINARY_FORMAT $ALLOCATOR $ICACHE $DCACHE $POLICY $UART_MODE $SMP $MPU $XENOMAI >/dev/null  2>&1
 
     # Back up image, configs and log to current log directory
     copy_image_config "policy"
