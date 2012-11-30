@@ -1276,11 +1276,19 @@ fi
 if [ ${AUTO_RUN_STATUS[$((n+2))]} -eq 1 ] ; then
     echo "Testing LTP..."
 
-    ltp_args=( [0]="1" [1]="2" [2]="3" )
-    ltp_suf=(slab slub slob)
+    if [ $ARCH_TYPE == "arm" ] ; then
+        ltp_args=( [0]="1 0 0" [1]="2 0 0" [2]="3 0 0" )
+        ltp_suf=(slab slub slob)
+    elif [ $ARCH_TYPE == "blackfin" ] ; then
+        ltp_args=( [0]="1 1 0" [1]="2 1 0" [2]="3 1 0" [3]="1 2 0" [4]="0 0 1" )
+        ltp_suf=(slab_wb slub_wb slob_wb slab_wt high_res_timer_preempt)
+    fi
 
-    for i in 0 1 2
+    for i in 0 1 2 3 4
     do
+        if [ -z ${ltp_suf[i]} ] ; then
+            continue
+        fi
 
         use_output_bak
 	cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config

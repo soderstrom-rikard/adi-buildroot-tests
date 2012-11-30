@@ -3,18 +3,26 @@
 # Build script for ltp test.
 #
 # Usage:
-#   ./build_ltp_kernel.exp board_type allocator
+#   ./build_ltp_kernel.exp board_type allocator wb_wt high_res_timer_preempt
 #
 # Example:
-#   ./build_ltp_kernel.exp BEAGLE 1
-#   slab: 1; slub: 2; slob: 3.
+#   allocator: 1 for slab, 2 for slub, 3 for slob;
+#   wb_wt: 0 for default, 1 for write back, 2 for write through;
+#   high_res_timer_preempt: 0 for default, 1 for high resolution timer and preempt;
+#   ./build_ltp_kernel.exp BF537-STAMP 1 1 0
 #
 
 source ../common/kernel_config.exp
 log_file [log_file_name "$argv0"]
 send_user "Starting $argv0\n"
 
+if { $argc < 4} {
+    puts "Please input: board_type, allocator, wb_wt, high_res_timer_preempt"
+    exit
+}
 set allocator [lindex $argv 1]
+set wb_wt [lindex $argv 2]
+set high_res_timer_preempt [lindex $argv 3]
 
 cd $src_root/testsuites/common
 step "Make default config"
@@ -33,12 +41,38 @@ while 1 {
             continue
         }
 
-        -re "($anomalous_option) \\\[\[^\]]+/.]" {
-            send "\r"
-        }
-
         -re "Choose SLAB allocator\r\n.*(\[0-9]+). SLAB.*SLUB.*SLOB.*\\\[.*]" {
             send "$allocator\r"
+        }
+
+        -re "\[Pp]olicy.*Write back.*BFIN_EXTMEM_WRITEBACK.*Write through.*BFIN_EXTMEM_WRITETHROUGH.*\[cC]hoice.*\\\[.*]" {
+            if { $wb_wt == "1" } {
+                send "1\r"
+            } elseif { $wb_wt == "2" } {
+                send "2\r"
+            } else {
+                send "\r"
+            }
+        }
+
+        -re "(\[0-9]+). Preemptible Kernel.*PREEMPT.*\[cC]hoice\\\[.*]:" {
+            if { $high_res_timer_preempt == 1 } {
+                send "$expect_out(1,string)\r"
+            } else {
+                send "\r"
+            }
+        }
+
+        -re "High Resolution Timer Support.*HIGH_RES_TIMERS.*\\\[.*]" {
+            if { $high_res_timer_preempt == 1 } {
+                send "Y\r"
+            } else {
+                send "\r"
+            }
+        }
+
+        -re "($anomalous_option) \\\[\[^\]]+/.]" {
+            send "\r"
         }
 
         "\\\(*) \\\[*]" {
