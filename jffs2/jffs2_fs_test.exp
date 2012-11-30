@@ -15,7 +15,7 @@ if { $board_type == "BF537-STAMP" || $board_type == "BF561-EZKIT" || $board_type
     set bootargs  $bootargs_param4
 }
 set boot_image vmImage
-#source ../common/reboot_kernel.exp
+source ../common/reboot_kernel.exp
 
 step "Starting test."
 set case_num 0
@@ -50,7 +50,6 @@ while 1 {
     }
 }
 
-#if [ catch { exec find  ../../output/build/file_operation_test-HEAD/ -name f*test -exec rcp {}  root@$targetip:/bin/ \; } ] {}
 set timeout 500
 expect "root:/bin>"
 set path [exec pwd]
@@ -58,7 +57,7 @@ send_user " $path"
 
 cd ../../output/build/file_operation_test-HEAD
 incr case_num
-if [ catch { exec find . -maxdepth 2 -type f -perm +100 -name *\\\[^gdb\]  -exec rcp \{\}  root@$targetip:/bin/  \; } ] {
+if [ catch { exec find . -maxdepth 2 -type f -perm +100 -name *\[^g\]\[^d\]\[^b\]  -exec rcp \{\}  root@$targetip:/bin/  \; } ] {
     send_user "\nFAIL: Copy file test to target board\n"
     send_user "$errorInfo\n"
     case_fail $case_num
@@ -79,13 +78,26 @@ while 1 {
     }
 }
 
-sleep 10
-incr case_num
-set timeout 10
-send -s "ls -l TestFailed.log\r"
+sleep 3
+send -s  "cp /bin/Test* $ftp_dir\r"
 while 1 {
     expect {
-        -re "rw.* .* .* .* (\[0-9]+) .*TestFailed\.log" {
+        -re "$kernel_prompt" {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
+
+incr case_num
+set timeout 10
+send -s "du TestFailed.log\r"
+while 1 {
+    expect {
+        -re "(\[0-9]+)\[x20\t\]TestFailed\.log" {
             set FileSize $expect_out(1,string)
             expect ">"
             puts " FileSize $expect_out(1,string)"
@@ -107,30 +119,13 @@ set timeout 500
 spawn ftp $targetip
 while 1 {
     expect {
-        "Name" { }
+        "):" { }
         timeout {
             send_user "Failed first return\n"
             break
         }
     }
     send -s "root\r"
-    expect {
-        "Password:" { }
-        timeout {
-            send_user "Failed first return\n"
-            break
-        }
-    }
-    send -s "uClinux\r"
-    expect {
-        "ftp>" { }
-        timeout {
-            send_user "Failed first return\n"
-            break
-        }
-    }
-
-    send -s "cd /bin\r"
     expect {
         "ftp>" { }
         timeout {
@@ -141,7 +136,7 @@ while 1 {
 
     send -s "get TestOverall.log\r"
     expect {
-        "ftp>" { }
+        -re "Operation successful.*ftp>" { }
         timeout {
             send_user "Failed first return\n"
             break
@@ -150,7 +145,7 @@ while 1 {
 
     send -s "get TestResults.log\r"
     expect {
-        "ftp>" { }
+        -re "Operation successful.*ftp>" { }
         timeout {
             send_user "Failed first return\n"
             break
@@ -159,13 +154,14 @@ while 1 {
 
     send -s "bye\r"
     expect {
-        "Goodbye" { break }
+        eof  {
+            break
+    }
         timeout {
             send_user "Failed first return\n"
             break
         }
     }
-
 }
 
 all_pass
