@@ -251,7 +251,9 @@ if { $board_type == "BF537-STAMP" || $board_type == "BF533-STAMP" } {
     set mtd_base_addr 0xB0000000
 }
 
+if { $arch == "blackfin" && $board_type != "BF533-EZKIT" } {
     set kernel_start_addr [format "%08x" [expr $mtd_base_addr + $uboot_size]]
     set kernel_end_addr [format "%08x" [expr $mtd_base_addr + $uboot_size + $kernel_size - 1]]
     set rootfs_start_addr [format "%08x" [expr $mtd_base_addr +$uboot_size + $kernel_size]]
     set rootfs_end_addr [format "%08x" [expr $mtd_base_addr + $uboot_size + $kernel_size + $rootfs_size - 1]]
+}
