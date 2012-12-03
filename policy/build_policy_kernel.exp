@@ -60,7 +60,7 @@ while 1 {
 #        }
 
         -re "Target CPU revision.*BR2_GCC_TARGET_CPU_REVISION.*\\\[.*]" {
-            if { $allocator == "default" } {
+            if { $revision == "default" } {
                 send  "\r"
             } else {
                 send "$revision\r"
