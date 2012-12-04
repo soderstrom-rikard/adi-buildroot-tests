@@ -35,13 +35,13 @@ step "Boot kernel"
 # set bootargs  $bootargs_param0
 source ../common/kernel_boot.exp
 
-set wait_time 10
+set sleep_time 15
 set wakeup_fail 0
 set sleep_pattern "Syncing filesystems.*Freezing user space processes \.\.\. \\\(elapsed.*seconds\\\) done\.\r\nFreezing remaining freezable tasks \.\.\. \\\(elapsed.*seconds\\\) done\.\r\nSuspending console\\\(s\\\) \\\(use no_console_suspend to debug\\\)"
-set wakeup_pattern "Restarting tasks.*done"
+set wakeup_pattern "Restarting tasks \.\.\. done"
 
 
-proc standby_test_case1 {} {
+proc pm_test_case1_reset {} {
     global case_num
     global kernel_prompt
     global wakeup_fail
@@ -256,6 +256,175 @@ proc standby_test_case1 {} {
     }
 }
 
+proc pm_test_case1_rtcwake {} {
+    global case_num
+    global kernel_prompt
+    global sleep_time
+    global wakeup_fail
+    global pm_state
+    global sleep_pattern
+    global wakeup_pattern
+    global dev
+    global mnt_point
+
+    set timeout [expr $sleep_time + 10]
+    incr case_num
+    send "\nrtcwake -s $sleep_time -m $pm_state\r"
+    while 1 {
+        expect {
+            -re "$sleep_pattern.*$wakeup_pattern" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                send_user "Test case 1: Wake up fail\n"
+                incr wakeup_fail
+                break
+            }
+        }
+    }
+
+    sleep 10
+    incr case_num
+    set timeout 10
+    send "ls $dev\r"
+    while 1 {
+        expect {
+            -re "(ls:|\[eE]rror|\[fF]ail).*#" {
+                case_fail $case_num
+            }
+            -re "#" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    incr case_num
+    set timeout 5
+    send "mount -t ext2 -o sync $dev $mnt_point\r"
+    while 1 {
+        expect {
+            -re "(mount:|\[eE]rror|\[fF]ail).*#" {
+                case_fail $case_num
+            }
+            -re "#" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    incr case_num
+    set timeout 1000
+    send "date; time dd if=/dev/zero of=$mnt_point/10m.bin bs=1M count=10; date\r"
+    while 1 {
+        expect {
+            -re "(\[eE]rror|\[fF]ail).*#" {
+                case_fail $case_num
+            }
+            -re "#" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    incr case_num
+    send "time cat $mnt_point/10m.bin > /dev/null\r"
+    while 1 {
+        expect {
+            -re "real.*user.*sys.*#" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    incr case_num
+    set timeout 5
+    send "ls -l $mnt_point\r"
+    while 1 {
+        expect {
+            -re "(\[eE]rror|\[fF]ail).*#" {
+                case_fail $case_num
+            }
+            -re "10m\.bin.*lost\\+found.*#" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    incr case_num
+    set timeout 10
+    send "rm $mnt_point/10m.bin\r"
+    while 1 {
+        expect {
+            -re "(\[eE]rror|\[fF]ail).*#" {
+                case_fail $case_num
+            }
+            -re "#" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    incr case_num
+    set timeout 5
+    send "ls -l $mnt_point/\r"
+    while 1 {
+        expect {
+            -re "(10m\.bin|\[eE]rror|\[fF]ail).*#" {
+                case_fail $case_num
+            }
+            -re "#" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    incr case_num
+    set timeout 5
+    send "umount $mnt_point\r"
+    while 1 {
+        expect {
+            -re "(umount:|\[eE]rror|\[fF]ail).*#" {
+                case_fail $case_num
+            }
+            -re "#" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+}
 
 step "Start testing"
 set case_num 0
@@ -605,12 +774,15 @@ while 1 {
 
 
 for {set count 1} {$count <= $Total_Count} {incr count} {
-    set spawn_id $kermit_spawn_id
-    set timeout 5
-    expect -re $kernel_prompt
-
-    standby_test_case1
-    send_user "\nStandby test case 1 round $count pass\n\n"
+    if { $board_type == "BF609-EZKIT" } {
+        set spawn_id $kermit_spawn_id
+        set timeout 5
+        expect -re $kernel_prompt
+        pm_test_case1_reset
+    } else {
+        pm_test_case1_rtcwake
+    }
+    send_user "\nPM test case 1 round $count pass\n\n"
 }
 
 incr case_num
