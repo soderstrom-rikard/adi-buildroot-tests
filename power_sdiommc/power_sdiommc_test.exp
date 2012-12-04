@@ -35,7 +35,7 @@ step "Boot kernel"
 # set bootargs  $bootargs_param0
 source ../common/kernel_boot.exp
 
-set wait_time 10
+set sleep_time 15
 set wakeup_fail 0
 set sleep_pattern "Syncing filesystems.*Freezing user space processes \.\.\. \\\(elapsed.*seconds\\\) done\.\r\nFreezing remaining freezable tasks \.\.\. \\\(elapsed.*seconds\\\) done\.\r\nSuspending console\\\(s\\\) \\\(use no_console_suspend to debug\\\)"
 set wakeup_pattern "Restarting tasks \.\.\. done.*mmcblk0: p"
