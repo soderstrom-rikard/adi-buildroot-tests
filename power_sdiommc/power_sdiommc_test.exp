@@ -41,7 +41,7 @@ set sleep_pattern "Syncing filesystems.*Freezing user space processes \.\.\. \\\
 set wakeup_pattern "Restarting tasks \.\.\. done.*mmcblk0: p"
 
 
-proc standby_test_case1 {} {
+proc pm_test_case1_reset {} {
     global case_num
     global kernel_prompt
     global wakeup_fail
@@ -51,7 +51,6 @@ proc standby_test_case1 {} {
     global host_spawn_id
     global kermit_spawn_id
     global spawn_id
-    global sh_prompt
 
     set timeout 5
     incr case_num
@@ -226,64 +225,26 @@ proc standby_test_case1 {} {
     }
 }
 
-proc standby_test_case2 {} {
+proc pm_test_case1_rtcwake {} {
     global case_num
     global kernel_prompt
+    global sleep_time
     global wakeup_fail
     global pm_state
     global sleep_pattern
     global wakeup_pattern
-    global host_spawn_id
-    global kermit_spawn_id
-    global spawn_id
-    global sh_prompt
 
-    set timeout 5
+    set timeout [expr $sleep_time + 10]
     incr case_num
-    send "echo $pm_state > /sys/power/state\r"
+    send "\nrtcwake -s $sleep_time -m $pm_state\r"
     while 1 {
         expect {
-            -re $sleep_pattern {
+            -re "$sleep_pattern.*$wakeup_pattern" {
                 case_pass $case_num
                 break
             }
             timeout {
-                send_user "Test case 2: Sleep fail\n"
-                case_fail $case_num
-            }
-        }
-    }
-
-    sleep 10
-
-    set spawn_id $host_spawn_id 
-
-    set timeout 5
-    incr case_num
-    send "reset_board 4\r"
-    while 1 {
-        expect {
-            -re "powering ON board attached to printer port pin 4" {
-                case_pass $case_num
-                break
-            }
-            timeout {
-                case_fail $case_num
-            }
-        }
-    }
-
-    set spawn_id $kermit_spawn_id
-    set timeout 5
-    incr case_num
-    while 1 {
-        expect {
-            -re $wakeup_pattern {
-                case_pass $case_num
-                break
-            }
-            timeout {
-                send_user "Test case 2: Wake up fail\n"
+                send_user "Test case 1: Wake up fail\n"
                 incr wakeup_fail
                 break
             }
@@ -292,14 +253,14 @@ proc standby_test_case2 {} {
 
     sleep 5
     incr case_num
-    set timeout 3
-    send "ls /mnt\r"
+    set timeout 5
+    send "mount -t ext2 /dev/mmcblk0p1 /mnt\r"
     while 1 {
         expect {
-            -nocase -re "(error|fail).*$kernel_prompt" {
+            -re "(mount:|\[fF]ail|\[eE]rror).*$kernel_prompt" {
                 case_fail $case_num
             }
-            -re "5m.bin.*$kernel_prompt" {
+            -re $kernel_prompt {
                 case_pass $case_num
                 break
             }
@@ -310,13 +271,25 @@ proc standby_test_case2 {} {
     }
 
     incr case_num
-    set timeout 15
-    send "time dd conv=fsync if=/dev/zero of=/mnt/2m.bin bs=1M count=2\r"
+    set timeout 5
+    send "mount\r"
     while 1 {
         expect {
-            -nocase -re "(error|fail).*$kernel_prompt" {
+            -re "/dev/mmcblk0p1 on /mnt type ext2.*$kernel_prompt" {
+                case_pass $case_num
+                break
+            }
+            timeout {
                 case_fail $case_num
             }
+        }
+    }
+
+    incr case_num
+    set timeout 30
+    send "time dd conv=fsync if=/dev/zero of=/mnt/5m.bin bs=1M count=5\r"
+    while 1 {
+        expect {
             -re "records in.*records out.*real.*user.*sys.*$kernel_prompt" {
                 case_pass $case_num
                 break
@@ -332,9 +305,6 @@ proc standby_test_case2 {} {
     send "time cat /mnt/5m.bin > /dev/null\r"
     while 1 {
         expect {
-            -nocase -re "(error|fail).*$kernel_prompt" {
-                case_fail $case_num
-            }
             -re "real.*user.*sys.*$kernel_prompt" {
                 case_pass $case_num
                 break
@@ -348,10 +318,46 @@ proc standby_test_case2 {} {
     sleep 2
     incr case_num
     set timeout 5
-    send "rm /mnt/2m.bin; sync\r"
+    send "rm /mnt/5m.bin; sync\r"
     while 1 {
         expect {
-            -nocase -re "(error|fail|rm:).*$kernel_prompt" {
+            -re "rm:.*$kernel_prompt" {
+                case_fail $case_num
+            }
+            -re $kernel_prompt {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    incr case_num
+    set timeout 10
+    send "umount /mnt\r"
+    while 1 {
+        expect {
+            -re "umount:.*$kernel_prompt" {
+                case_fail $case_num
+            }
+            -re $kernel_prompt {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    incr case_num
+    set timeout 10
+    send "ls /mnt\r"
+    while 1 {
+        expect {
+            -re "lost+found.*$kernel_prompt" {
                 case_fail $case_num
             }
             -re $kernel_prompt {
@@ -364,7 +370,6 @@ proc standby_test_case2 {} {
         }
     }
 }
-
 
 step "Start testing"
 set case_num 0
@@ -593,8 +598,12 @@ expect -re $kernel_prompt
 
 
 for {set count 1} {$count <= $Total_Count} {incr count} {
-    standby_test_case1
-    send_user "\nStandby test case 1 round $count pass\n\n"
+    if { $board_type == "BF609-EZKIT" } {
+        pm_test_case1_reset
+    } else {
+        pm_test_case1_rtcwake
+    }
+    send_user "\nPM test case 1 round $count pass\n\n"
 }
 
 incr case_num
