@@ -149,15 +149,13 @@ while 1 {
         }
 
         -re "\[Pp]olicy.*Write back.*BFIN_EXTMEM_WRITEBACK.*Write through.*BFIN_EXTMEM_WRITETHROUGH.*\[cC]hoice.*\\\[.*]" {
-            if { $board_type != "BF548-EZKIT" && $board_type != "BF561-EZKIT" } {
-            if { $policy == "write_back" } {
+            if { $policy == "write_back" && $board_type != "BF548-EZKIT" } {
                 send "1\r"
             } elseif { $policy == "write_through" } {
                 send "2\r"
             } else {
                 send "\r"
             }
-        }
         }
 
         -re "Enable the memory protection unit.*MPU.*\\\[.*]" {

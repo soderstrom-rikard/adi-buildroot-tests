@@ -9,7 +9,8 @@ BINARY_FORMAT=flat
 ALLOCATOR=slab
 ICACHE=on
 DCACHE=on
-POLICY=write_back
+#BF548-EZKIT can't support write_back
+POLICY=write_through
 UART_MODE=dma
 SMP=off
 MPU=off
