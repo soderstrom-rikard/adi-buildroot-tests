@@ -35,13 +35,13 @@ step "Boot kernel"
 # set bootargs  $bootargs_param0
 source ../common/kernel_boot.exp
 
-set wait_time 10
+set sleep_time 15
 set wakeup_fail 0
 set sleep_pattern "Syncing filesystems.*Freezing user space processes \.\.\. \\\(elapsed.*seconds\\\) done\.\r\nFreezing remaining freezable tasks \.\.\. \\\(elapsed.*seconds\\\) done\.\r\nSuspending console\\\(s\\\) \\\(use no_console_suspend to debug\\\)"
 set wakeup_pattern "Restarting tasks \.\.\. done"
 
 
-proc standby_test_case1 {} {
+proc pm_test_case1_reset {} {
     global case_num
     global kernel_prompt
     global targetip
@@ -142,7 +142,7 @@ proc standby_test_case1 {} {
     }
 }
 
-proc standby_test_case2 {} {
+proc pm_test_case2_reset {} {
     global case_num
     global kernel_prompt
     global targetip
@@ -226,6 +226,118 @@ proc standby_test_case2 {} {
     }
 }
 
+proc pm_test_case1_rtcwake {} {
+    global case_num
+    global kernel_prompt
+    global sleep_time
+    global targetip
+    global serverip
+    global wakeup_fail
+    global pm_state
+    global sleep_pattern
+    global wakeup_pattern
+
+    set timeout [expr $sleep_time + 10]
+    incr case_num
+    send "\nrtcwake -s $sleep_time -m $pm_state\r"
+    while 1 {
+        expect {
+            -re "$sleep_pattern.*$wakeup_pattern" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                send_user "Test case 1: Wake up fail\n"
+                incr wakeup_fail
+                break
+            }
+        }
+    }
+
+    set timeout 5
+    expect -re "Full\r\n|lpa 0x41E1\r\n"
+
+    set timeout 5
+    incr case_num
+    send "ifconfig\r"
+    while 1 {
+        expect {
+            -re "eth0.*$targetip.*$kernel_prompt" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                send_user "set ip $targetip failed\r"
+                case_fail $case_num
+            }
+        }
+    }
+
+    sleep 2
+    set timeout 20
+    send "ping $serverip -c 5\r"
+    while 1 {
+        expect {
+            -re "5 packets transmitted, 5 packets received, 0% packet loss.*$kernel_prompt" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                send_user "ping $serverip failed\r"
+                case_fail $case_num
+            }
+        }
+    }
+}
+
+proc pm_test_case2_rtcwake {} {
+    global case_num
+    global kernel_prompt
+    global sleep_time
+    global targetip
+    global serverip
+    global pack_num
+    global wakeup_fail
+    global pm_state
+    global sleep_pattern
+    global wakeup_pattern
+
+    set timeout [expr $sleep_time + 10]
+    incr case_num
+    send "\nrtcwake -s $sleep_time -m $pm_state\r"
+    while 1 {
+        expect {
+            -re "$sleep_pattern.*$wakeup_pattern" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                send_user "Test case 2: Wake up fail\n"
+                incr wakeup_fail
+                break
+            }
+        }
+    }
+
+    set timeout 5
+    expect -re "Full\r\n|lpa 0x41E1\r\n"
+
+    set timeout 30
+    incr pack_num 15
+    send_user "pack_num=$pack_num\r"
+    while 1 {
+        expect {
+            -re "64 bytes from $serverip: seq=$pack_num ttl=64 time=" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                send_user "ping $serverip failed\r"
+                case_fail $case_num
+            }
+        }
+    }
+}
 
 step "Start testing"
 set case_num 0
@@ -318,8 +430,12 @@ expect -re $kernel_prompt
 
 
 for {set count 1} {$count <= $Total_Count} {incr count} {
-    standby_test_case1
-    send_user "\nStandby test case 1 round $count pass\n\n"
+    if { $board_type == "BF609-EZKIT" } {
+        pm_test_case1_reset
+    } else {
+        pm_test_case1_rtcwake
+    }
+    send_user "\nPM test case 1 round $count pass\n\n"
 }
 
 set timeout 20
@@ -340,8 +456,12 @@ while 1 {
 
 set pack_num 10
 for {set count 1} {$count <= $Total_Count} {incr count} {
-    standby_test_case2
-    send_user "\nStandby test case 2 round $count pass\n\n"
+    if { $board_type == "BF609-EZKIT" } {
+        pm_test_case2_reset
+    } else {
+        pm_test_case2_rtcwake
+    }
+    send_user "\nPM test case 2 round $count pass\n\n"
 }
 
 incr case_num
