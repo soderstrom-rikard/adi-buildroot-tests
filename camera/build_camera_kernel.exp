@@ -3,14 +3,23 @@
 # Build Kernel for Video Capture Driver test
 #
 # Usage:
-#   ./build_camera_kernel.exp board_type
+#   ./build_camera_kernel.exp board_type camera_dev
 #
 # Example:
-#   ./build_camera_kernel.exp BF609-EZKIT
+#   ./build_camera_kernel.exp BF609-EZKIT camera_vs6624
 #
 
 source ../common/kernel_config.exp
-log_file [log_file_name "$argv0"]
+
+if { $argc < 2} {
+    puts "Please input: board_type, camera_dev(camera_vs6624 or camera_mt9m114)"
+    exit
+}
+
+set camera_dev [lindex $argv 1]
+set log_name build_${camera_dev}_kernel_log
+
+log_file $log_name
 send_user "Starting $argv0\n"
 
 cd $src_root/testsuites/common
@@ -63,7 +72,19 @@ while 1 {
         }
 
         -re "ST VS6624 sensor support.*VIDEO_VS6624.*\\\[.*]" {
-            send "M\r"
+            if { $camera_dev == "vs6624" } {
+                send "M\r"
+            } else {
+                send "N\r"
+            }
+        }
+
+        -re "Aptina MT9M114 sensor support.*VIDEO_MT9M114.*\\\[.*]" {
+            if { $camera_dev == "mt9m114" } {
+                send "M\r"
+            } else {
+                send "N\r"
+            }
         }
 
         -re "V4L platform devices.*V4L_PLATFORM_DRIVERS.*\\\[.*]" {

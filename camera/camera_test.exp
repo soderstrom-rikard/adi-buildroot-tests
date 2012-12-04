@@ -3,16 +3,27 @@
 # Test camera VS6624 on target board
 #
 # Usage:
-#   ./usb_camera_test.exp board_type
+#   ./camera_test.exp board_type camera_dev
 #
 # Example:
-#   ./usb_camera_test.exp BF609-EZKIT
+#   ./camera_test.exp BF609-EZKIT camera_vs6624
 #
 
 source ../common/kernel_config.exp
-log_file [log_file_name "$argv0"]
-send_user "Starting $argv0\n"
+
+if { $argc < 2} {
+    puts "Please input: board_type, camera_dev(camera_vs6624 or camera_mt9m114)"
+    exit
+}
+
+set camera_dev [lindex $argv 1]
+set camera_module [string trimleft [string trimleft $camera_dev camera] _]
 set TITLE [title "$argv0"]
+append TITLE " ($camera_module)"
+set log_name ${camera_dev}_test_log
+
+log_file $log_name
+send_user "Starting $argv0\n"
 
 step "Start kermit"
 source ../common/spawn_kermit.exp
@@ -33,7 +44,7 @@ set case_num 0
 
 incr case_num
 set timeout 5
-send "modprobe vs6624\r"
+send "modprobe $camera_module\r"
 while 1 {
     expect {
         -re "\[eE]rror|\[fF]ail|Hardware Trace|SIGSEGV" {
