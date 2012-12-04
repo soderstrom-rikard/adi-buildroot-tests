@@ -220,6 +220,7 @@ if { $debug_port == "uart" } {
 
 if { $debug_port == "uart" } {
 send -s "\x81"
+sleep 1
 send -s "b"
 send -s "g"
 sleep 3
