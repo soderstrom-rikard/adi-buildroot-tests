@@ -591,10 +591,10 @@ do
             TESTCASE_DIR=usbhost
         elif [ `echo ${AUTO_TESTCASE[$i]}|grep ide_` ] ; then
             TESTCASE_DIR=ide
+        elif [ `echo ${AUTO_TESTCASE[$i]}|grep kgdb` ] ; then
+            TESTCASE_DIR=kgdb
         elif [ ${AUTO_TESTCASE[$i]} == "jffs2_fs" ] ; then
             TESTCASE_DIR=jffs2
-        elif [ ${AUTO_TESTCASE[$i]} == "kgdb_uart" ] ; then
-            TESTCASE_DIR=kgdb
         else
             TESTCASE_DIR=${AUTO_TESTCASE[$i]}
         fi
@@ -628,6 +628,8 @@ do
             ./build_usbhost_kernel.exp $BOARD_TYPE $usb_dev >/dev/null 2>&1
         elif [ ${AUTO_TESTCASE[$i]} == "kgdb_uart" ] ; then
             ./build_kgdb_kernel.exp $BOARD_TYPE uart >/dev/null 2>&1
+        elif [ ${AUTO_TESTCASE[$i]} == "kgdb_smp" ] ; then
+            ./build_kgdb_kernel.exp $BOARD_TYPE ethernet SMP >/dev/null 2>&1
         else
             ./build_${AUTO_TESTCASE[$i]}_kernel.exp $BOARD_TYPE >/dev/null 2>&1
         fi
@@ -690,6 +692,8 @@ do
                 ./usbhost_test.exp $BOARD_TYPE $usb_dev >/dev/null 2>&1
             elif [ ${AUTO_TESTCASE[$i]} == "kgdb_uart" ] ; then
                 ./kgdb_test.exp $BOARD_TYPE uart >/dev/null 2>&1
+            elif [ ${AUTO_TESTCASE[$i]} == "kgdb_smp" ] ; then
+                ./kgdb_test.exp $BOARD_TYPE ethernet SMP >/dev/null 2>&1
             else
                 ./${AUTO_TESTCASE[$i]}_test.exp $BOARD_TYPE >/dev/null 2>&1
             fi
@@ -697,7 +701,7 @@ do
 
 
         # backup all test results (configs, images and logs)
-        if [ ${AUTO_TESTCASE[$i]} == "sdiommc" ] || [ ${AUTO_TESTCASE[$i]} == "kgdb_uart" ] ; then
+        if [ ${AUTO_TESTCASE[$i]} == "sdiommc" ] || [ ${AUTO_TESTCASE[$i]} == "kgdb_uart" ] || [ ${AUTO_TESTCASE[$i]} == "kgdb_smp" ]; then
             cp $IMAGE_DIR/vmImage $THIS_LOG/vmImage.${AUTO_TESTCASE[$i]}
         elif [ `echo ${AUTO_TESTCASE[$i]}|grep jffs2` ] ; then
             cp $IMAGE_DIR/vmImage $THIS_LOG/vmImage.${AUTO_TESTCASE[$i]}
