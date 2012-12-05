@@ -977,11 +977,13 @@ if [ ${AUTO_RUN_STATUS[$((n+5))]} -eq 1 ] ; then
             cd $TESTSUITES_DIR/common
             ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
 
-            sleep 30
-            cd $TESTSUITES_DIR/usbdev
-            ./gadget_storage_hd_test.exp $BOARD_TYPE $config >/dev/null  2>&1
-            cd $TESTSUITES_DIR/common
-            ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
+            if [ $BOARD_TYPE != "BF527-EZKIT" ] && [ $BOARD_TYPE != "BF527-EZKIT-V2" ] ; then
+                sleep 30
+                cd $TESTSUITES_DIR/usbdev
+                ./gadget_storage_hd_test.exp $BOARD_TYPE $config >/dev/null  2>&1
+                cd $TESTSUITES_DIR/common
+                ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
+            fi
 
         fi
 
