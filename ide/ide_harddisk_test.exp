@@ -53,13 +53,16 @@ while 1 {
     send "d\r"
     expect {
         -re "Partition number.*:" {
+            send "1\r"
+        }
+
+        -re "Selected partition 1" {
         }
         timeout {
             case_fail $case_num
         }
     }
 
-    send "1\r"
     expect {
         -re "Command .*:" {
         }
