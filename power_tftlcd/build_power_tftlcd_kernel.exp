@@ -17,6 +17,11 @@ cd $src_root/testsuites/common
 step "Make default config"
 source make_default_config.exp
 
+cd $src_root/testsuites/common
+step "Kernel config for tft lcd driver"
+source_args config_tftlcd.exp module
+
+
 step "Make kernel config"
 cd $src_root
 set timeout 300
@@ -29,68 +34,6 @@ while 1 {
 
         -re "Suspend to RAM and standby.*SUSPEND.*\\\[.*]" {
             send "Y\r"
-        }
-
-        -re "I2C support \\\(I2C\\\).*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "Blackfin TWI I2C support.*I2C_BLACKFIN_TWI.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "Support for generic platform NAND driver.*MTD_NAND_PLATFORM.*\\\[.*]" {
-            #conflict with TFT LCD
-            send "N\r"
-        }
-
-        -re "Support for frame buffer devices.*FB.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "Backlight & LCD device support.*BACKLIGHT_LCD_SUPPORT.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "SHARP LQ043 TFT LCD.*BF548 EZKIT.*\\\[.*]" {
-            if { $board_type == "BF548-EZKIT" } {
-                send "M\r"
-            } else {
-                send "N\r"
-            }
-        }
-
-        -re "Varitronix COG-T350MCQB TFT LCD display.*FB_BFIN_T350MCQB.*\\\[.*]" {
-            if { $board_type == "BF527-EZKIT" } {
-                send "M\r"
-            } else {
-                send "N\r"
-            }
-        }
-
-        -re "SHARP LQ035Q1DH02 TFT LCD.*FB_BFIN_LQ035Q1.*\\\[.*]" {
-            if { $board_type == "BF527-EZKIT-V2" } {
-                send "M\r"
-            } else {
-                send "N\r"
-            }
-        }
-
-#LQ035 on BF537-STAMP
-        -re "SPI controller driver for ADI Blackfin5xx.*SPI_BFIN5XX.*\\\[.*]" {
-            if { $board_type == "BF537-STAMP" } {
-                send "M\r"
-            } else {
-                send "\r"
-            }
-        }
-
-        -re "SHARP LQ035 TFT LCD.*FB_BF537_LQ035.*\\\[.*]" {
-            if { $board_type == "BF537-STAMP" } {
-                send "M\r"
-            } else {
-                send "N\r"
-            }
         }
 
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
