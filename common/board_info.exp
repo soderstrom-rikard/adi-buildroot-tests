@@ -172,8 +172,8 @@ if { $board_type == "BF537-STAMP" || $board_type == "BF533-STAMP" } {
     set spi_rootfs_start_addr 0x1c0000
     set spi_rootfs_size 0x63ffff
     set spi_size 0x800000
-    set spi_erase_offset 0x1c0000
-    set spi_erase_size 0x63ffff
+    set spi_erase_offset 0x40000
+    set spi_erase_size 0x7bffff
     set pnor_rootfs_num 2
     set spi_rootfs_num 2
     set nand_rootfs_num 1
