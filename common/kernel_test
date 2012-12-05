@@ -589,7 +589,7 @@ do
             TESTCASE_DIR=audio
         elif [ `echo ${AUTO_TESTCASE[$i]}|grep usbhost_` ] ; then
             TESTCASE_DIR=usbhost
-        elif [ `echo ${AUTO_TESTCASE[$i]}|grep ide` ] ; then
+        elif [ `echo ${AUTO_TESTCASE[$i]}|grep ide_` ] ; then
             TESTCASE_DIR=ide
         elif [ ${AUTO_TESTCASE[$i]} == "jffs2_fs" ] ; then
             TESTCASE_DIR=jffs2
