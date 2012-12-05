@@ -35,13 +35,10 @@ step "Boot kernel"
 # set bootargs  $bootargs_param0
 source ../common/kernel_boot.exp
 
-set wait_time 15
+set sleep_time 15
 set wakeup_fail 0
-if { $board_type == "BF548-EZKIT" }  {
-    set wakeup_pattern "Syncing filesystems \.\.\. done.*Freezing user space processes \.\.\. \\\(elapsed.*seconds\\\) done.*Freezing remaining freezable tasks \.\.\. \\\(elapsed.*seconds\\\) done.*Suspending console\\\(s\\\).*Restarting tasks.*$kernel_prompt"
-} else {
-    set wakeup_pattern "Syncing filesystems \.\.\. done\.\r\nFreezing user space processes \.\.\. \\\(elapsed.*seconds\\\) done\.\r\nFreezing remaining freezable tasks \.\.\. \\\(elapsed.*seconds\\\) done\.\r\nSuspending console\\\(s\\\).*Restarting tasks \.\.\. done.*$kernel_prompt"
-}
+set sleep_pattern "Syncing filesystems.*Freezing user space processes \.\.\. \\\(elapsed.*seconds\\\) done\.\r\nFreezing remaining freezable tasks \.\.\. \\\(elapsed.*seconds\\\) done\.\r\nSuspending console\\\(s\\\) \\\(use no_console_suspend to debug\\\)"
+set wakeup_pattern "Restarting tasks \.\.\. done"
 
 if { $pm_state == "mem" } {
     if { $board_type == "BF533-STAMP" || $board_type == "BF533-EZKIT" }  {
@@ -49,20 +46,60 @@ if { $pm_state == "mem" } {
     }
 }
 
-proc standby_test_case1 {} {
+proc pm_test_case1_reset {} {
     global case_num
     global kernel_prompt
-    global wait_time
     global wakeup_fail
     global pm_state
+    global sleep_pattern
     global wakeup_pattern
+    global host_spawn_id
+    global kermit_spawn_id
+    global spawn_id
 
-    set timeout [expr $wait_time + 9]
+    set timeout 5
     incr case_num
-    send "\nrtcwake -s $wait_time -m $pm_state\r"
+    send "echo $pm_state > /sys/power/state\r"
+    while 1 {
+        expect {
+            -re $sleep_pattern {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                send_user "Test case 1: Sleep fail\n"
+                case_fail $case_num
+            }
+        }
+    }
+
+    sleep 10
+
+    set spawn_id $host_spawn_id
+
+    set timeout 5
+    incr case_num
+    send "reset_board 4\r"
+    while 1 {
+        expect {
+            -re "powering ON board attached to printer port pin 4" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    set spawn_id $kermit_spawn_id
+
+    set timeout 5
+    incr case_num
     while 1 {
         expect {
             -re $wakeup_pattern {
+		expect -re "Up.*Full"
                 case_pass $case_num
                 break
             }
@@ -108,20 +145,147 @@ proc standby_test_case1 {} {
     }
 }
 
-proc standby_test_case2 {} {
+proc pm_test_case2_reset {} {
     global case_num
     global kernel_prompt
-    global wait_time
     global wakeup_fail
     global pm_state
+    global sleep_pattern
     global wakeup_pattern
+    global host_spawn_id
+    global kermit_spawn_id
+    global spawn_id
 
-    set timeout [expr $wait_time + 9]
+    set timeout 5
     incr case_num
-    send "\nrtcwake -s $wait_time -m $pm_state\r"
+    send "echo $pm_state > /sys/power/state\r"
+    while 1 {
+        expect {
+            -re $sleep_pattern {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                send_user "Test case 2: Sleep fail\n"
+                case_fail $case_num
+            }
+        }
+    }
+
+    sleep 10
+
+    set spawn_id $host_spawn_id 
+
+    set timeout 5
+    incr case_num
+    send "reset_board 4\r"
+    while 1 {
+        expect {
+            -re "powering ON board attached to printer port pin 4" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    set spawn_id $kermit_spawn_id
+    set timeout 5
+    incr case_num
     while 1 {
         expect {
             -re $wakeup_pattern {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                send_user "Test case 2: Wake up fail\n"
+                incr wakeup_fail
+                break
+            }
+        }
+    }
+
+    set timeout 5
+    expect -re "Full\r\n|lpa 0x41E1\r\n"
+}
+proc pm_test_case1_rtcwake {} {
+    global case_num
+    global kernel_prompt
+    global sleep_time
+    global wakeup_fail
+    global pm_state
+    global sleep_pattern
+    global wakeup_pattern
+
+    set timeout [expr $sleep_time + 9]
+    incr case_num
+    send "\nrtcwake -s $sleep_time -m $pm_state\r"
+    while 1 {
+        expect {
+            -re "$sleep_pattern.*$wakeup_pattern" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                send_user "Test case 1: Wake up fail\n"
+                incr wakeup_fail
+                break
+            }
+        }
+    }
+
+    set timeout 5
+    expect -re "(Full|lpa 0x41E1|SD card at address.*)\r\n"
+
+    incr case_num
+    set timeout 10
+    send "video_test\r"
+    while 1 {
+        expect {
+            -re "\r\n\[a-zA-Z0-9]" {
+                case_fail $case_num
+            }
+            timeout {
+                case_pass $case_num
+                break
+            }
+        }
+    }
+
+    set timeout 5
+    incr case_num
+    send -s "\3"
+    while 1 {
+        expect {
+            -re $kernel_prompt {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+}
+
+proc pm_test_case2_rtcwake {} {
+    global case_num
+    global kernel_prompt
+    global sleep_time
+    global wakeup_fail
+    global pm_state
+    global sleep_pattern
+    global wakeup_pattern
+
+    set timeout [expr $sleep_time + 9]
+    incr case_num
+    send "\nrtcwake -s $sleep_time -m $pm_state\r"
+    while 1 {
+        expect {
+            -re "$sleep_pattern.*$wakeup_pattern" {
                 case_pass $case_num
                 break
             }
@@ -155,14 +319,20 @@ if { $board_type == "BF548-EZKIT" } {
     set module "bfin_lq035q1_fb"
 } elseif { $board_type == "BF537-STAMP" } {
     set module "bf537_lq035"
+} elseif {$board_type == "BF609-EZKIT" } {
+    set module "bf609_nl8048"
+} else {
+    send_user "Wrong board type!\n"
+    case_fail $case_num
 }
+
 send "modprobe $module\r"
 while 1 {
     expect {
         -re "(\[eE]rror|\[fF]ail).*$kernel_prompt" {
             case_fail $case_num
         }
-        -re "initializ.*$kernel_prompt" {
+        -re $kernel_prompt {
             break
         }
         timeout {
@@ -183,6 +353,28 @@ while 1 {
             case_fail $case_num
         }
     }
+}
+
+# BF609-EZKIT need to use ad7879 touchscreen driver to light the balcklight
+if { $board_type == "BF609-EZKIT" } {
+    incr case_num
+    send "modprobe ad7879-spi\r"
+    while 1 {
+        expect {
+            -re "(\[eE]rror|\[fF]ail).*$kernel_prompt" {
+                case_fail $case_num
+            }
+            -re "input: AD7879 Touchscreen as.*input.*$kernel_prompt" {
+                case_pass $case_num
+                break
+            }
+            timeout {
+                case_fail $case_num
+            }
+        }
+    }
+
+    start_backlight
 }
 
 sleep 5
@@ -247,9 +439,47 @@ while 1 {
     }
 }
 
+spawn /bin/bash
+
+set host_spawn_id $spawn_id
+set timeout 5
+expect -re $sh_prompt
+
+incr case_num
+set timeout 15
+send "su\r"
+while 1 {
+    expect {
+        -re "\[pP]assword" {
+            send "$password\r"
+            continue
+        }
+        -re "\[eE]rror|\[fF]ail" {
+            case_fail $case_num
+        }
+        -re $sh_prompt {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
+
+
+set spawn_id $kermit_spawn_id
+set timeout 5
+expect -re $kernel_prompt
+
+
 for {set count 1} {$count <= $Total_Count} {incr count} {
-    standby_test_case1
-    send_user "\nStandby test case 1 round $count pass\n\n"
+    if { $board_type == "BF609-EZKIT" } {
+        pm_test_case1_reset
+    } else {
+        pm_test_case1_rtcwake
+    }
+    send_user "\nPM test case 1 round $count pass\n\n"
 }
 
 set timeout 15
@@ -269,8 +499,12 @@ while 1 {
 
 sleep 5
 for {set count 1} {$count <= $Total_Count} {incr count} {
-    standby_test_case2
-    send_user "\nStandby test case 2 round $count pass\n\n"
+    if { $board_type == "BF609-EZKIT" } {
+        pm_test_case2_reset
+    } else {
+        pm_test_case2_rtcwake
+    }
+    send_user "\nPM test case 2 round $count pass\n\n"
     sleep 5
 }
 
