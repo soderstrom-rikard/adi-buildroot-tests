@@ -42,7 +42,15 @@ while 1 {
         }
 
         -re "Choose SLAB allocator\r\n.*(\[0-9]+). SLAB.*SLUB.*SLOB.*\\\[.*]" {
-            send "$allocator\r"
+            if { $allocator == "1" } {
+                send "1\r"
+            } elseif { $allocator == "2" } {
+                send "2\r"
+            } elseif { $allocator == "3" } {
+                send "3\r"
+            } else {
+                send "\r"
+            }
         }
 
         -re "\[Pp]olicy.*Write back.*BFIN_EXTMEM_WRITEBACK.*Write through.*BFIN_EXTMEM_WRITETHROUGH.*\[cC]hoice.*\\\[.*]" {

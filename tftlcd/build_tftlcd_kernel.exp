@@ -17,6 +17,11 @@ cd $src_root/testsuites/common
 step "Make default config"
 source make_default_config.exp
 
+cd $src_root/testsuites/common
+step "Kernel config for tft lcd driver"
+source_args config_tftlcd.exp module
+
+
 step "Make kernel config"
 cd $src_root
 set timeout 300
@@ -25,127 +30,6 @@ while 1 {
     expect {
         -nocase -re "\\\[\[^\r]*] (\\\(NEW\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
-        }
-
-        -re "I2C support \\\(I2C\\\).*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "Blackfin TWI I2C support.*I2C_BLACKFIN_TWI.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "SPI controller driver for ADI Blackfin5xx.*SPI_BFIN5XX.*\\\[.*]" {
-            if { $board_type == "BF537-STAMP" } {
-                send "M\r"
-            } else {
-                send "\r"
-            }
-        }
-
-        -re "Support for generic platform NAND driver.*MTD_NAND_PLATFORM.*\\\[.*]" {
-            #conflict with some TFT LCD
-            send "N\r"
-        }
-
-        -re "MMC/SD/SDIO card support \\\(MMC\\\).*\\\[.*]" {
-            # gpio confliction with touchscreen AD7879 on BF609-EZKIT
-            if { $board_type == "BF609-EZKIT" } {
-                send "N\r"
-            } else {
-                send "\r"
-            }
-        }
-
-        -re "Virtual terminal.*VT.*\\\[.*]" {
-            send "N\r"
-        }
-
-# LCD on bf609-ezkit depends on touchscreen setting of AD7879 
-        -re "Touchscreens.*INPUT_TOUCHSCREEN.*\\\[.*]" {
-            if { $board_type == "BF609-EZKIT" } {
-                send "Y\r"
-            } else {
-                send "N\r"
-            }
-        }
-
-        -re "Analog Devices.*touchscreen interface.*TOUCHSCREEN_AD7879.*\\\[.*]" {
-            if { $board_type == "BF609-EZKIT" } {
-                send "M\r"
-            } else {
-                send "N\r"
-            }
-        }
-
-        -re "support SPI bus connection.*TOUCHSCREEN_AD7879_SPI.*\\\[.*]" {
-            if { $board_type == "BF609-EZKIT" } {
-                send "M\r"
-            } else {
-                send "N\r"
-            }
-        }
-
-# Framebuffer config
-        -re "Support for frame buffer devices.*FB.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "SHARP LQ043 TFT LCD.*BF548 EZKIT.*\\\[.*]" {
-            if { $board_type == "BF548-EZKIT" } {
-                send "M\r"
-            } else {
-                send "N\r"
-            }
-        }
-
-        -re "Varitronix COG-T350MCQB TFT LCD display.*FB_BFIN_T350MCQB.*\\\[.*]" {
-            if { $board_type == "BF527-EZKIT" } {
-                send "M\r"
-            } else {
-                send "N\r"
-            }
-        }
-
-        -re "SHARP LQ035Q1DH02 TFT LCD.*FB_BFIN_LQ035Q1.*\\\[.*]" {
-            if { $board_type == "BF527-EZKIT-V2" } {
-                send "M\r"
-            } else {
-                send "N\r"
-            }
-        }
-
-        -re "SHARP LQ035 TFT LCD.*FB_BF537_LQ035.*\\\[.*]" {
-            if { $board_type == "BF537-STAMP" } {
-                send "M\r"
-            } else {
-                send "N\r"
-            }
-        }
-
-        -re "NEC NL8048HL WVGA LCD for BF609.*FB_BF609_NL8048.*\\\[.*]" {
-            if { $board_type == "BF609-EZKIT" } {
-                send "M\r"
-            } else {
-                send "N\r"
-            }
-        }
-
-# Backlight config
-        -re "Backlight & LCD device support.*BACKLIGHT_LCD_SUPPORT.*\\\[.*]" {
-            if { $board_type == "BF609-EZKIT" } {
-                send "N\r"
-            } else {
-                send "Y\r"
-            }
-        }
-
-        -re "Lowlevel LCD controls.*LCD_CLASS_DEVICE.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "Lowlevel Backlight controls.*BACKLIGHT_CLASS_DEVICE.*\\\[.*]" {
-            send "Y\r"
         }
 
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
