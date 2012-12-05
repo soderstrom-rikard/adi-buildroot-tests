@@ -24,7 +24,7 @@ source_args make_bfin-format.exp fdpic
 
 cd $src_root/testsuites/common
 step "Kernel config for tft lcd driver"
-source config_tftlcd.exp
+source_args config_tftlcd.exp built-in
 
 cd $src_root/testsuites/common
 step "Kernel config for specified usb host"
