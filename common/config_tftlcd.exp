@@ -79,7 +79,13 @@ while 1 {
 
         -re "Analog Devices.*touchscreen interface.*TOUCHSCREEN_AD7879.*\\\[.*]" {
             if { $board_type == "BF609-EZKIT" } {
-                send "Y\r"
+                if { $driver_module == "module" } {
+                    send "M\r"
+                } elseif { $driver_module == "built-in" } {
+                    send "Y\r"
+                } else {
+                    send "\r"
+                }
             } else {
                 send "N\r"
             }
@@ -87,7 +93,13 @@ while 1 {
 
         -re "support SPI bus connection.*TOUCHSCREEN_AD7879_SPI.*\\\[.*]" {
             if { $board_type == "BF609-EZKIT" } {
-                send "Y\r"
+                if { $driver_module == "module" } {
+                    send "M\r"
+                } elseif { $driver_module == "built-in" } {
+                    send "Y\r"
+                } else {
+                    send "\r"
+                }
             } else {
                 send "N\r"
             }
@@ -183,6 +195,16 @@ while 1 {
 
         -re "Lowlevel Backlight controls.*BACKLIGHT_CLASS_DEVICE.*\\\[.*]" {
             send "Y\r"
+        }
+
+        -re "Framebuffer Console support.*FRAMEBUFFER_CONSOLE.*\\\[.*]" {
+# VT will auto select FRAMEBUFFER_CONSOLE; Due to bug [#7517],
+# FRAMEBUFFER_CONSOLE need to set to module when LCD driver is module.
+            if { $driver_module == "module" } {
+                send "M\r"
+            } else {
+                send "\r"
+            }
         }
 
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
