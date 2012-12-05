@@ -1299,7 +1299,7 @@ if [ ${AUTO_RUN_STATUS[$((n+2))]} -eq 1 ] ; then
         ltp_args=( [0]="1 0 0" [1]="2 0 0" [2]="3 0 0" )
         ltp_suf=(slab slub slob)
     elif [ $ARCH_TYPE == "blackfin" ] ; then
-        if [ $BOARD_CONFIG == "BF561-EZKIT-SMP" || $BOARD_TYPE == "BF548-EZKIT" ] ; then
+        if [ $BOARD_CONFIG == "BF561-EZKIT-SMP" ] || [ $BOARD_TYPE == "BF548-EZKIT" ] ; then
             # BF561-EZKIT-SMP(silicon 0.5) and BF548-EZKIT can't support write_back
             ltp_args=( [0]="1 2 0" [1]="2 2 0" [2]="3 2 0" [3]="0 2 1" )
             ltp_suf=(slab_wt slub_wt slob_wt high_res_timer_preempt)
