@@ -53,7 +53,6 @@ proc pm_test_case1_reset {} {
     global host_spawn_id
     global kermit_spawn_id
     global spawn_id
-    global sh_prompt
     global count_under_run
 
     set timeout 5
@@ -151,7 +150,6 @@ proc pm_test_case2_reset {} {
     global host_spawn_id
     global kermit_spawn_id
     global spawn_id
-    global sh_prompt
 
     set timeout 5
     incr case_num

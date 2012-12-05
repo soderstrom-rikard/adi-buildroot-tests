@@ -51,7 +51,6 @@ proc pm_test_case1_reset {} {
     global host_spawn_id
     global kermit_spawn_id
     global spawn_id
-    global sh_prompt
     global usb_dev1
 
     set timeout 5
