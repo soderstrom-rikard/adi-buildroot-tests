@@ -1,39 +1,46 @@
 #!/usr/bin/expect
+#
+# timer test
+#
+# Usage:
+#   ./timer_test.exp board_type timer_frequency
+#
+# Example:
+#   ./timer_test.exp BF537-STAMP 100
+#
 
 source ../common/kernel_config.exp
-log_file [log_file_name "$argv0"]
-send_user "Starting $argv0\n"
-set TITLE [title "$argv0"]
 
-set TEST_PASS pass
-set TEST_FAIL fail
-set SLEEP_TIME 10
-
-set timer_frequency [lindex $argv 1]
-
-append TITLE " ($timer_frequency Mhz)"
-
-if { $argc < 2} {
-    puts "Please input: timer_frequency."
-    puts "100, 250 or 1000(Mhz)."
+if { $argc < 2 } {
+    puts "Please input: timer_frequency(100, 250 or 1000(Mhz)."
     exit
 }
+set timer_frequency [lindex $argv 1]
+set TITLE [title "$argv0"]
+append TITLE " ($timer_frequency Mhz)"
+set log_name timer${timer_frequency}_test_log
 
-step "Start kermit."
+log_file $log_name
+send_user "Starting $argv0\n"
+send_user "\n#### Test with timer_frequency $timer_frequency Mhz\n"
+
+step "Start kermit"
 source ../common/spawn_kermit.exp
 
-step "Reboot the kernel."
-source ../common/reboot_kernel.exp
+step "Boot kernel"
+# Different bootargs can be set here.
+# For example:
+# set bootargs $bootargs_param1
+source ../common/kernel_boot.exp
 
-send_user "*********************************\r"
-send_user "Start $TITLE\r"
-send_user "*********************************\n"
 
-set timeout 5
+step "Start testing"
 set case_num 0
-
+set timeout 5
+set SLEEP_TIME 10
 set timer_interrupt_id 6
 set timer_interrupt_name "Blackfin CoreTimer"
+
 send "uname -a\r"
 while 1 {
     expect {
