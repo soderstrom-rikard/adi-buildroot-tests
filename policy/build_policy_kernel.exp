@@ -25,6 +25,18 @@ cd $src_root/testsuites/common
 step "Make default config"
 source  make_default_config.exp
 
+# Command source_args can pass arguments while running source.
+# Send bfin binary formats as argument for make_bfin-format.exp,
+# and change to the specified bfin binary formats.
+# It won't change formats for arm.
+# make clean and source make_default_config.exp are already included.
+if { $arch == "blackfin" } {
+    cd $src_root/testsuites/common
+    step "Make config for specified bfin format"
+    source_args make_bfin-format.exp $binary_format
+}
+
+
 step "Make user space config"
 cd $src_root
 set timeout 1000
