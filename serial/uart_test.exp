@@ -236,7 +236,7 @@ if { [info exists usb_serial_dev] } {
 
     incr case_num
     set timeout 5
-    send "lsmod |grep usbserial\r"
+    send "lsmod |grep --color=never usbserial\r"
     while 1 {
         expect {
             -nocase -re "lsmod:|error|fail" {
@@ -266,7 +266,7 @@ if { [info exists usb_serial_dev] } {
 
     incr case_num
     set timeout 5
-    send "lsmod |grep usbserial\r"
+    send "lsmod |grep --color=never usbserial\r"
     while 1 {
         expect {
             -nocase -re "lsmod:|error|fail" {
@@ -306,7 +306,7 @@ if { [info exists usb_serial_dev] } {
 
     incr case_num
     set timeout 5
-    send "lsmod |grep usbserial\r"
+    send "lsmod |grep --color=never usbserial\r"
     while 1 {
         expect {
             -nocase -re "lsmod:|error|fail" {
