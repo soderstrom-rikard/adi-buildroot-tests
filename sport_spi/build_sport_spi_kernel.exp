@@ -10,7 +10,7 @@ send_user "Starting $argv0\n"
 step "Apply patch."
 
 cd $src_root/linux/linux-kernel/
-exec patch -p0   < ../testsuites/sport_spi/stamp.diff
+exec patch -p0   < ../../testsuites/sport_spi/stamp.diff
 
 cd $src_root/testsuites/common
 
