@@ -6,7 +6,7 @@
 #   ./build_bluetoothuart_kernel.exp board_type
 #
 # Example:
-#   ./build_bluetoothuart_kernel.exp BEAGLE
+#   ./build_bluetoothuart_kernel.exp BF537-STAMP
 #
 
 source ../common/kernel_config.exp
@@ -27,6 +27,59 @@ source make_default_config.exp
 #    set binary_flat "NA"
 #}
 #send_user "\n#### binary_flat is $binary_flat. ####\n"
+
+
+# Toolchain configuration has changed, so needs to put user space
+# configuration before kernel configuration
+step "user space config for prerequisite"
+cd $src_root
+set timeout 300
+spawn make config
+while 1 {
+    expect {
+        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+            continue
+        }
+
+# bluez_utils requires WCHAR
+        -re "Toolchain has WCHAR support.*BR2_TOOLCHAIN_EXTERNAL_WCHAR.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        "\\\(*) \\\[*]" {
+            sleep .01
+            send "\r"
+        }
+
+        -re "\[cC]hoice\\\[.*]:" {
+            send "\r"
+        }
+
+        eof {
+            send_user "\nEnd of configuration\n"
+            break
+        }
+
+        timeout {
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
+            exit
+        }
+    }
+}
+
+# Toolchain configuration has changed, so better to make clean
+# before kernel configuration. We have make clean in script 
+# make_bfin-format.exp already.
+
+
+# Command source_args can pass arguments while running source.
+# Send bfin binary formats as argument for make_bfin-format.exp,
+# and change to the specified bfin binary formats.
+# It won't change formats for arm.
+# make clean and source make_default_config.exp are already included.
+cd $src_root/testsuites/common
+step "Make config for specified bfin format"
+source_args make_bfin-format.exp fdpic
 
 
 step "Make kernel config"
@@ -102,55 +155,6 @@ while 1 {
 
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
             send "\r"
-        }
-
-        "\\\(*) \\\[*]" {
-            sleep .01
-            send "\r"
-        }
-
-        -re "\[cC]hoice\\\[.*]:" {
-            send "\r"
-        }
-
-        eof {
-            send_user "\nEnd of configuration\n"
-            break
-        }
-
-        timeout {
-            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
-            exit
-        }
-    }
-}
-
-step "user space config for expat and static gettext"
-cd $src_root
-set timeout 300
-spawn make config
-while 1 {
-    expect {
-        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
-            continue
-        }
-
-#        -re "gettext \\\(BR2_PACKAGE_GETTEXT\\\) \\\[.*]" {
-#            send "Y\r"
-#        }
-
-#        -re "Use libgettext.a instead of libgettext.so.*BR2_PACKAGE_GETTEXT_STATIC.*\\\[.*]" {
-#            if { $binary_flat == 1 } {
-#                send "Y\r"
-#            } elseif { $binary_flat == 0 } {
-#                send "N\r"
-#            } else {
-#                send "\r"
-#            }
-#        }
-
-        -re "expat \\\(BR2_PACKAGE_EXPAT\\\) \\\[.*]" {
-            send "Y\r"
         }
 
         "\\\(*) \\\[*]" {
