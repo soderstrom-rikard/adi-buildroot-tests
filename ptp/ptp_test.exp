@@ -352,7 +352,7 @@ while 1 {
      }
 }
 
-sleep 3
+sleep 15
 
 send -s "phc2sys -s /dev/ptp0 &\r" 
 while 1 {

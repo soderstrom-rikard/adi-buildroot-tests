@@ -32,6 +32,10 @@ while 1 {
             send -s "Y\r"
         }
 
+        -re "Enable timerfd.*system call.*TIMERFD.*\\\[.*]" {
+            send -s "Y\r"
+        }
+
         -re "Networking support.*NET.*\\\[.*]" {
             send -s "Y\r"
         }
