@@ -183,13 +183,13 @@ MANUAL_RUN_STATUS=( [0]="0" [1]="0" [2]="0" [3]="1" [4]="1" [5]="1" [6]="1" [7]=
 if [ $BOARD_CONFIG = "BEAGLE-STD" ] ; then
     BOARD_TYPE=BEAGLE
 
-    AUTO_RUN_STATUS[2]="1"; AUTO_RUN_STATUS[3]="1"; AUTO_RUN_STATUS[4]="1"; AUTO_RUN_STATUS[5]="1"; AUTO_RUN_STATUS[36]="0"; AUTO_RUN_STATUS[$((n+3))]="1";
+    AUTO_RUN_STATUS[2]="1"; AUTO_RUN_STATUS[3]="1"; AUTO_RUN_STATUS[5]="1"; AUTO_RUN_STATUS[36]="0"; AUTO_RUN_STATUS[$((n+3))]="1";
     MANUAL_RUN_STATUS[0]="1"; MANUAL_RUN_STATUS[1]="1";
 
 elif [ $BOARD_CONFIG = "PANDA-STD" ] ; then
     BOARD_TYPE=PANDA
 
-    AUTO_RUN_STATUS[2]="1"; AUTO_RUN_STATUS[3]="1"; AUTO_RUN_STATUS[4]="0"; AUTO_RUN_STATUS[5]="0"; AUTO_RUN_STATUS[36]="0";
+    AUTO_RUN_STATUS[2]="1"; AUTO_RUN_STATUS[3]="1"; AUTO_RUN_STATUS[5]="0"; AUTO_RUN_STATUS[36]="0";
     MANUAL_RUN_STATUS[0]="1"; MANUAL_RUN_STATUS[1]="1"; MANUAL_RUN_STATUS[2]="1";
 
 elif [ $BOARD_CONFIG = "BF537-STAMP-ORIGIN" ] ; then
@@ -219,13 +219,13 @@ elif [ $BOARD_CONFIG = "BF518F-EZBRD-STD" ] ; then
 elif [ $BOARD_CONFIG = "BF533-STAMP-AD1836" ] ; then
     BOARD_TYPE=BF533-STAMP
 
-    AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[4]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[62]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[76]="1"; AUTO_RUN_STATUS[78]="0"; AUTO_RUN_STATUS[105]="1"; AUTO_RUN_STATUS[106]="1"; AUTO_RUN_STATUS[$((n+6))]="1"; AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+12))]="1";
+    AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[62]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[76]="1"; AUTO_RUN_STATUS[78]="0"; AUTO_RUN_STATUS[105]="1"; AUTO_RUN_STATUS[106]="1"; AUTO_RUN_STATUS[$((n+6))]="1"; AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+12))]="1";
     MANUAL_RUN_STATUS[0]="0";MANUAL_RUN_STATUS[2]="1";MANUAL_RUN_STATUS[3]="1";MANUAL_RUN_STATUS[4]="1";MANUAL_RUN_STATUS[5]="1";MANUAL_RUN_STATUS[9]="1";MANUAL_RUN_STATUS[10]="1";MANUAL_RUN_STATUS[11]="1"; MANUAL_RUN_STATUS[12]="0";MANUAL_RUN_STATUS[13]="1";MANUAL_RUN_STATUS[14]="1";MANUAL_RUN_STATUS[15]="1";MANUAL_RUN_STATUS[17]="1";MANUAL_RUN_STATUS[18]="1";MANUAL_RUN_STATUS[19]="1";MANUAL_RUN_STATUS[21]="1"; MANUAL_RUN_STATUS[22]="1"; MANUAL_RUN_STATUS[30]="1";
 
 elif [ $BOARD_CONFIG = "BF533-STAMP-ELF" ] ; then
     BOARD_TYPE=BF533-STAMP
 
-    AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[4]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[62]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[76]="1"; AUTO_RUN_STATUS[78]="0"; AUTO_RUN_STATUS[$((n+6))]="1"; AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+12))]="1";
+    AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[62]="1"; AUTO_RUN_STATUS[72]="1"; AUTO_RUN_STATUS[73]="1"; AUTO_RUN_STATUS[74]="1"; AUTO_RUN_STATUS[76]="1"; AUTO_RUN_STATUS[78]="0"; AUTO_RUN_STATUS[$((n+6))]="1"; AUTO_RUN_STATUS[$((n+11))]="1"; AUTO_RUN_STATUS[$((n+12))]="1";
     MANUAL_RUN_STATUS[0]="0"; MANUAL_RUN_STATUS[2]="1"; MANUAL_RUN_STATUS[3]="1"; MANUAL_RUN_STATUS[4]="1"; MANUAL_RUN_STATUS[5]="1"; MANUAL_RUN_STATUS[9]="1"; MANUAL_RUN_STATUS[10]="1"; MANUAL_RUN_STATUS[11]="1"; MANUAL_RUN_STATUS[12]="0"; MANUAL_RUN_STATUS[13]="1"; MANUAL_RUN_STATUS[14]="1"; MANUAL_RUN_STATUS[15]="1"; MANUAL_RUN_STATUS[17]="1"; MANUAL_RUN_STATUS[18]="1"; MANUAL_RUN_STATUS[19]="1"; MANUAL_RUN_STATUS[21]="1"; MANUAL_RUN_STATUS[22]="1";
 
 elif [ $BOARD_CONFIG = "BF533-STAMP-STD" ] ; then
@@ -595,6 +595,8 @@ do
             TESTCASE_DIR=kgdb
         elif [ ${AUTO_TESTCASE[$i]} == "jffs2_fs" ] ; then
             TESTCASE_DIR=jffs2
+        elif [ ${AUTO_TESTCASE[$i]} == "spimmc_interrupt" ] ; then
+            TESTCASE_DIR=spimmc
         else
             TESTCASE_DIR=${AUTO_TESTCASE[$i]}
         fi
@@ -630,6 +632,8 @@ do
             ./build_kgdb_kernel.exp $BOARD_TYPE uart >/dev/null 2>&1
         elif [ ${AUTO_TESTCASE[$i]} == "kgdb_smp" ] ; then
             ./build_kgdb_kernel.exp $BOARD_TYPE ethernet SMP >/dev/null 2>&1
+        elif [ ${AUTO_TESTCASE[$i]} == "spimmc_interrupt" ] ; then
+            ./build_spimmc_kernel.exp $BOARD_TYPE interrupt >/dev/null 2>&1
         else
             ./build_${AUTO_TESTCASE[$i]}_kernel.exp $BOARD_TYPE >/dev/null 2>&1
         fi
@@ -694,6 +698,8 @@ do
                 ./kgdb_test.exp $BOARD_TYPE uart >/dev/null 2>&1
             elif [ ${AUTO_TESTCASE[$i]} == "kgdb_smp" ] ; then
                 ./kgdb_test.exp $BOARD_TYPE ethernet SMP >/dev/null 2>&1
+            elif [ ${AUTO_TESTCASE[$i]} == "spimmc_interrupt" ] ; then
+                ./spimmc_test.exp $BOARD_TYPE interrupt >/dev/null 2>&1
             else
                 ./${AUTO_TESTCASE[$i]}_test.exp $BOARD_TYPE >/dev/null 2>&1
             fi
@@ -701,7 +707,7 @@ do
 
 
         # backup all test results (configs, images and logs)
-        if [ ${AUTO_TESTCASE[$i]} == "sdiommc" ] || [ ${AUTO_TESTCASE[$i]} == "kgdb_uart" ] || [ ${AUTO_TESTCASE[$i]} == "kgdb_smp" ]; then
+        if [ ${AUTO_TESTCASE[$i]} == "sdiommc" ] || [ `echo ${AUTO_TESTCASE[$i]}|grep spimmc` ] || [ ${AUTO_TESTCASE[$i]} == "kgdb_uart" ] || [ ${AUTO_TESTCASE[$i]} == "kgdb_smp" ]; then
             cp $IMAGE_DIR/vmImage $THIS_LOG/vmImage.${AUTO_TESTCASE[$i]}
         elif [ `echo ${AUTO_TESTCASE[$i]}|grep jffs2` ] ; then
             cp $IMAGE_DIR/vmImage $THIS_LOG/vmImage.${AUTO_TESTCASE[$i]}
