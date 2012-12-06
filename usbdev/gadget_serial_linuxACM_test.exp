@@ -81,6 +81,8 @@ while 1 {
 
 spawn /bin/bash
 set host_spawn_id $spawn_id
+set timeout 5
+expect -re $sh_prompt
 
 incr case_num
 set timeout 15
@@ -94,7 +96,7 @@ while 1 {
         -re "\[eE]rror|\[fF]ail" {
             case_fail $case_num
         }
-        -re "#" {
+        -re $sh_prompt {
             case_pass $case_num
             break
         }
@@ -116,7 +118,7 @@ while 1 {
         -re "\[eE]rror|\[fF]ail" {
             case_fail $case_num
         }
-        -re "#" {
+        -re $sh_prompt {
             case_pass $case_num
             break
         }
@@ -131,7 +133,7 @@ set timeout 4
 send "mount\r"
 while 1 {
     expect {
-        -re "none on /proc/bus/usb type usbfs.*#" {
+        -re "none on /proc/bus/usb type usbfs.*$sh_prompt" {
             case_pass $case_num
             break
         }
@@ -159,7 +161,9 @@ while 1 {
 
 
 set spawn_id $kermit_spawn_id
-sleep 3
+set timeout 5
+expect -re $kernel_prompt
+
 incr case_num
 set timeout 8
 send "setsid getty 9600 /dev/ttyGS0\r"
@@ -277,6 +281,8 @@ while 1 {
 }
 
 set spawn_id $host_spawn_id
+set timeout 5
+expect -re $sh_prompt
 
 incr case_num
 set timeout 5
@@ -287,7 +293,7 @@ while 1 {
             case_pass $case_num
             break
         }
-        -re "#" {
+        -re $sh_prompt {
             case_pass $case_num
             break
         }
@@ -318,8 +324,9 @@ while 1 {
 
 step "Send file to target board through gadget serial"
 set spawn_id $gserial_spawn_id
+set timeout 5
+expect -re $kernel_prompt
 
-sleep 2
 incr case_num
 set timeout 5
 send "\0c"
@@ -335,8 +342,9 @@ while 1 {
     }
 }
 
+sleep 5
 incr case_num
-set timeout 5
+set timeout 30
 send "send file_in_target.rcp\r"
 while 1 {
     expect {
@@ -406,7 +414,8 @@ while 1 {
 
 
 set spawn_id $host_spawn_id 
-sleep 2
+set timeout 5
+expect -re $sh_prompt
 
 incr case_num
 set timeout 5
@@ -434,7 +443,7 @@ while 1 {
         -re "umount:|\[eE]rror|\[fF]ail" {
             case_fail $case_num
         }
-        -re "#" {
+        -re $sh_prompt {
             case_pass $case_num
             break
         }
@@ -452,7 +461,7 @@ while 1 {
         -re "none on /proc/bus/usb type usbfs.*#" {
             case_fail $case_num
         }
-        -re "#" {
+        -re $sh_prompt {
             case_pass $case_num
             break
         }

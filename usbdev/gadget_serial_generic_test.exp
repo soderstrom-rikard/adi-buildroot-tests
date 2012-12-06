@@ -270,6 +270,7 @@ while 1 {
     }
 }
 
+
 spawn /bin/bash
 set gserial_spawn_id $spawn_id 
 incr case_num
@@ -306,8 +307,20 @@ while 1 {
 
 step "Send file to host PC through gadget serial"
 set spawn_id $gserial_spawn_id
-set timeout 5
-expect -re $kernel_prompt
+
+incr case_num
+set timeout 8
+while 1 {
+    expect {
+        -re $kernel_prompt {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
 
 incr case_num
 set timeout 5
@@ -399,8 +412,9 @@ while 1 {
 
 step "Send file to target board through gadget serial"
 set spawn_id $gserial_spawn_id
+set timeout 5
+expect -re $kernel_prompt
 
-sleep 2
 incr case_num
 set timeout 5
 send "\0c"
