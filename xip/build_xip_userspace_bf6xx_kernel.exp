@@ -5,10 +5,10 @@
 # Test application is run in additional ROM file systems.
 #
 # Usage:
-#   ./build_xip_userspace_kernel.exp board_type binary_format
+#   ./build_xip_userspace_bf6xx_kernel.exp board_type binary_format
 #
 # Example:
-#   ./build_xip_userspace_kernel.exp BF537-STAMP fdpic
+#   ./build_xip_userspace_bf6xx_kernel.exp BF5609-EZKIT fdpic
 #
 
 source ../common/kernel_config.exp
@@ -18,12 +18,14 @@ if { $argc < 2} {
     exit
 }
 set format [lindex $argv 1]
-set log_name build_xip_userspace_${format}_kernel_log
+set log_name build_xip_userspace_bf6xx_${format}_kernel_log
 
 log_file $log_name
 send_user "Starting $argv0\n"
 send_log "\n#### Build kernel with binary_format $format. ####\n"
 
+
+set HAVE_KERNEL_ONLY_IMAGE 1
 
 # Command source_args can pass arguments while running source.
 # Send bfin binary formats as argument for make_bfin-format.exp,
@@ -33,6 +35,9 @@ send_log "\n#### Build kernel with binary_format $format. ####\n"
 cd $src_root/testsuites/common
 step "Make config for specified bfin format"
 source_args make_bfin-format.exp $format
+
+cd $src_root/testsuites/common
+source config_cut_app.exp
 
 step "Make kernel config"
 cd $src_root
@@ -44,16 +49,24 @@ while 1 {
             continue
         }
 
+        -re "Kernel executes from.*(\[0-9]). ROM.*choice.*\\\[.*]" {
+            send "$expect_out(1,string)\r"
+        }
+
         -re "Initial RAM filesystem and RAM disk.*BLK_DEV_INITRD.*\\\[.*]" {
+            send "N\r"
+        }
+
+        -re "Caching block device access to MTD devices.*MTD_BLOCK.*\\\[.*]" {
             send "Y\r"
         }
 
         -re "Detect flash chips by Common Flash Interface.*MTD_CFI.*\\\[.*]" {
-            send "N\r"
+            send "Y\r"
         }
 
-        -re "Support for AMD.*flash chips.*MTD_CFI_AMDSTD.*\\\[.*]" {
-            send "N\r"
+        -re "Support for Intel/Sharp flash chips.*MTD_CFI_INTELEXT.*\\\[.*]" {
+            send "Y\r"
         }
 
         -re "Support for ROM chips in bus mapping.*MTD_ROM.*\\\[.*]" {
@@ -64,7 +77,7 @@ while 1 {
             send "Y\r"
         }
 
-        -re "Miscellaneous filesystems \\\(MISC_FILESYSTEMS.*\\\[.*]" {
+        -re "Miscellaneous filesystems \\\(MISC_FILESYSTEMS\\\) \\\[.*]" {
             send "Y\r"
         }
 
@@ -76,8 +89,77 @@ while 1 {
             send "$expect_out(1,string)\r"
         }
 
-        -re "Enable shared FLAT support \\\(BINFMT_SHARED_FLAT\\\).*\\\[././.]" {
+        -re "Network File Systems \\\(NETWORK_FILESYSTEMS\\\).*\\\[.*]" {
             send "Y\r"
+        }
+
+        -re "NFS client support \\\(NFS_FS\\\).*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "NFS client support for NFS version 3 \\\(NFS_V3\\\).*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Root file system on NFS \\\(ROOT_NFS\\\).*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Kernel support for FDPIC ELF binaries.*BINFMT_ELF_FDPIC.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Kernel support for flat binaries.*BINFMT_FLAT.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Enable shared FLAT support \\\(BINFMT_SHARED_FLAT\\\) \\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "($anomalous_option) \\\[\[^\]]+/.]" {
+            send "\r"
+        }
+
+        "\\\(*) \\\[*]" {
+            sleep .05
+            send "\r"
+        }
+
+        -re "\[cC]hoice\\\[.*]:" {
+            send "\r"
+        }
+
+        eof {
+            send_user "\nEnd of configuration\n"
+            break
+        }
+
+        timeout {
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
+            exit
+        }
+    }
+}
+
+step "Config kernel again"
+cd $src_root
+set timeout 300
+spawn make linux-config
+while 1 {
+    expect {
+        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+            continue
+        }
+
+        -re "Kernel ROM Base.*ROM_BASE.*\\\[.*]" {
+            if { $board_type == "BF548-EZKIT" } {
+                send "0x20080040\r"
+            } elseif { $board_type == "BF609-EZKIT" } {
+                send "0xB0080040\r"
+            } else {
+                send "\r"
+            }
         }
 
         -re "($anomalous_option) \\\[\[^\]]+/.]" {

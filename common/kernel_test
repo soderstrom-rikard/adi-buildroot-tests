@@ -1109,7 +1109,11 @@ fi
 
 if [ ${AUTO_RUN_STATUS[$((n+11))]} -eq 1 ] ; then
     APP_FORMAT="fdpic shared-flat"
-    SUB_TESTCASE="xip_userspace kernel_xip fs_xip"
+    if [ $BOARD_TYPE == "BF609-EZKIT" ] ; then
+        SUB_TESTCASE="xip_userspace_bf6xx kernel_xip fs_xip"
+    else
+        SUB_TESTCASE="xip_userspace kernel_xip"
+    fi
 
     for sub_test in $SUB_TESTCASE
     do
@@ -1125,7 +1129,7 @@ if [ ${AUTO_RUN_STATUS[$((n+11))]} -eq 1 ] ; then
             cd $TESTSUITES_DIR/xip
             ./build_${sub_test}_kernel.exp $BOARD_TYPE $format >/dev/null 2>&1
 
-            if ( [ $sub_test == "xip_userspace" ] && [ ! -f $IMAGE_DIR/uImage ] ) || ( [ $sub_test == "kernel_xip" ] && [ ! -f $IMAGE_DIR/vmImage ] ) || ( [ $sub_test == "fs_xip" ] && ( [ ! -f $IMAGE_DIR/vmImage ] || [ ! -f $IMAGE_DIR/rootfs.romfs ] ) )
+            if ( [ $sub_test == "xip_userspace_bf6xx" ] && [ ! -f $IMAGE_DIR/vmImage ] ) || ( [ $sub_test == "xip_userspace" ] && [ ! -f $IMAGE_DIR/uImage ] ) || ( [ $sub_test == "kernel_xip" ] && [ ! -f $IMAGE_DIR/vmImage ] ) || ( [ $sub_test == "fs_xip" ] && ( [ ! -f $IMAGE_DIR/vmImage ] || [ ! -f $IMAGE_DIR/rootfs.romfs ] ) )
             then
                 echo "$0:   Error, failed."
                 tail -50 ./build_${sub_test}_${format}_kernel_log
@@ -1134,9 +1138,12 @@ if [ ${AUTO_RUN_STATUS[$((n+11))]} -eq 1 ] ; then
             fi
 
             copy_image_config "$sub_test.$format"
-            if [ $sub_test == "xip_userspace" ] ; then
+            if [ $sub_test == "xip_userspace_bf6xx" ] ; then
                 mv /tftpboot/img.romfs $THIS_LOG/img.romfs.$sub_test.$format
                 mv $IMAGE_DIR/vmImage $THIS_LOG/vmImage.$sub_test.$format
+                cp -a $OUTPUT_DIR/target $THIS_LOG/romfs.$sub_test.$format
+            elif [ $sub_test == "xip_userspace" ] ; then
+                mv /tftpboot/img.romfs $THIS_LOG/img.romfs.$sub_test.$format
                 cp -a $OUTPUT_DIR/target $THIS_LOG/romfs.$sub_test.$format
             elif [ $sub_test == "kernel_xip" ] ; then
                 mv $IMAGE_DIR/vmImage $THIS_LOG/vmImage.$sub_test.$format
