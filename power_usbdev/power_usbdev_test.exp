@@ -44,6 +44,7 @@ set wakeup_pattern "Restarting tasks \.\.\. done"
 proc pm_test_case1_reset {} {
     global case_num
     global kernel_prompt
+    global sh_prompt
     global wakeup_fail
     global pm_state
     global sleep_pattern
@@ -55,7 +56,8 @@ proc pm_test_case1_reset {} {
     global mnt_point
 
     set spawn_id $kermit_spawn_id
-    sleep 2
+    set timeout 5
+    expect -re $kernel_prompt
 
     set timeout 5
     incr case_num
@@ -112,6 +114,8 @@ proc pm_test_case1_reset {} {
     }
 
     set spawn_id $host_spawn_id
+    set timeout 5
+    expect -re $sh_prompt
 
     sleep 10
     incr case_num
@@ -119,10 +123,10 @@ proc pm_test_case1_reset {} {
     send "ls $dev\r"
     while 1 {
         expect {
-            -re "(ls:|\[eE]rror|\[fF]ail).*#" {
+            -re "(ls:|\[eE]rror|\[fF]ail).*$sh_prompt" {
                 case_fail $case_num
             }
-            -re "#" {
+            -re $sh_prompt {
                 case_pass $case_num
                 break
             }
@@ -137,10 +141,10 @@ proc pm_test_case1_reset {} {
     send "mount -t ext2 -o sync $dev $mnt_point\r"
     while 1 {
         expect {
-            -re "(mount:|\[eE]rror|\[fF]ail).*#" {
+            -re "(mount:|\[eE]rror|\[fF]ail).*$sh_prompt" {
                 case_fail $case_num
             }
-            -re "#" {
+            -re $sh_prompt {
                 case_pass $case_num
                 break
             }
@@ -155,10 +159,10 @@ proc pm_test_case1_reset {} {
     send "date; time dd if=/dev/zero of=$mnt_point/10m.bin bs=1M count=10; date\r"
     while 1 {
         expect {
-            -re "(\[eE]rror|\[fF]ail).*#" {
+            -re "(\[eE]rror|\[fF]ail).*$sh_prompt" {
                 case_fail $case_num
             }
-            -re "#" {
+            -re $sh_prompt {
                 case_pass $case_num
                 break
             }
@@ -172,7 +176,7 @@ proc pm_test_case1_reset {} {
     send "time cat $mnt_point/10m.bin > /dev/null\r"
     while 1 {
         expect {
-            -re "real.*user.*sys.*#" {
+            -re "real.*user.*sys.*$sh_prompt" {
                 case_pass $case_num
                 break
             }
@@ -187,10 +191,10 @@ proc pm_test_case1_reset {} {
     send "ls -l $mnt_point\r"
     while 1 {
         expect {
-            -re "(\[eE]rror|\[fF]ail).*#" {
+            -re "(\[eE]rror|\[fF]ail).*$sh_prompt" {
                 case_fail $case_num
             }
-            -re "10m\.bin.*lost\\+found.*#" {
+            -re "10m\.bin.*lost\\+found.*$sh_prompt" {
                 case_pass $case_num
                 break
             }
@@ -205,10 +209,10 @@ proc pm_test_case1_reset {} {
     send "rm $mnt_point/10m.bin\r"
     while 1 {
         expect {
-            -re "(\[eE]rror|\[fF]ail).*#" {
+            -re "(\[eE]rror|\[fF]ail).*$sh_prompt" {
                 case_fail $case_num
             }
-            -re "#" {
+            -re $sh_prompt {
                 case_pass $case_num
                 break
             }
@@ -223,10 +227,10 @@ proc pm_test_case1_reset {} {
     send "ls -l $mnt_point/\r"
     while 1 {
         expect {
-            -re "(10m\.bin|\[eE]rror|\[fF]ail).*#" {
+            -re "(10m\.bin|\[eE]rror|\[fF]ail).*$sh_prompt" {
                 case_fail $case_num
             }
-            -re "#" {
+            -re $sh_prompt {
                 case_pass $case_num
                 break
             }
@@ -241,10 +245,10 @@ proc pm_test_case1_reset {} {
     send "umount $mnt_point\r"
     while 1 {
         expect {
-            -re "(umount:|\[eE]rror|\[fF]ail).*#" {
+            -re "(umount:|\[eE]rror|\[fF]ail).*$sh_prompt" {
                 case_fail $case_num
             }
-            -re "#" {
+            -re $sh_prompt {
                 case_pass $case_num
                 break
             }
@@ -258,13 +262,21 @@ proc pm_test_case1_reset {} {
 proc pm_test_case1_rtcwake {} {
     global case_num
     global kernel_prompt
+    global sh_prompt
     global sleep_time
     global wakeup_fail
     global pm_state
     global sleep_pattern
     global wakeup_pattern
+    global host_spawn_id
+    global kermit_spawn_id
+    global spawn_id
     global dev
     global mnt_point
+
+    set spawn_id $kermit_spawn_id
+    set timeout 5
+    expect -re $kernel_prompt
 
     set timeout [expr $sleep_time + 10]
     incr case_num
@@ -283,16 +295,19 @@ proc pm_test_case1_rtcwake {} {
         }
     }
 
-    sleep 10
+    set spawn_id $host_spawn_id
+    set timeout 5
+    expect -re $sh_prompt
+
     incr case_num
     set timeout 10
     send "ls $dev\r"
     while 1 {
         expect {
-            -re "(ls:|\[eE]rror|\[fF]ail).*#" {
+            -re "(ls:|\[eE]rror|\[fF]ail).*$sh_prompt" {
                 case_fail $case_num
             }
-            -re "#" {
+            -re $sh_prompt {
                 case_pass $case_num
                 break
             }
@@ -307,10 +322,10 @@ proc pm_test_case1_rtcwake {} {
     send "mount -t ext2 -o sync $dev $mnt_point\r"
     while 1 {
         expect {
-            -re "(mount:|\[eE]rror|\[fF]ail).*#" {
+            -re "(mount:|\[eE]rror|\[fF]ail).*$sh_prompt" {
                 case_fail $case_num
             }
-            -re "#" {
+            -re $sh_prompt {
                 case_pass $case_num
                 break
             }
@@ -325,10 +340,10 @@ proc pm_test_case1_rtcwake {} {
     send "date; time dd if=/dev/zero of=$mnt_point/10m.bin bs=1M count=10; date\r"
     while 1 {
         expect {
-            -re "(\[eE]rror|\[fF]ail).*#" {
+            -re "(\[eE]rror|\[fF]ail).*$sh_prompt" {
                 case_fail $case_num
             }
-            -re "#" {
+            -re $sh_prompt {
                 case_pass $case_num
                 break
             }
@@ -342,7 +357,7 @@ proc pm_test_case1_rtcwake {} {
     send "time cat $mnt_point/10m.bin > /dev/null\r"
     while 1 {
         expect {
-            -re "real.*user.*sys.*#" {
+            -re "real.*user.*sys.*$sh_prompt" {
                 case_pass $case_num
                 break
             }
@@ -357,10 +372,10 @@ proc pm_test_case1_rtcwake {} {
     send "ls -l $mnt_point\r"
     while 1 {
         expect {
-            -re "(\[eE]rror|\[fF]ail).*#" {
+            -re "(\[eE]rror|\[fF]ail).*$sh_prompt" {
                 case_fail $case_num
             }
-            -re "10m\.bin.*lost\\+found.*#" {
+            -re "10m\.bin.*lost\\+found.*$sh_prompt" {
                 case_pass $case_num
                 break
             }
@@ -375,10 +390,10 @@ proc pm_test_case1_rtcwake {} {
     send "rm $mnt_point/10m.bin\r"
     while 1 {
         expect {
-            -re "(\[eE]rror|\[fF]ail).*#" {
+            -re "(\[eE]rror|\[fF]ail).*$sh_prompt" {
                 case_fail $case_num
             }
-            -re "#" {
+            -re $sh_prompt {
                 case_pass $case_num
                 break
             }
@@ -393,10 +408,10 @@ proc pm_test_case1_rtcwake {} {
     send "ls -l $mnt_point/\r"
     while 1 {
         expect {
-            -re "(10m\.bin|\[eE]rror|\[fF]ail).*#" {
+            -re "(10m\.bin|\[eE]rror|\[fF]ail).*$sh_prompt" {
                 case_fail $case_num
             }
-            -re "#" {
+            -re $sh_prompt {
                 case_pass $case_num
                 break
             }
@@ -411,10 +426,10 @@ proc pm_test_case1_rtcwake {} {
     send "umount $mnt_point\r"
     while 1 {
         expect {
-            -re "(umount:|\[eE]rror|\[fF]ail).*#" {
+            -re "(umount:|\[eE]rror|\[fF]ail).*$sh_prompt" {
                 case_fail $case_num
             }
-            -re "#" {
+            -re $sh_prompt {
                 case_pass $case_num
                 break
             }
@@ -556,10 +571,10 @@ set timeout 5
 send "mkdir -p $mnt_point\r"
 while 1 {
     expect {
-        -re "(mkdir:|\[eE]rror|\[fF]ail).*#" {
+        -re "(mkdir:|\[eE]rror|\[fF]ail).*$sh_prompt" {
             case_fail $case_num
         }
-        -re "#" {
+        -re $sh_prompt {
             case_pass $case_num
             break
         }
@@ -575,10 +590,10 @@ set timeout 10
 send "ls $dev\r"
 while 1 {
     expect {
-        -re "(ls:|\[eE]rror|\[fF]ail).*#" {
+        -re "(ls:|\[eE]rror|\[fF]ail).*$sh_prompt" {
             case_fail $case_num
         }
-        -re "#" {
+        -re $sh_prompt {
             case_pass $case_num
             break
         }
@@ -593,7 +608,7 @@ set timeout 90
 send "time fdisk $dev\r"
 while 1 {
     expect {
-        -re "(fdisk:|\[eE]rror|\[fF]ail).*#" {
+        -re "(fdisk:|\[eE]rror|\[fF]ail).*$sh_prompt" {
             case_fail $case_num
         }
         -re "Command.*:" {
@@ -615,7 +630,7 @@ while 1 {
                     }
                     -re "Syncing disks" {
                         send "\r"
-                        expect "#"
+                        expect -re $sh_prompt
                         case_pass $case_num
                         break
                     }
@@ -639,7 +654,7 @@ set timeout 600
 send "mke2fs $dev\r"
 while 1 {
     expect {
-        -re "Writing inode tables.*done.*done.*#" {
+        -re "Writing inode tables.*done.*done.*$sh_prompt" {
             case_pass $case_num
             break
         }
@@ -654,10 +669,10 @@ set timeout 5
 send "mount -t ext2 -o sync $dev $mnt_point\r"
 while 1 {
     expect {
-        -re "(mount:|\[eE]rror|\[fF]ail).*#" {
+        -re "(mount:|\[eE]rror|\[fF]ail).*$sh_prompt" {
             case_fail $case_num
         }
-        -re "#" {
+        -re $sh_prompt {
             case_pass $case_num
             break
         }
@@ -672,10 +687,10 @@ set timeout 1000
 send "date; time dd if=/dev/zero of=$mnt_point/10m.bin bs=1M count=10; date\r"
 while 1 {
     expect {
-        -re "(\[eE]rror|\[fF]ail).*#" {
+        -re "(\[eE]rror|\[fF]ail).*$sh_prompt" {
             case_fail $case_num
         }
-        -re "#" {
+        -re $sh_prompt {
             case_pass $case_num
             break
         }
@@ -689,7 +704,7 @@ incr case_num
 send "time cat $mnt_point/10m.bin > /dev/null\r"
 while 1 {
     expect {
-        -re "real.*user.*sys.*#" {
+        -re "real.*user.*sys.*$sh_prompt" {
             case_pass $case_num
             break
         }
@@ -704,10 +719,10 @@ set timeout 5
 send "ls -l $mnt_point\r"
 while 1 {
     expect {
-        -re "(\[eE]rror|\[fF]ail).*#" {
+        -re "(\[eE]rror|\[fF]ail).*$sh_prompt" {
             case_fail $case_num
         }
-        -re "10m\.bin.*lost\\+found.*#" {
+        -re "10m\.bin.*lost\\+found.*$sh_prompt" {
             case_pass $case_num
             break
         }
@@ -722,10 +737,10 @@ set timeout 10
 send "rm $mnt_point/10m.bin\r"
 while 1 {
     expect {
-        -re "(\[eE]rror|\[fF]ail).*#" {
+        -re "(\[eE]rror|\[fF]ail).*$sh_prompt" {
             case_fail $case_num
         }
-        -re "#" {
+        -re $sh_prompt {
             case_pass $case_num
             break
         }
@@ -740,10 +755,10 @@ set timeout 5
 send "ls -l $mnt_point/\r"
 while 1 {
     expect {
-        -re "(10m\.bin|\[eE]rror|\[fF]ail).*#" {
+        -re "(10m\.bin|\[eE]rror|\[fF]ail).*$sh_prompt" {
             case_fail $case_num
         }
-        -re "#" {
+        -re $sh_prompt {
             case_pass $case_num
             break
         }
@@ -758,10 +773,10 @@ set timeout 5
 send "umount $mnt_point\r"
 while 1 {
     expect {
-        -re "(umount:|\[eE]rror|\[fF]ail).*#" {
+        -re "(umount:|\[eE]rror|\[fF]ail).*$sh_prompt" {
             case_fail $case_num
         }
-        -re "#" {
+        -re $sh_prompt {
             case_pass $case_num
             break
         }
@@ -773,10 +788,8 @@ while 1 {
 
 
 for {set count 1} {$count <= $Total_Count} {incr count} {
+    sleep 3
     if { $board_type == "BF609-EZKIT" } {
-        set spawn_id $kermit_spawn_id
-        set timeout 5
-        expect -re $kernel_prompt
         pm_test_case1_reset
     } else {
         pm_test_case1_rtcwake
