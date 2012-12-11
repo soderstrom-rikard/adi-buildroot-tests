@@ -102,7 +102,7 @@ set bootargs_param1 "root=/dev/mtdblock0 rw mem=${res_mem}M max_mem=${max_mem}M 
 set bootargs_param2 "root=/dev/nfs rw nfsroot=$serverip:/tftpboot/romfs,tcp,nfsvers=3 rootdelay=1 earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
 set bootargs_param3 "rw rootfstype=jffs2 earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
 
-if [ info exists nand_rootfs_num ] {
+if [ info exists pnor_rootfs_num ] {
     set bootargs_param4 "root=/dev/mtdblock$pnor_rootfs_num rw rootfstype=jffs2 earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
     set bootargs_param5 "root=/dev/mtdblock$pnor_rootfs_num ro rootfstype=romfs earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
 }
