@@ -626,6 +626,8 @@ do
             ./build_linphone_kernel.exp $BOARD_TYPE $audio_dev >/dev/null 2>&1
         elif [ ${AUTO_TESTCASE[$i]} == "power_audio" ] ; then
             ./build_power_audio_kernel.exp $BOARD_TYPE $audio_dev > /dev/null 2>&1
+        elif [ ${AUTO_TESTCASE[$i]} == "multichannel" ] ; then
+            ./build_multichannel_kernel.exp $BOARD_TYPE $audio_dev >/dev/null 2>&1
         elif [ `echo ${AUTO_TESTCASE[$i]}|grep usbhost_` ] ; then
             ./build_usbhost_kernel.exp $BOARD_TYPE $usb_dev >/dev/null 2>&1
         elif [ ${AUTO_TESTCASE[$i]} == "kgdb_uart" ] ; then
