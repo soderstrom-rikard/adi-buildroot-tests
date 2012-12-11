@@ -507,7 +507,7 @@ while 1 {
 
 step "Reboot the kernel."
 set boot_image vmImage
-set bootargs   $bootargs_param4
+set bootargs   $bootargs_param11
 source ../common/reboot_kernel.exp
 
 incr case_num
