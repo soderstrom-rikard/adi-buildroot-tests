@@ -27,6 +27,11 @@ while 1 {
             continue
         }
 
+# Disable unrelated drivers so it won't interfere with wake up message
+        -re "Serial ATA and Parallel ATA drivers.*ATA.*\\\[.*]" {
+            send "N\r"
+        }
+
         -re "Suspend to RAM and standby.*SUSPEND.*\\\[.*]" {
             send "Y\r"
         }
