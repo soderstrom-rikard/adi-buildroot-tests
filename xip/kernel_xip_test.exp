@@ -124,7 +124,7 @@ set start_addr $kernel_start_addr
 
 if { $board_type == "BF609-EZKIT" } {
     set end_addr $kernel_end_addr
-} elseif { $board_type == "BF537-STAMP" } {
+} else {
     set end_addr $rootfs_end_addr
 }
 
