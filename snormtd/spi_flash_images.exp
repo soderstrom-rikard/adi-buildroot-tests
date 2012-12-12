@@ -37,13 +37,13 @@ send -s "cat /proc/mtd \r"
 while 1 {
     expect {
 
-       -re  "mtd(\[0-9]):\[^\r\n]*file system\\\(spi\\\)" {
+       -re  "mtd(\[0-9]):\[^\r\n]*\\\(spi\\\)\[^spi]*$kernel_prompt" {
                 set spi_rootfs_num $expect_out(1,string)
-		set mtd_temp_result $TEST_PASS
-		expect  -re $kernel_prompt
+                set mtd_temp_result $TEST_PASS
+                expect  -re $kernel_prompt
                 case_pass $case_num
-		break
-	}
+                break
+        }
 
 	timeout {
                 case_fail $case_num
