@@ -127,11 +127,7 @@ set xip_test_ver [exec grep XIP_TEST_VERSION $src_root/package/xip_test/xip_test
 set case_num 0
 
 set image_start_addr $kernel_start_addr
-if { $board_type == "BF609-EZKIT" } {
-    set image_end_addr $kernel_end_addr
-} elseif { $board_type == "BF537-STAMP" } {
-    set image_end_addr $rootfs_end_addr
-}
+set image_end_addr $kernel_end_addr
 
 incr case_num
 send_user "genromfs -f $src_root/output/target/img.romfs -d $src_root/output/build/xip_test-${xip_test_ver}\n"
