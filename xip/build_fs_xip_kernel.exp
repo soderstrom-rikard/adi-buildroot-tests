@@ -30,7 +30,7 @@ set HAVE_ROMFS_IMAGE 1
 
 step "Apply patch to change partition"
 cd $kernel_root
-if [ catch {exec patch -p0 < $src_root/testsuites/xip/partition.patch} ] {
+if [ catch {exec patch -p1 < $src_root/testsuites/xip/partition.patch} ] {
     send_user "$errorInfo\n"
     exit
 }
@@ -44,8 +44,18 @@ cd $src_root/testsuites/common
 step "Make config for specified bfin format"
 source_args make_bfin-format.exp $format
 
+step "Reduce applicaion size"
 cd $src_root/testsuites/common
 source config_cut_app.exp
+
+step "Reduce kernel size to minimum"
+cd $src_root/testsuites/common
+source config_cut_kernel_min.exp
+
+step "Reduce busybox size"
+cd $src_root/testsuites/common
+source config_cut_busybox.exp
+
 
 step "Make kernel config"
 cd $src_root
@@ -180,7 +190,7 @@ step "Make"
 source make_kernel.exp
 
 step "Make image without libgfortran"
-if [ catch {exec rm [glob $src_root/output/target/lib/libgfortran*]} ] {
+if [ catch {eval exec rm [glob $src_root/output/target/usr/lib/libgfortran*]} ] {
     send_user "$errorInfo\n"
 }
 
@@ -194,7 +204,7 @@ source make_kernel.exp
 
 # Reverse patch of partition
 cd $kernel_root
-if [ catch {exec patch -p0 -R < $src_root/testsuites/xip/partition.patch} ] {
+if [ catch {exec patch -p1 -R < $src_root/testsuites/xip/partition.patch} ] {
     send_user "$errorInfo\n"
     exit
 }
