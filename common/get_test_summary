@@ -70,8 +70,8 @@ do
     result=FAIL
     case_name=${build_file/_kernel_log/}
 
-    # delete control characters: ^H ^Q ^X ^[ ; turn ^M to \n
-    err_msg=`tail -n 30 $build_file | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g' | tr -d "\010" | tr -d "\021" | tr -d "\030" | tr -d "\033" | tr -d "\r"`
+    # delete control characters: ^G ^H ^Q ^X ^[ ; turn ^M to \n
+    err_msg=`tail -n 30 $build_file | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g' | tr -d "\007" | tr -d "\010" | tr -d "\021" | tr -d "\030" | tr -d "\033" | tr -d "\r"`
 
     ((fail_num += 1))
     gen_testcase "$result" "$class_name" "$case_name" "$test_time" "$result_xml" "$err_msg"
@@ -112,8 +112,8 @@ do
     case_name=${test_log/_test_log/}
     test_time=`grep -e "Test Period is: [0-9]* seconds" $test_log  --binary-files=text | awk 'BEGIN { FS="[ ]" } {print $4}'`
 
-    # delete control characters: ^H ^Q ^X ^[ ; turn ^M to \n
-    err_msg=`tail -n 20 $test_log | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g' | tr -d "\010" | tr -d "\021" | tr -d "\030" | tr -d "\033" | tr -d "\r"`
+    # delete control characters: ^G ^H ^Q ^X ^[ ; turn ^M to \n
+    err_msg=`tail -n 20 $test_log | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g' | tr -d "\007" | tr -d "\010" | tr -d "\021" | tr -d "\030" | tr -d "\033" | tr -d "\r"`
 
     ((fail_num += 1))
     gen_testcase "$result" "$class_name" "$case_name" "$test_time" "$result_xml" "$err_msg"
