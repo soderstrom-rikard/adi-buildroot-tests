@@ -79,6 +79,10 @@ while 1 {
             }
         }
 
+        -re "BSD Process Accounting.*BSD_PROCESS_ACCT.*\\\[.*]" {
+            send "Y\r"
+        }
+
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
             send "\r"
         }
