@@ -95,7 +95,8 @@ proc reset_board {} {
    global spawn_id
    global timeout
    global LTP_SCRIPT_DIR
-   global sudo_password
+   global test_password
+   global root_password
 
    if { $output_pin == 0 } {
       send "reboot\r"
@@ -111,8 +112,11 @@ proc reset_board {} {
       }
       while 1 {
          expect {
-            -re "\[Pp]assword.*:" {
-               send -r "$sudo_password\r"
+            -re "root.*password:" {
+               send -r "$root_password\r"
+            }
+            -re "password.*test:" {
+               send -r "$test_password\r"
             }
             timeout {
                report "ERROR: Failed to reset target board with reset script"
@@ -2375,7 +2379,8 @@ set skip_manual     $PARAM_OFF
 set logfile         "$LTP_LOG_DIR/$argv0-[exec date +%b-%d-%G-%H-%M]-detailed-log"
 set summary_logfile "$LTP_LOG_DIR/$argv0-[exec date +%b-%d-%G-%H-%M]-summary-log"
 set compare_file    "/dev/null"
-set sudo_password   "test"
+set test_password   "test"
+set root_password   "blackfin"
 set step_sequence_number    1
 set test_started "test not started"
 
