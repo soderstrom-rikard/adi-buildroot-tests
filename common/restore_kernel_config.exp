@@ -6,7 +6,7 @@ if { ![file exists $src_root/config.kernel.policy] } {
 }
 
 cd $src_root
-set timeout 300
+set timeout 1000
 spawn make linux-config
 while 1 {
     expect {
