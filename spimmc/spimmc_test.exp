@@ -58,15 +58,16 @@ while 1 {
     }
 }
 
+# format fat 32 file system
 incr case_num
 set timeout 30
-send "time mkdosfs -F 32 /dev/$mmc_dev\r"
+send "time mkdosfs /dev/$mmc_dev\r"
 while 1 {
     expect {
-        -re "No such .*$kernel_prompt" {
+        -re "(mkdosfs:|No such).*$kernel_prompt" {
             case_fail $case_num
         }
-        -re "\[0-9]\.\[0-9]+.*$kernel_prompt" {
+        -re $kernel_prompt {
             send_user "mkdosfs done, test pass\n"
             case_pass $case_num
             break
@@ -170,60 +171,132 @@ while 1 {
 }
 
 step "Create 2 partitions in MMC/SD"
-set timeout 10
+incr case_num
+set timeout 40
 send "fdisk /dev/$mmc_dev\r"
-expect -re "Command.*:"
-send "n\r"
-expect -re "primary partition.*"
-send "p\r"
-expect -re "Partition number.*"
-send "1\r"
-expect -re "First cylinder.*"
-send "\r"
-expect -re "Last cylinder.*"
-send "$NUM_CYLINDER\r"
-expect -re "Command.*"
-send "n\r"
-expect -re "primary partition.*"
-send "p\r"
-expect -re "Partition number.*"
-send "2\r"
-expect -re "First cylinder.*"
-send "\r"
-expect -re "Last cylinder.*"
-send "\r"
-expect -re "Command.*"
-send "w\r"
-expect -re $kernel_prompt
+while 1 {
+    expect {
+        -re "(fdisk:|\[eE]rror|\[fF]ail).*$kernel_prompt" {
+            case_fail $case_num
+        }
+        -re "Command.*:" {
+            send "n\r"
+            expect -re "primary partition \\\(1-4\\\)"
+            send "p\r"
+            expect -re "Partition number \\\(1-4\\\):"
+            send "1\r"
+            expect -re "First cylinder.*:"
+            send "\r"
+            expect -re "Last cylinder.*:"
+            send "$NUM_CYLINDER\r"
+            expect -re "Command.*:"
+            send "w\r"
+            while 1 {
+                expect {
+                    -re "kernel still uses the old table|\[eE]rror|\[fF]ail" {
+                        case_fail $case_num
+                    }
+                    -re "re-read partition table.*$mmc_dev: p1.*$kernel_prompt" {
+                        case_pass $case_num
+                        break
+                    }
+                    timeout {
+                        case_fail $case_num
+                    }
+                }
+            }
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
 
-set timeout 10
+incr case_num
+set timeout 40
 send "fdisk /dev/$mmc_dev\r"
-expect -re "Command.*:"
-send "t\r"
-expect -re "Partition number.*"
-send "2\r"
-expect -re "Hex code.*:"
-send "b\r"
-expect -re "Changed system type.*:"
-send "w\r"
-expect -re $kernel_prompt
+while 1 {
+    expect {
+        -re "(fdisk:|\[eE]rror|\[fF]ail).*$kernel_prompt" {
+            case_fail $case_num
+        }
+        -re "Command.*:" {
+            send "n\r"
+            expect -re "primary partition \\\(1-4\\\)"
+            send "p\r"
+            expect -re "Partition number \\\(1-4\\\):"
+            send "2\r"
+            expect -re "First cylinder.*:"
+            send "\r"
+            expect -re "Last cylinder.*:"
+            send "\r"
+            expect -re "Command.*:"
+            send "w\r"
+            while 1 {
+                expect {
+                    -re "kernel still uses the old table|\[eE]rror|\[fF]ail" {
+                        case_fail $case_num
+                    }
+                    -re "re-read partition table.*$mmc_dev: p1 p2.*$kernel_prompt" {
+                        case_pass $case_num
+                        break
+                    }
+                    timeout {
+                        case_fail $case_num
+                    }
+                }
+            }
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
+
+incr case_num
+set timeout 40
+send "fdisk /dev/$mmc_dev\r"
+while 1 {
+    expect {
+        -re "(fdisk:|\[eE]rror|\[fF]ail).*$kernel_prompt" {
+            case_fail $case_num
+        }
+        -re "Command.*:" {
+            send "t\r"
+            expect -re "Partition number \\\(1-4\\\):"
+            send "2\r"
+            expect -re "Hex code.*:"
+            send "L\r"
+            expect -re "Hex code.*:"
+            send "b\r"
+            expect -re "Changed system type.*:"
+            send "w\r"
+            while 1 {
+                expect {
+                    -re "kernel still uses the old table|\[eE]rror|\[fF]ail" {
+                        case_fail $case_num
+                    }
+                    -re "re-read partition table.*$mmc_dev: p1 p2.*$kernel_prompt" {
+                        case_pass $case_num
+                        break
+                    }
+                    timeout {
+                        case_fail $case_num
+                    }
+                }
+            }
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
 
 send_user "Creat 2 partitions done\n"
 
-#incr case_num
-#set timeout 5
-#send "mdev -s\r"
-#while 1 {
-#    expect {
-#        -re "$kernel_prompt" {
-#            case_pass $case_num
-#            break
-#        }
-#        timeout {
-#            case_fail $case_num
-#        }
-#    }
-#}
 sleep 5
 
 incr case_num
@@ -299,7 +372,7 @@ set timeout 90
 send "mke2fs /dev/$mmc_dev1\r"
 while 1 {
     expect {
-        -re "Filesystem label.*$kernel_prompt" {
+        -re "Superblock backups stored on blocks:.*$kernel_prompt" {
             send_user "mke2fs done, test pass\n"
             case_pass $case_num
             break
@@ -341,10 +414,10 @@ set timeout 30
 send "time mkdosfs -F 32 /dev/$mmc_dev2\r"
 while 1 {
     expect {
-        -re "No such .*$kernel_prompt" {
+        -re "(mkdosfs:|No such).*$kernel_prompt" {
             case_fail $case_num
         }
-        -re "\[0-9]\.\[0-9]+.*$kernel_prompt" {
+        -re $kernel_prompt {
             send_user "mkdosfs done, test pass\n"
             case_pass $case_num
             break
@@ -560,11 +633,9 @@ while 1 {
     expect {
         -re "/dev/$mmc_dev2" {
             send "d\r"
-            expect -re "Partition number.*"
-            send "2\r"
-            expect -re "Command.*"
+            expect -re "Selected partition 2.*Command.*:"
             send "w\r"
-            expect -re $kernel_prompt
+            expect -re "re-read partition table.*$kernel_prompt"
             break
         }
         eof {
@@ -578,23 +649,47 @@ while 1 {
     }
 }
 
-
-set timeout 10
+incr case_num
+set timeout 40
 send "fdisk /dev/$mmc_dev\r"
-expect -re "Command.*:"
-send "n\r"
-expect -re "primary partition.*"
-send "p\r"
-expect -re "Partition number.*"
-send "1\r"
-expect -re "First cylinder.*"
-send "\r"
-expect -re "Last cylinder.*"
-send "\r"
-expect -re "Command.*"
-send "w\r"
-expect -re $kernel_prompt
-
+while 1 {
+    expect {
+        -re "(fdisk:|\[eE]rror|\[fF]ail).*$kernel_prompt" {
+            case_fail $case_num
+        }
+        -re "Command.*:" {
+            send "n\r"
+            expect -re "primary partition \\\(1-4\\\)"
+            send "p\r"
+            expect -re "Partition number \\\(1-4\\\):"
+            send "1\r"
+            expect -re "First cylinder.*:"
+            send "\r"
+            expect -re "Last cylinder.*:"
+            send "\r"
+            expect -re "Command.*:"
+            send "w\r"
+            while 1 {
+                expect {
+                    -re "kernel still uses the old table|\[eE]rror|\[fF]ail" {
+                        case_fail $case_num
+                    }
+                    -re "re-read partition table.*$mmc_dev: p1.*$kernel_prompt" {
+                        case_pass $case_num
+                        break
+                    }
+                    timeout {
+                        case_fail $case_num
+                    }
+                }
+            }
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
 send_user "Whole card is created as ext2 partition\n"
 
 incr case_num
@@ -617,7 +712,7 @@ set timeout 90
 send "mke2fs /dev/$mmc_dev1\r"
 while 1 {
     expect {
-        -re "Filesystem label.*$kernel_prompt" {
+        -re "Superblock backups stored on blocks:.*$kernel_prompt" {
             send_user "mke2fs done, test pass\n"
             case_pass $case_num
             break
@@ -804,29 +899,55 @@ while 1 {
     }
 }
 
-set timeout 10
+incr case_num
+set timeout 40
 send "fdisk /dev/$mmc_dev\r"
-expect -re "Command.*:"
-send "n\r"
-expect -re "primary partition.*"
-send "p\r"
-expect -re "Partition number.*"
-send "1\r"
-expect -re "First cylinder.*"
-send "\r"
-expect -re "Last cylinder.*"
-send "\r"
-expect -re "Command.*"
-send "t\r"
-expect -re "Partition number.*"
-send "1\r"
-expect -re "Hex code.*:"
-send "83\r"
-expect -re "Changed system type.*:"
-send "p\r"
-expect -re "Command.*"
-send "w\r"
-expect -re $kernel_prompt
+while 1 {
+    expect {
+        -re "(fdisk:|\[eE]rror|\[fF]ail).*$kernel_prompt" {
+            case_fail $case_num
+        }
+        -re "Command.*:" {
+            send "n\r"
+            expect -re "primary partition \\\(1-4\\\)"
+            send "p\r"
+            expect -re "Partition number \\\(1-4\\\):"
+            send "1\r"
+            expect -re "First cylinder.*:"
+            send "\r"
+            expect -re "Last cylinder.*:"
+            send "\r"
+            expect -re "Command.*:"
+            send "t\r"
+            expect -re "Partition number \\\(1-4\\\):"
+            send "1\r"
+            expect -re "Hex code.*:"
+            send "83\r"
+            expect -re "Changed system type.*:"
+            send "p\r"
+            expect -re "Command.*"
+            send "w\r"
+            while 1 {
+                expect {
+                    -re "kernel still uses the old table|\[eE]rror|\[fF]ail" {
+                        case_fail $case_num
+                    }
+                    -re "re-read partition table.*$mmc_dev: p1.*$kernel_prompt" {
+                        case_pass $case_num
+                        break
+                    }
+                    timeout {
+                        case_fail $case_num
+                    }
+                }
+            }
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
 send_user "Whole card is created as ext2\n"
 
 
@@ -850,7 +971,7 @@ set timeout 120
 send "time mke2fs /dev/$mmc_dev1\r"
 while 1 {
     expect {
-        -re "Filesystem label.*$kernel_prompt" {
+        -re "Superblock backups stored on blocks:.*$kernel_prompt" {
             send_user "mke2fs done, test pass\n"
             case_pass $case_num
             break
