@@ -112,7 +112,7 @@ proc pm_test_case1_reset {} {
     }
 
     set timeout 5
-    expect -re "(Full|lpa 0x41E1|SD card at address.*)\r\n"
+    expect -re "(Full|lpa 0x41E1)\r\n"
 
     incr case_num
     set timeout 10
@@ -211,6 +211,7 @@ proc pm_test_case2_reset {} {
     set timeout 5
     expect -re "Full\r\n|lpa 0x41E1\r\n"
 }
+
 proc pm_test_case1_rtcwake {} {
     global case_num
     global kernel_prompt
@@ -225,7 +226,7 @@ proc pm_test_case1_rtcwake {} {
     send "\nrtcwake -s $sleep_time -m $pm_state\r"
     while 1 {
         expect {
-            -re "$sleep_pattern.*$wakeup_pattern" {
+            -re "$sleep_pattern.*$wakeup_pattern.*$kernel_prompt" {
                 case_pass $case_num
                 break
             }
@@ -238,7 +239,7 @@ proc pm_test_case1_rtcwake {} {
     }
 
     set timeout 5
-    expect -re "(Full|lpa 0x41E1|SD card at address.*)\r\n"
+    expect -re "(Full|lpa 0x41E1)\r\n"
 
     incr case_num
     set timeout 10
@@ -285,7 +286,7 @@ proc pm_test_case2_rtcwake {} {
     send "\nrtcwake -s $sleep_time -m $pm_state\r"
     while 1 {
         expect {
-            -re "$sleep_pattern.*$wakeup_pattern" {
+            -re "$sleep_pattern.*$wakeup_pattern.*$kernel_prompt" {
                 case_pass $case_num
                 break
             }
