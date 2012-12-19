@@ -61,7 +61,7 @@ while 1 {
 # format fat 32 file system
 incr case_num
 set timeout 30
-send "time mkdosfs /dev/$mmc_dev\r"
+send "time mkdosfs -F 32 /dev/$mmc_dev\r"
 while 1 {
     expect {
         -re "(mkdosfs:|No such).*$kernel_prompt" {
@@ -885,16 +885,26 @@ while 1 {
     expect {
         -re "/dev/$mmc_dev1" {
             send "d\r"
-            expect -re "Partition number.*"
-            send "1\r"
-            expect -re "Command.*"
-            break
-        }
-        eof {
+            expect -re "Selected partition 1.*Command.*:"
+            send "w\r"
+            while 1 {
+                expect {
+                    -re "kernel still uses the old table|\[eE]rror|\[fF]ail" {
+                        case_fail $case_num
+                    }
+                    -re "re-read partition table.*$mmc_dev:.*$kernel_prompt" {
+                        case_pass $case_num
+                        break
+                    }
+                    timeout {
+                        case_fail $case_num
+                    }
+                }
+            }
             break
         }
         timeout {
-            break
+            case_fail $case_num
         }
     }
 }
@@ -950,7 +960,7 @@ while 1 {
 }
 send_user "Whole card is created as ext2\n"
 
-
+sleep 5
 incr case_num
 set timeout 5
 send "ls /dev/$mmc_dev*\r"
