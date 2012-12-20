@@ -28,6 +28,13 @@ cd $src_root/testsuites/common
 step "Make default config"
 source  make_default_config.exp
 
+if { $board_type == "BF548-EZKIT" } {
+# enable for mount/umount test
+    cd $src_root/testsuites/common
+    step "Kernel config for specified usb host"
+    source_args config_usb.exp musb dma
+}
+
 cd $src_root/testsuites/common
 source  config_cut_app.exp
 
