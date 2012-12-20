@@ -270,9 +270,11 @@ proc recover {} {
       }
 
       if { $state_variable == 4 } {
-        set timeout 5
+        set timeout 8
         expect -nocase -re "up.*full"
+        expect -nocase -re "sdb1.*Attached SCSI removable disk"
 
+        set timeout 5
 	send "export PATH=\$PATH:/bin\r"
 	expect -re $ltp_test_prompt
 	send "export TMP=/tmp\r"
@@ -420,9 +422,11 @@ proc force_reboot {} {
         }
 
         if { $state_variable == 4 } {
-            set timeout 5
+            set timeout 8
             expect -nocase -re "up.*full"
+            expect -nocase -re "sdb1.*Attached SCSI removable disk"
 
+            set timeout 5
             send "export PATH=\$PATH:/bin\r"
             expect -re $ltp_test_prompt
             send "export TMP=/tmp\r"
@@ -2690,9 +2694,10 @@ test_cleanup
 set timeout 30
 expect -nocase -re "up.*full"
 
-set timeout 5
+set timeout 8
 send -s "ifconfig $eth_dev $ipaddr up\r"
 expect -nocase -re "up.*full"
+expect -nocase -re "sdb1.*Attached SCSI removable disk"
 
 step "additional setup for tests"
 if [ catch {exec rcp $LTP_SCRIPT_DIR/config/passwd root@$ipaddr:/etc} ] {
@@ -2716,6 +2721,7 @@ if [ catch {exec rcp $LTP_TESTCASES_DIR/test3 root@$ipaddr:/bin} ] {
     send_user "$errorInfo\n"
 }
 
+set timeout 5
 send "export PATH=\$PATH:/bin\r"
 expect -re $ltp_test_prompt
 send "export TMP=/tmp\r"
