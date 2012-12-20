@@ -62,12 +62,35 @@ send_user "\n########## Test ethernet with $test_dev ##########\n"
 
 step "Start testing"
 
+set timeout 5
+
+spawn /bin/sh
+expect -re  $sh_prompt
+send -s  "ps aux | grep netserver | grep -v grep | head -1 \r"
+expect "\r"
+while 1 {
+   expect {
+      "netserver" {
+        break
+        }
+
+      timeout {
+        send -s  "netserver \r"
+        expect "Starting netserver"
+        break
+        }
+     }
+}
+
+expect -re  $sh_prompt
+set netserver_id $spawn_id
+set spawn_id $kermit_spawn_id
+
 set test_time  600
 set TransRate  0
 set Throughput 0
 
 incr case_num
-set timeout 5
 send "ifconfig $test_dev $test_ip up\r"
 while 1 {
     expect {
