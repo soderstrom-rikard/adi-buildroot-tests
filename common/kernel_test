@@ -1092,8 +1092,7 @@ if [ ${AUTO_RUN_STATUS[$((n+8))]} -eq 1 ] ; then
             cd $TESTSUITES_DIR/$OTG_mode
 
             if [ $OTG_mode = "usbhost" ] ; then
-                ./usbhost_test.exp $BOARD_TYPE otg >/dev/null 2>&1
-                mv usbhost_otg_test_log usbotg_host_${config}_test_log
+                ./usbhost_test.exp $BOARD_TYPE otg $config >/dev/null 2>&1
             elif [ $OTG_mode = "usbdev" ] ; then
                 ./gadget_zero_test.exp $BOARD_TYPE $config >/dev/null 2>&1
                 mv gadget_zero_test_log usbotg_dev_${config}_test_log

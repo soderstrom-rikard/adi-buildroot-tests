@@ -14,19 +14,26 @@
 source ../common/kernel_config.exp
 
 if { $argc < 2} {
-    puts "Please input: board_type, usb_driver(usbhost_isp1362, usbhost_sl811, usbhost_isp1760 or musb)\n"
-    puts "If musb is used, please also input: musb_mode(dma or pio)\n"
+    puts "Please input: board_type, usb_driver(usbhost_isp1362, usbhost_sl811, usbhost_isp1760, musb or otg)\n"
+    puts "If musb or otg is used, please also input: musb_mode(dma or pio)\n"
     exit
 }
 set usb_driver [lindex $argv 1]
 
-if { $usb_driver == "musb" } {
+if { $usb_driver == "musb" || $usb_driver == "otg" } {
     if { $argc > 2 } {
         set musb_mode [lindex $argv 2]
     } else {
         set musb_mode "dma"
     }
-    set log_name usbhost_musb_${musb_mode}_test_log
+
+    if { $usb_driver == "musb" } {
+        set log_name usbhost_musb_${musb_mode}_test_log
+    }
+
+    if { $usb_driver == "otg" } {
+        set log_name usbotg_host_${musb_mode}_test_log
+    }
 } else {
     set log_name ${usb_driver}_test_log
 }
