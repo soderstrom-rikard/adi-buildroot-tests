@@ -38,7 +38,7 @@ source ../common/kernel_boot.exp
 set sleep_time 15
 set wakeup_fail 0
 set sleep_pattern "Syncing filesystems.*Freezing user space processes \.\.\. \\\(elapsed.*seconds\\\) done\.\r\nFreezing remaining freezable tasks \.\.\. \\\(elapsed.*seconds\\\) done\.\r\nSuspending console\\\(s\\\) \\\(use no_console_suspend to debug\\\)"
-set wakeup_pattern "Restarting tasks.*done.*Attached SCSI removable disk"
+set wakeup_pattern "Restarting tasks.*done"
 
 
 proc pm_test_case1_reset {} {
@@ -94,6 +94,12 @@ proc pm_test_case1_reset {} {
     incr case_num
     while 1 {
         expect {
+            -nocase -re "fail|error" {
+                expect -re $kernel_prompt
+                send_user "Test case 1: Wake up fail\n"
+                incr wakeup_fail
+                break
+            }
             -re $wakeup_pattern {
                 case_pass $case_num
                 break
@@ -105,6 +111,10 @@ proc pm_test_case1_reset {} {
             }
         }
     }
+
+    set timeout 10
+    expect -re $kernel_prompt
+    expect -re "Attached SCSI removable disk"
 
     sleep 5
     incr case_num
@@ -241,6 +251,12 @@ proc pm_test_case1_rtcwake {} {
     send "\nrtcwake -s $sleep_time -m $pm_state\r"
     while 1 {
         expect {
+            -nocase -re "fail|error" {
+                expect -re $kernel_prompt
+                send_user "Test case 1: Wake up fail\n"
+                incr wakeup_fail
+                break
+            }
             -re "$sleep_pattern.*$wakeup_pattern" {
                 case_pass $case_num
                 break
@@ -253,10 +269,14 @@ proc pm_test_case1_rtcwake {} {
         }
     }
 
-    sleep 5
+    set timeout 10
+    expect -re $kernel_prompt
+    expect -re "Attached SCSI removable disk"
+
     incr case_num
-    set timeout 5
-    send "mount -t ext2 /dev/$usb_dev1 /mnt\r"
+    set timeout 60
+    send "time mount -t ext2 /dev/$usb_dev1 /mnt\r"
+    send "\r"
     while 1 {
         expect {
             -re "(mount:|\[fF]ail|\[eE]rror).*$kernel_prompt" {
