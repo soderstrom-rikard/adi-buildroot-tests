@@ -27,6 +27,15 @@ while 1 {
             continue
         }
 
+# Disable unrelated drivers so it won't interfere with wake up message
+        -re "Serial ATA and Parallel ATA drivers.*ATA.*\\\[.*]" {
+            send "N\r"
+        }
+
+        -re "MMC/SD/SDIO card support \\\(MMC\\\).*\\\[.*]" {
+            send "N\r"
+        }
+
         -re "Virtual terminal.*VT.*\\\[.*]" {
             send "N\r"
         }
