@@ -1217,50 +1217,6 @@ if [ ${AUTO_RUN_STATUS[$((n+12))]} -eq 1 ] ; then
 
 fi
 
-
-
-################# TEST KERNEL BOOT AND MOUNT JFFS2 FS FROM SPI FLASH ########################
-
-if [ ${AUTO_RUN_STATUS[$((n+6))]} -eq 1  ] ; then
-    echo  "Testing kernel boot and mount jffs2 file system from SPI flash ..."
-    # Please set the chip selection to the 3rd one on bf533 and the 2rd on bf537 board.
-
-    rm -fr /tftpboot/uImage.snormtd* /tftpboot/vmImage
-
-    use_output_bak
-    cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
-
-    cd $TESTSUITES_DIR/${AUTO_TESTCASE[$((n+6))]}
-    ./build_${AUTO_TESTCASE[$((n+6))]}_kernel.exp $BOARD_TYPE >/dev/null 2>&1
-
-    if [ ! -f $IMAGE_DIR/uImage ] || [ ! -f $IMAGE_DIR/vmImage ] ; then
-        echo "$0:   Error, failed."
-        tail -50 ./build_snormtd*kernel_log
-    else
-        ./${AUTO_TESTCASE[$((n+6))]}_test.exp $BOARD_TYPE >/dev/null 2>&1
-        sleep 30
-        ./spi_flash_images.exp $BOARD_TYPE >/dev/null 2>&1
-        if [ $? == 0 ] ; then
-            sleep 30
-            ./snormtd_reboot_test.exp $BOARD_TYPE >/dev/null 2>&1
-        fi
-    fi
-
-    copy_image_config "snormtd"
-    mv $IMAGE_DIR/vmImage $THIS_LOG/vmImage.snormtd
-    mv $TESTSUITES_DIR/${AUTO_TESTCASE[$((n+6))]}/*_log  $THIS_LOG
-
-    echo  "End testing snormtd..."
-    sleep 10
-
-    if [ $RESET_BOARD -eq 1 ] ; then
-        cd $TESTSUITES_DIR/common
-        ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
-        sleep 10
-    fi
-
-fi
-
 #############################################################################################
 #################### TEST SPI FLASH WITH DIFFERENT CONFIGS ##################################
 
@@ -1314,6 +1270,48 @@ fi
 
   done
 
+
+################# TEST KERNEL BOOT AND MOUNT JFFS2 FS FROM SPI FLASH ########################
+
+if [ ${AUTO_RUN_STATUS[$((n+6))]} -eq 1  ] ; then
+    echo  "Testing kernel boot and mount jffs2 file system from SPI flash ..."
+    # Please set the chip selection to the 3rd one on bf533 and the 2rd on bf537 board.
+
+    rm -fr /tftpboot/uImage.snormtd* /tftpboot/vmImage
+
+    use_output_bak
+    cp $SRC_ROOT/config.user.policy $SRC_ROOT/.config
+
+    cd $TESTSUITES_DIR/${AUTO_TESTCASE[$((n+6))]}
+    ./build_${AUTO_TESTCASE[$((n+6))]}_kernel.exp $BOARD_TYPE >/dev/null 2>&1
+
+    if [ ! -f $IMAGE_DIR/uImage ] || [ ! -f $IMAGE_DIR/vmImage ] ; then
+        echo "$0:   Error, failed."
+        tail -50 ./build_snormtd*kernel_log
+    else
+        ./${AUTO_TESTCASE[$((n+6))]}_test.exp $BOARD_TYPE >/dev/null 2>&1
+        sleep 30
+        ./spi_flash_images.exp $BOARD_TYPE >/dev/null 2>&1
+        if [ $? == 0 ] ; then
+            sleep 30
+            ./snormtd_reboot_test.exp $BOARD_TYPE >/dev/null 2>&1
+        fi
+    fi
+
+    copy_image_config "snormtd"
+    mv $IMAGE_DIR/vmImage $THIS_LOG/vmImage.snormtd
+    mv $TESTSUITES_DIR/${AUTO_TESTCASE[$((n+6))]}/*_log  $THIS_LOG
+
+    echo  "End testing snormtd..."
+    sleep 10
+
+    if [ $RESET_BOARD -eq 1 ] ; then
+        cd $TESTSUITES_DIR/common
+        ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
+        sleep 10
+    fi
+
+fi
 
 ######################################### TEST LTP #########################################
 
