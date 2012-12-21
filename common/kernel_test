@@ -614,14 +614,6 @@ do
             audio_dev="audio_ad1836"
         fi
 
-        if [ ${AUTO_RUN_STATUS[86]} -eq 1  ] ; then
-            usb_dev="usbhost_isp1362"
-        elif [ ${AUTO_RUN_STATUS[87]} -eq 1  ] ; then
-            usb_dev="usbhost_isp1760"
-        elif [ ${AUTO_RUN_STATUS[99]} -eq 1  ] ; then
-            usb_dev="usbhost_sl811"
-        fi
-
         if [ ${AUTO_TESTCASE[$i]} == "ethernet_in_buffer" ] ; then
             ./build_ethernet_kernel.exp $BOARD_TYPE in_buffer >/dev/null 2>&1
         elif [ `echo ${AUTO_TESTCASE[$i]}|grep audio_` ] ; then
@@ -632,8 +624,12 @@ do
             ./build_power_audio_kernel.exp $BOARD_TYPE $audio_dev > /dev/null 2>&1
         elif [ ${AUTO_TESTCASE[$i]} == "multichannel" ] ; then
             ./build_multichannel_kernel.exp $BOARD_TYPE $audio_dev >/dev/null 2>&1
-        elif [ `echo ${AUTO_TESTCASE[$i]}|grep usbhost_` ] ; then
-            ./build_usbhost_kernel.exp $BOARD_TYPE $usb_dev >/dev/null 2>&1
+        elif [ ${AUTO_TESTCASE[$i]} == "usbhost_isp1362" ] ; then
+            ./build_usbhost_kernel.exp $BOARD_TYPE usbhost_isp1362 >/dev/null 2>&1
+        elif [ ${AUTO_TESTCASE[$i]} == "usbhost_isp1760" ] ; then
+            ./build_usbhost_kernel.exp $BOARD_TYPE usbhost_isp1760 >/dev/null 2>&1
+        elif [ ${AUTO_TESTCASE[$i]} == "usbhost_sl811" ] ; then
+            ./build_usbhost_kernel.exp $BOARD_TYPE usbhost_sl811 >/dev/null 2>&1
         elif [ ${AUTO_TESTCASE[$i]} == "kgdb_uart" ] ; then
             ./build_kgdb_kernel.exp $BOARD_TYPE uart >/dev/null 2>&1
         elif [ ${AUTO_TESTCASE[$i]} == "kgdb_smp" ] ; then
@@ -702,8 +698,12 @@ do
                 else
                     ./${AUTO_TESTCASE[$i]}_test.exp $BOARD_TYPE mem >/dev/null 2>&1
                 fi
-            elif [ `echo ${AUTO_TESTCASE[$i]}|grep usbhost_` ] ; then
-                ./usbhost_test.exp $BOARD_TYPE $usb_dev >/dev/null 2>&1
+            elif [ ${AUTO_TESTCASE[$i]} == "usbhost_isp1362" ] ; then
+                ./usbhost_test.exp $BOARD_TYPE usbhost_isp1362 >/dev/null 2>&1
+            elif [ ${AUTO_TESTCASE[$i]} == "usbhost_isp1760" ] ; then
+                ./usbhost_test.exp $BOARD_TYPE usbhost_isp1760 >/dev/null 2>&1
+            elif [ ${AUTO_TESTCASE[$i]} == "usbhost_sl811" ] ; then
+                ./usbhost_test.exp $BOARD_TYPE usbhost_sl811 >/dev/null 2>&1
             elif [ ${AUTO_TESTCASE[$i]} == "kgdb_uart" ] ; then
                 ./kgdb_test.exp $BOARD_TYPE uart >/dev/null 2>&1
             elif [ ${AUTO_TESTCASE[$i]} == "kgdb_smp" ] ; then
