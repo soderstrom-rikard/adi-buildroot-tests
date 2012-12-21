@@ -52,6 +52,41 @@ while 1 {
     }
 }
 
+step "Make busybox config"
+cd $src_root
+set timeout 300
+spawn make busybox-config
+while 1 {
+    expect {
+        -nocase -re "\\\[\[^\r]*] (\\\(NEW\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+            continue
+        }
+
+        -re "taskset \\\(TASKSET\\\) \\\[.*]" {
+            send "Y\r"
+        }
+
+        "\\\(*) \\\[*]" {
+            sleep .01
+            send "\r"
+        }
+
+        -re "\[cC]hoice\\\[.*]:" {
+            send "\r"
+        }
+
+        eof {
+            send_user "\nEnd of configuration\n"
+            break
+        }
+
+        timeout {
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n\n"
+            exit
+        }
+    }
+}
+
 step "user space config"
 cd $src_root
 set timeout 300
@@ -64,10 +99,6 @@ while 1 {
 
         -re "pthread test.*BR2_PACKAGE_PTHREAD_TEST.*\\\[.*]" {
             send -s "Y\r"
-        }
-
-        -re "taskset.*BR2_PACKAGE_BUSYBOX_TASKSET.*\\\[.*]" {
-            send  "Y\r"
         }
 
         "\\\(*) \\\[*]" {
