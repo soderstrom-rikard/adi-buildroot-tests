@@ -10,11 +10,33 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+#if defined (BF537) || defined (BF533) || defined (BF527) || defined (BF526) || defined (BF518) || defined (BF538)
+#define L1_INST_TEST_ADDRESS       	0xFFA0A000
+#define L1_DATA_TEST_ADDRESS       	0xFF802000
+#endif
+
+#ifdef BF548
+#define L1_INST_TEST_ADDRESS       	0xFFA0A000
+#define L1_DATA_TEST_ADDRESS       	0xFF802000
+#define L2_TEST_ADDRESS    		0xFEB0A000
+#endif
+
+#ifdef BF561
+#define L1_INST_TEST_ADDRESS       	0xFFA0A000
+#define L1_DATA_TEST_ADDRESS       	0xFF802000
+#define COREB_L1_INST_TEST_ADDRESS     	0xFF60A000
+#define COREB_L1_DATA_TEST_ADDRESS     	0xFF402000
+#define L2_TEST_ADDRESS    		0xFEB0A000
+#endif
+
+#ifdef BF609
+
 #define L1_INST_TEST_ADDRESS       	0xFFA0A000
 #define L1_DATA_TEST_ADDRESS       	0xFF802000
 #define COREB_L1_INST_TEST_ADDRESS     	0xFF60A000
 #define COREB_L1_DATA_TEST_ADDRESS     	0xFF402000
 #define L2_TEST_ADDRESS    		0xC808A000
+#endif
 
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof(*arr))
 
@@ -102,7 +124,6 @@ int has_l2(void)
 	/* if the part does not have L2, then don't try to use it */
 	return WEXITSTATUS(system("grep -qs '^L2 SRAM[[:space:]]*:[[:space:]]*[1-9]' /proc/cpuinfo")) == 0;
 }
-
 int has_coreb(void)
 {
 	/* if the part does not have the 2nd core, then don't try to use it */
@@ -186,15 +207,24 @@ int sram_test(int size, char *sram_desc, int flags)
         //char *sram = sram_alloc(size, flags);
 
 	if (!strcmp(sram_desc,"COREB L1 INST")){
+        #if defined (BF561) || defined (BF609)
 		sram = (char *) COREB_L1_INST_TEST_ADDRESS; 
+        #endif
+		;
 	}else if (!strcmp(sram_desc,"COREB L1 DATA")){
+        #if defined (BF561) || defined (BF609)
 		sram = (char *) COREB_L1_DATA_TEST_ADDRESS; 
+        #endif
+		;
 	}else if (!strcmp(sram_desc,"L1 INST")){
 		sram = (char *) L1_INST_TEST_ADDRESS; 
 	}else if (!strcmp(sram_desc,"L1 DATA")){
 		sram = (char *) L1_DATA_TEST_ADDRESS; 
 	}else if (!strcmp(sram_desc,"L2")){
+        #if defined (BF561) || defined (BF609) || defined (BF548)
 		sram = (char *) L2_TEST_ADDRESS;
+        #endif
+		;
 	}
 
 	printf("TEST:  --- SRAM (%s) <-> SDRAM w/%i bytes ---\n", sram_desc, size);
@@ -320,15 +350,17 @@ int main(int argc, char *argv[])
 
 	TEST_RANGE(sml, sram_test, "L1 INST", L1_INST_SRAM);
 	TEST_RANGE(sml, sram_test, "L1 DATA", L1_DATA_SRAM);
+        #if defined (BF561) || defined (BF609) || defined (BF548)
 	if (has_l2())
 		TEST_RANGE(mid, sram_test, "L2", L2_SRAM);
+        #endif
 	TEST_RANGE(lrg, sdram_test);
-
+        #if defined (BF561) || defined (BF609)
 	if (has_coreb()) {
 	TEST_RANGE(sml, sram_test, "COREB L1 INST",0);
 	TEST_RANGE(sml, sram_test, "COREB L1 DATA",0);
 	}
-
+        #endif
 	if (ret)
 		printf("SUMMARY: %i tests failed\n", ret);
 	else
