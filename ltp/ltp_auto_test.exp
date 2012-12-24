@@ -1006,7 +1006,7 @@ proc run_LTP_test { filename command torun mode} {
        send "mke2fs /dev/sdb1\r"
        while 1 {
            expect {
-               -re "done.*done.*>" {
+               -re "Superblock backups stored on blocks.*$ltp_test_prompt" {
                    report "mke2fs OK"
                    break
                }
