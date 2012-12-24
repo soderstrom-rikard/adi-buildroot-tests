@@ -11,29 +11,29 @@
 #include <sys/wait.h>
 
 #if defined (BF537) || defined (BF533) || defined (BF527) || defined (BF526) || defined (BF518) || defined (BF538)
-#define L1_INST_TEST_ADDRESS       	0xFFA0A000
+#define L1_INST_TEST_ADDRESS       	0xFFA02000
 #define L1_DATA_TEST_ADDRESS       	0xFF802000
 #endif
 
 #ifdef BF548
-#define L1_INST_TEST_ADDRESS       	0xFFA0A000
+#define L1_INST_TEST_ADDRESS       	0xFFA02000
 #define L1_DATA_TEST_ADDRESS       	0xFF802000
 #define L2_TEST_ADDRESS    		0xFEB0A000
 #endif
 
 #ifdef BF561
-#define L1_INST_TEST_ADDRESS       	0xFFA0A000
+#define L1_INST_TEST_ADDRESS       	0xFFA02000
 #define L1_DATA_TEST_ADDRESS       	0xFF802000
-#define COREB_L1_INST_TEST_ADDRESS     	0xFF60A000
+#define COREB_L1_INST_TEST_ADDRESS     	0xFF602000
 #define COREB_L1_DATA_TEST_ADDRESS     	0xFF402000
 #define L2_TEST_ADDRESS    		0xFEB0A000
 #endif
 
 #ifdef BF609
 
-#define L1_INST_TEST_ADDRESS       	0xFFA0A000
+#define L1_INST_TEST_ADDRESS       	0xFFA02000
 #define L1_DATA_TEST_ADDRESS       	0xFF802000
-#define COREB_L1_INST_TEST_ADDRESS     	0xFF60A000
+#define COREB_L1_INST_TEST_ADDRESS     	0xFF602000
 #define COREB_L1_DATA_TEST_ADDRESS     	0xFF402000
 #define L2_TEST_ADDRESS    		0xC808A000
 #endif
