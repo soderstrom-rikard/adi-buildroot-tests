@@ -834,6 +834,7 @@ proc run_LTP_test { filename command torun mode} {
    global board_type
    global printk_level
    global errorInfo
+   global mpu_kernel
 
    step "Start to test \[$filename\]"
 
@@ -861,38 +862,16 @@ proc run_LTP_test { filename command torun mode} {
        }
    }
 
-   if { $filename == "write05" } {
-       set timeout 5
-       send "dmesg|grep -c NOMPU\r"
-       while 1 {
-           expect {
-               -re "\r\n\[1-9].*$kernel_prompt" {
-                   set result_flag $LTP_NA
-                   step "Test NA on non MPU kernel"
-                   return $result_flag
-               }
-               timeout {
-                   break
-               }
-           }
-       }
+   if { $filename == "write05" && $mpu_kernel == "no" } {
+       set result_flag $LTP_NA
+       step "Test NA on non mpu kernel"
+       return $result_flag
    }
 
-   if { $filename == "mmap03" } {
-       set timeout 5
-       send "dmesg|grep -c \"^MPU\"\r"
-       while 1 {
-           expect {
-               -re "\r\n\[1-9].*$kernel_prompt" {
-                   set result_flag $LTP_NA
-                   step "Test NA on MPU kernel"
-                   return $result_flag
-               }
-               timeout {
-                   break
-               }
-           }
-       }
+   if { $filename == "mmap03" && $mpu_kernel == "yes" } {
+       set result_flag $LTP_NA
+       step "Test NA on mpu kernel"
+       return $result_flag
    }
 
    if { $board_type != "BF533-EZKIT" && $filename == "munlock01" } {
@@ -2387,6 +2366,7 @@ set test_password   "test"
 set root_password   "blackfin"
 set step_sequence_number    1
 set test_started "test not started"
+set mpu_kernel "no"
 
 puts "\nThis program is used to run LTP test for uClinux kernel on a target board."
 
@@ -2809,6 +2789,21 @@ while 1 {
         timeout {
             send_user "get printk level timeout\r"
             set printk_level 7
+            break
+        }
+    }
+}
+
+set timeout 5
+send "dmesg|grep -c NOMPU\r"
+while 1 {
+    expect {
+        -re "\r\n\[1-9].*$kernel_prompt" {
+            set mpu_kernel "yes"
+            break
+        }
+        timeout {
+            set mpu_kernel "no"
             break
         }
     }
