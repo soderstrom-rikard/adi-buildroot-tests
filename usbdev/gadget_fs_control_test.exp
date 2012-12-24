@@ -312,7 +312,7 @@ set timeout 5
 send "cat /proc/bus/usb/devices\r"
 while 1 {
     expect {
-        -re "Manufacturer=Licensed to Code, LLC.*Product=My Source/Sink Product.*usbdev #" {
+        -re "Manufacturer=Licensed to Code, LLC.*Product=My Source/Sink Product.*usbdev.*#" {
             case_pass $case_num
             break
         }
@@ -325,6 +325,8 @@ while 1 {
 sleep 3
 incr case_num
 set timeout 5
+send "lsusb\r"
+expect "#"
 send "lsusb|grep -i \"Netchip Technology\"|awk '{print \$2\" \"\$4}'\r"
 while 1 {
     expect {
