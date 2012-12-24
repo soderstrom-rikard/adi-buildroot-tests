@@ -1,4 +1,13 @@
 #!/usr/bin/expect
+#
+# Build script for spi coexistence test.
+#
+# Usage:
+#   ./build_spi_coexistence_kernel.exp board_type
+#
+# Example:
+#   ./build_spi_coexistence_kernel.exp BF537-STAMP
+#
 
 source ../common/kernel_config.exp
 log_file [log_file_name "$argv0"]
@@ -23,18 +32,18 @@ cd $src_root/testsuites/common
 step "Make config for specified bfin format"
 source_args make_bfin-format.exp fdpic
 
-# Following make specific configuration for this case.
+cd $src_root/testsuites/common
+step "Release memory from user space"
+source config_cut_app.exp
+
+step "Make kernel config"
 cd $src_root
 set timeout 300
 spawn make linux-config
 while 1 {
     expect {
-        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+        -nocase -re "\\\[\[^\r]*] (\\\(NEW\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
-        }
-
-        -re "($anomalous_option) \\\[\[^\]]+/.]" {
-            send "\r"
         }
 
         -re "SPI bus lock.*SPI_BFIN_LOCK.*\\\[.*]" {
@@ -127,6 +136,10 @@ while 1 {
             send "N\r"
         }
 
+        -re "($anomalous_option) \\\[\[^\]]+/.]" {
+            send "\r"
+        }
+
         "\\\(*) \\\[*]" {
             sleep .01
             send "\r"
@@ -137,26 +150,66 @@ while 1 {
         }
 
         eof {
-            send_user "End of configuration"
+            send_user "\nEnd of configuration\n"
             break
         }
 
         timeout {
-            send_user "\n\nFATAL ERROR: config prompt timeout in make config"
-            break
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n\n"
+            exit
         }
     }
 }
 
+step "Make busybox config"
 cd $src_root
 set timeout 300
-set baud_rate_done_flag 0
-spawn make config
-
-#puts "Begin the interactive process of configuration"
+spawn make busybox-config
 while 1 {
     expect {
+        -nocase -re "\\\[\[^\r]*] (\\\(NEW\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+            continue
+        }
 
+        -re "fdisk \\\(FDISK\\\) \\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "mkfs_ext2 \\\(MKFS_EXT2\\\) \\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "mkfs_vfat \\\(MKFS_VFAT\\\) \\\[.*]" {
+            send "Y\r"
+        }
+
+        "\\\(*) \\\[*]" {
+            sleep .01
+            send "\r"
+        }
+
+        -re "\[cC]hoice\\\[.*]:" {
+            send "\r"
+        }
+
+        eof {
+            send_user "\nEnd of configuration\n"
+            break
+        }
+
+        timeout {
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n\n"
+            exit
+        }
+    }
+}
+
+step "user space config"
+cd $src_root
+set timeout 300
+spawn make config
+while 1 {
+    expect {
         -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
         }
@@ -164,32 +217,6 @@ while 1 {
         -re "Target ABI.*FDPIC.*FLAT.*FLAT_SEP_DATA.*SHARED_FLAT.*\\\[.*]" {
             send "1\r"
         }
-
-        -re "e2fsprogs.*BR2_PACKAGE_E2FSPROGS.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "e2fsck.*BR2_PACKAGE_E2FSPROGS_E2FSCK.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "mke2fs.*BR2_PACKAGE_E2FSPROGS_MKE2FS.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "badblocks.*BR2_PACKAGE_E2FSPROGS_BADBLOCKS.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "dosfstools.*BR2_PACKAGE_DOSFSTOOLS.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "mkdosfs.*BR2_PACKAGE_DOSFSTOOLS_MKDOSFS.*\\\[.*]" {
-            send "Y\r"
-        }
-
-#########
 
         -re "alsa-utils \\\(BR2_PACKAGE_ALSA_UTILS\\\) \\\[.*]" {
             send "Y\r"
@@ -225,58 +252,24 @@ while 1 {
         }
 
         eof {
-            puts "End of configuration"
+            send_user "\nEnd of configuration\n"
             break
         }
 
         timeout {
-            puts "\n\nFATAL ERROR: config prompt timeout in make config"
-        }
-    }
-}
-
-step "Make busybox config"
-cd $src_root
-set timeout 300
-spawn make busybox-config
-while 1 {
-    expect {
-        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
-            continue
-        }
-
-        -re "fdisk \\\(FDISK\\\) \\\[.*]" {
-            send "Y\r"
-        }
-
-        "\\\(*) \\\[*]" {
-            sleep .01
-            send "\r"
-        }
-
-        -re "\[cC]hoice\\\[.*]:" {
-            send "\r"
-        }
-
-        eof {
-            send_user "End of configuration"
-            break
-        }
-
-        timeout {
-            send_user "\n\nFATAL ERROR: config prompt timeout in make config"
-            break
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n\n"
+            exit
         }
     }
 }
 
 cd $src_root/testsuites/common
 step "Make"
-source  make_kernel.exp
+source make_kernel.exp
 
 cd $src_root/testsuites/common
-step "Copy linux"
-source   copy_image.exp
+step "Copy image"
+source copy_image.exp
 
 send_user "Ending $argv0\n"
 log_file
