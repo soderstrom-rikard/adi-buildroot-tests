@@ -17,63 +17,13 @@ cd $src_root/testsuites/common
 step "Make default config"
 source make_default_config.exp
 
-
-# Toolchain configuration has changed, so needs to put user space
-# configuration before kernel configuration
-step "user space config for prerequisite"
-cd $src_root
-set timeout 300
-spawn make config
-while 1 {
-    expect {
-        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
-            continue
-        }
-
-# e2fsprogs requires WCHAR
-        -re "Toolchain has WCHAR support.*BR2_TOOLCHAIN_EXTERNAL_WCHAR.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        "\\\(*) \\\[*]" {
-            sleep .01
-            send "\r"
-        }
-
-        -re "\[cC]hoice\\\[.*]:" {
-            send "\r"
-        }
-
-        eof {
-            send_user "\nEnd of configuration\n"
-            break
-        }
-
-        timeout {
-            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
-            exit
-        }
-    }
-}
-
-# Toolchain configuration has changed, so better to make clean
-# before kernel configuration.
-cd $src_root/testsuites/common
-step "Make clean"
-if { [source make_clean.exp] != 0 } {
-    send_user "\n\nFail to make clean. Exit!\n\n"
-    exit
-}
-
-# This step should be done after buildroot is cleaned
-# and user space config is configured.
-cd $src_root/testsuites/common
-step "Restore kernel config of policy"
-source restore_kernel_config.exp
-
 cd $src_root/testsuites/common
 step "Release L1 space in kernel"
 source config_release_L1.exp
+
+cd $src_root/testsuites/common
+step "Release memory from user space"
+source config_cut_app.exp
 
 step "Make kernel config"
 cd $src_root
@@ -149,7 +99,50 @@ while 1 {
         }
 
         timeout {
-            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n\n"
+            exit
+        }
+    }
+}
+
+step "Make busybox config"
+cd $src_root
+set timeout 300
+spawn make busybox-config
+while 1 {
+    expect {
+        -nocase -re "\\\[\[^\r]*] (\\\(NEW\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+            continue
+        }
+
+        -re "fdisk \\\(FDISK\\\) \\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "mkfs_ext2 \\\(MKFS_EXT2\\\) \\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "mkfs_vfat \\\(MKFS_VFAT\\\) \\\[.*]" {
+            send "Y\r"
+        }
+
+        "\\\(*) \\\[*]" {
+            sleep .01
+            send "\r"
+        }
+
+        -re "\[cC]hoice\\\[.*]:" {
+            send "\r"
+        }
+
+        eof {
+            send_user "\nEnd of configuration\n"
+            break
+        }
+
+        timeout {
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n\n"
             exit
         }
     }
@@ -163,22 +156,6 @@ while 1 {
     expect {
         -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
-        }
-
-        -re "e2fsprogs.*BR2_PACKAGE_E2FSPROGS.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "mke2fs.*BR2_PACKAGE_E2FSPROGS_MKE2FS.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "dosfstools.*BR2_PACKAGE_DOSFSTOOLS.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "mkdosfs.*BR2_PACKAGE_DOSFSTOOLS_MKDOSFS.*\\\[.*]" {
-            send "Y\r"
         }
 
         -re "bonnie\\\+\\\+.*BR2_PACKAGE_BONNIE.*\\\[.*]" {
@@ -200,7 +177,7 @@ while 1 {
         }
 
         timeout {
-            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n"
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n\n"
             exit
         }
     }
