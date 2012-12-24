@@ -12,7 +12,7 @@
 
 #if defined (BF537) || defined (BF533) || defined (BF527) || defined (BF526) || defined (BF518) || defined (BF538)
 #define L1_INST_TEST_ADDRESS       	0xFFA02000
-#define L1_DATA_TEST_ADDRESS       	0xFF802000
+#define L1_DATA_TEST_ADDRESS       	0xFF900000
 #endif
 
 #ifdef BF548
