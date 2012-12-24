@@ -101,7 +101,7 @@ if { $usb_driver == "usbhost_isp1362" || $usb_driver == "usbhost_sl811" || $usb_
             }
 
             -re "Dummy Delay ASYNC Memory Bank.*(\[0-9]+). Bank0.*DUMMY_DELAY_BANK0.*\[cC]hoice\\\[.*]" {
-                if { $usb_driver == "usbhost_isp1362" || $usb_driver == "usbhost_sl811" } {
+                if { $usb_driver == "usbhost_sl811" } {
                     send "$expect_out(1,string)\r"
                 } else {
                     send "\r"

@@ -1116,10 +1116,10 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
         incr case_num
 	if { $CUR_CPU == $CPU0_NUM } {
 		set CUR_CPU $CPU1_NUM
-		set CUR_CPU_MASK 0xe5040501
+		set CUR_CPU_MASK 0xe5040.01
 	} else {
 		set CUR_CPU $CPU0_NUM
-		set CUR_CPU_MASK 0xe5040500
+		set CUR_CPU_MASK 0xe5040.00
 	}
 	send "thread $CUR_CPU\r"
 	expect {
@@ -1156,10 +1156,10 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
         incr case_num
 	if { $CUR_CPU == $CPU0_NUM } {
 		set CUR_CPU $CPU1_NUM
-		set CUR_CPU_MASK 0xe5040501
+		set CUR_CPU_MASK 0xe5040.01
 	} else {
 		set CUR_CPU $CPU0_NUM
-		set CUR_CPU_MASK 0xe5040500
+		set CUR_CPU_MASK 0xe5040.00
 	}
 	send "thread $CUR_CPU\r"
 	expect {
@@ -1196,10 +1196,10 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
         incr case_num
 	if { $CUR_CPU == $CPU0_NUM } {
 		set CUR_CPU $CPU1_NUM
-		set CUR_CPU_MASK 0xe5040501
+		set CUR_CPU_MASK 0xe5040.01
 	} else {
 		set CUR_CPU $CPU0_NUM
-		set CUR_CPU_MASK 0xe5040500
+		set CUR_CPU_MASK 0xe5040.00
 	}
 	send "thread $CUR_CPU\r"
 	expect {
@@ -1662,10 +1662,10 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
         incr case_num
 	if { $CUR_CPU == $CPU0_NUM } {
 		set CUR_CPU $CPU1_NUM
-		set CUR_CPU_MASK 0xe5040501
+		set CUR_CPU_MASK 0xe5040.01
 	} else {
 		set CUR_CPU $CPU0_NUM
-		set CUR_CPU_MASK 0xe5040500
+		set CUR_CPU_MASK 0xe5040.00
 	}
 	send "thread $CUR_CPU\r"
 	expect {
@@ -1702,10 +1702,10 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
         incr case_num
 	if { $CUR_CPU == $CPU0_NUM } {
 		set CUR_CPU $CPU1_NUM
-		set CUR_CPU_MASK 0xe5040501
+		set CUR_CPU_MASK 0xe5040.01
 	} else {
 		set CUR_CPU $CPU0_NUM
-		set CUR_CPU_MASK 0xe5040500
+		set CUR_CPU_MASK 0xe5040.00
 	}
 	send "thread $CUR_CPU\r"
 	expect {
@@ -1742,10 +1742,10 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
         incr case_num
 	if { $CUR_CPU == $CPU0_NUM } {
 		set CUR_CPU $CPU1_NUM
-		set CUR_CPU_MASK 0xe5040501
+		set CUR_CPU_MASK 0xe5040.01
 	} else {
 		set CUR_CPU $CPU0_NUM
-		set CUR_CPU_MASK 0xe5040500
+		set CUR_CPU_MASK 0xe5040.00
 	}
 	send "thread $CUR_CPU\r"
 	expect {
