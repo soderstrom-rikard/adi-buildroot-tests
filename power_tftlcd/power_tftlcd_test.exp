@@ -42,7 +42,7 @@ set wakeup_pattern "Restarting tasks \.\.\. done"
 
 if { $pm_state == "mem" } {
     if { $board_type == "BF533-STAMP" || $board_type == "BF533-EZKIT" }  {
-        set wakeup_pattern "wakeup from.*rtcwake: short write.*$kernel_prompt"
+        set wakeup_pattern "wakeup from.*rtcwake: short write"
     }
 }
 
@@ -98,7 +98,7 @@ proc pm_test_case1_reset {} {
     incr case_num
     while 1 {
         expect {
-            -re $wakeup_pattern {
+            -re "$wakeup_pattern.*$kernel_prompt" {
 		expect -re "Up.*Full"
                 case_pass $case_num
                 break
@@ -196,7 +196,8 @@ proc pm_test_case2_reset {} {
     incr case_num
     while 1 {
         expect {
-            -re $wakeup_pattern {
+            -re "$wakeup_pattern.*$kernel_prompt" {
+		expect -re "Up.*Full"
                 case_pass $case_num
                 break
             }
@@ -540,7 +541,7 @@ while 1 {
             send_user "Uninstall module failed!\r"
             case_fail $case_num
         }
-        -re "\[uU]nregister.*LCD driver.*$kernel_prompt" {
+        -re $kernel_prompt {
             case_pass $case_num
             break
         }
