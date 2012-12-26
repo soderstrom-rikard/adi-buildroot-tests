@@ -26,29 +26,27 @@ set TEST_FAIL               "fail"
 step "MTD test"
 
 set case_num 0
-
 incr case_num
+
+set mtd_temp_result $TEST_FAIL
+set mtd_result $TEST_FAIL
 
 set timeout 5
 set mtd_temp_result $TEST_FAIL
 set mtd_result $TEST_FAIL
-#send -s "\r"
 send -s "cat /proc/mtd \r"
 while 1 {
     expect {
 
-       -re  "mtd(\[0-9]):\[^\r\n]*\\\(spi\\\)\[^spi]*$kernel_prompt" {
+       -re  "mtd(\[0-9]):\[^\r]*spi" {
                 set spi_rootfs_num $expect_out(1,string)
                 set mtd_temp_result $TEST_PASS
-                expect  -re $kernel_prompt
-                case_pass $case_num
-                break
+                send_user "\nspi_rootfs_num $spi_rootfs_num \n"
         }
 
-	timeout {
-                case_fail $case_num
-		exit
-	}
+        timeout {
+                break
+        }
     }
 }
 
