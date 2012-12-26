@@ -36,6 +36,8 @@ sleep 5
 send "cd\r"
 expect -re $kernel_prompt
 
+# Contents for manual test
+while 0 {
 step "Runtime configuration of keyboard/mouse/touchscreen for QT"
 puts "\nUSB keyboard/mouse/touchscreen may conflict for QT"
 puts "If you choose keyboard, press \"k\" and enter;"
@@ -101,6 +103,8 @@ if { $use_ts == "1" } {
         }
     }
 }
+}
+# End of contents for manual test
 
 step "Run QT example"
 incr case_num
