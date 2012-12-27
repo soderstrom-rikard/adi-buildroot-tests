@@ -532,6 +532,9 @@ while 1 {
     }
 }
 
+set timeout 5
+expect -re $kernel_prompt
+
 set timeout 20
 incr case_num
 send "modprobe -r $module\r"
