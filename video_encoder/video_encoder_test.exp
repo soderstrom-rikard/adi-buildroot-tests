@@ -32,7 +32,8 @@ expect -re $kernel_prompt
 step "Start testing"
 set case_num 0
 
-if [ catch {exec rcp adv7842.yuv root@$targetip:/} ] {
+# Prepare adv7842.yuv for auto test; in manual test, use video_decoder_adv7842.yuv from video_decoder test
+if [ catch {exec rcp $src_root/dl/adv7842.yuv root@$targetip:/} ] {
     send_user "FAIL: rcp test file to target\n"
     send_user "$errorInfo\n"
     case_fail $case_num
@@ -61,6 +62,8 @@ while 1 {
     }
 }
 
+# Disable for auto test
+while 0 {
 set timeout 60
 incr case_num
 send_user "\n\nIf picture with good quality is shown on TV, press \"y/Y\" and enter, otherwise press \"n/N\":\n"
@@ -78,6 +81,8 @@ while 1 {
         }
     }
 }
+}
+# End: disable for auto test
 
 set timeout 10
 incr case_num
