@@ -1264,7 +1264,8 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
                 }
         }
         # If l1 is not run, the breakpoints  are different.
-        incr case_num # 21
+	# case 21
+        incr case_num
         send "info b\r"
         expect {
                -re "Num Type.*breakpoint" {
