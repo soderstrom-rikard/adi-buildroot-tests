@@ -322,7 +322,7 @@ while 1 {
     }
 }
 
-sleep 3
+sleep 10
 incr case_num
 set timeout 5
 send "lsusb\r"
