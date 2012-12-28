@@ -56,24 +56,21 @@ source ../common/reset_to_uboot.exp
 set TEST_PASS pass
 set TEST_FAIL fail
 
-if { $board_type == "BF537-STAMP" || $board_type == "BF533-STAMP" || $board_type == "BF609-EZKIT"} {
-
 set bootargs_param3 "root=/dev/mtdblock$spi_rootfs_num $bootargs_param3"
 set bootargs 		 $bootargs_param3
 
-}  elseif { $board_type == "BF548-EZKIT" || [string match "BF527-EZKIT*" $board_type] || $board_type == "BF518F-EZBRD" || $board_type == "BF526-EZBRD" } {
-#set bootargs 		 $bootargs_param3
+if { $board_type == "BF548-EZKIT" || [string match "BF527-EZKIT*" $board_type] || $board_type == "BF518F-EZBRD" || $board_type == "BF526-EZBRD" } {
 all_pass
 exit 0
 }
 
 if { $board_type == "BF537-STAMP" || $board_type == "BF609-EZKIT" } {
-
 set chip_select 1
-
 }  elseif { $board_type == "BF533-STAMP"  } {
-
 set chip_select 2
+} else {
+send_user "Don't support spi flash on this board. exit!"
+exit 1
 }
 
 send -s "set bootargs $bootargs\r"
