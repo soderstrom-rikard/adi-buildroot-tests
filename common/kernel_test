@@ -1434,6 +1434,8 @@ do
             TESTCASE_DIR=audio
         elif [ ${MANUAL_TESTCASE[$i]} == "awg" ] || [ ${MANUAL_TESTCASE[$i]} == "ndso" ] ; then
             TESTCASE_DIR=spiadc
+        elif [ ${MANUAL_TESTCASE[$i]} == "sport_uart" ] ; then
+            TESTCASE_DIR=serial
         else
             TESTCASE_DIR=${MANUAL_TESTCASE[$i]}
         fi
@@ -1441,6 +1443,8 @@ do
 
         if [ `echo ${MANUAL_TESTCASE[$i]}|grep audio_` ] ; then
             ./build_audio_kernel.exp $BOARD_TYPE ${MANUAL_TESTCASE[$i]} >/dev/null 2>&1
+        elif [ ${MANUAL_TESTCASE[$i]} == "sport_uart" ] ; then
+            ./build_uart_kernel.exp $BOARD_TYPE sport_uart > /dev/null 2>&1
         else
             ./build_${MANUAL_TESTCASE[$i]}_kernel.exp $BOARD_TYPE > /dev/null 2>&1
         fi
