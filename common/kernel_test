@@ -613,6 +613,8 @@ do
             audio_dev="audio_ssm2603"
         elif [ ${AUTO_RUN_STATUS[105]} -eq 1  ] ; then
             audio_dev="audio_ad1836"
+        elif [ ${AUTO_RUN_STATUS[107]} -eq 1  ] ; then
+            audio_dev="audio_ad1938"
         fi
 
         if [ ${AUTO_TESTCASE[$i]} == "ethernet_in_buffer" ] ; then
