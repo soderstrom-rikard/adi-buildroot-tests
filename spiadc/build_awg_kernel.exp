@@ -73,13 +73,9 @@ while 1 {
             send "Y\r"
         }
 
-        -re "Networked Software Defined Storage Oscilloscope.*USER_NDSO.*\\\[.*]" {
-            send "N\r"
-        }
-
-        -re "Networked Arbitrary Waveform Genertor.*USER_AWG.*\\\[.*]" {
-            send "Y\r"
-        }
+        -re " (\[0-9]+). Networked Arbitrary Waveform Genertor.*USER_AWG.*\[cC]hoice.*\\\[.*]" {
+            send "$expect_out(1,string)\r"
+        }   
 
         "\\\(*) \\\[*]" {
             sleep .01
