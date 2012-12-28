@@ -47,6 +47,10 @@ if [ info exists musb_mode ] {
     source_args config_usb.exp $usb_driver
 }
 
+cd $src_root/testsuites/common
+step "Release memory from user space"
+source config_cut_app.exp
+
 
 step "Make kernel config"
 cd $src_root
