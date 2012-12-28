@@ -31,6 +31,12 @@ cd $src_root/testsuites/common
 step "Kernel config for specified usb host"
 source_args config_usb.exp musb
 
+if { $board_type == "BF548-EZKIT" } {
+    cd $src_root/testsuites/common
+    step "Make config to cut app"
+    source config_cut_app.exp
+}
+
 step "Make kernel config"
 cd $src_root
 set timeout 300
