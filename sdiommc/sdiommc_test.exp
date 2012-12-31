@@ -57,10 +57,11 @@ set timeout 40
 send "time mkdosfs -F 32 /dev/$mmc_dev\r"
 while 1 {
     expect {
-        -re "No such .*$kernel_prompt" {
+        -re "(Hardware Trace|No such).*$kernel_prompt" {
+            send_user "mkdosfs sda1 fail\n"
             case_fail $case_num
         }
-        -re "$kernel_prompt" {
+        -re $kernel_prompt {
             send_user "mkdosfs done, test pass\n"
             case_pass $case_num
             break
@@ -291,7 +292,11 @@ set timeout 120
 send "mke2fs /dev/$mmc_dev1\r"
 while 1 {
     expect {
-        -re "Filesystem.*$kernel_prompt" {
+        -re "(Hardware Trace|No such).*$kernel_prompt" {
+            send_user "mke2fs sda2 fail\n"
+            case_fail $case_num
+        }
+        -re "(Superblock backups stored on blocks:|Writing superblocks).*$kernel_prompt" {
             send_user "mke2fs done, test pass\n"
             case_pass $case_num
             break
@@ -329,10 +334,11 @@ set timeout 40
 send "time mkdosfs -F 32 /dev/$mmc_dev2\r"
 while 1 {
     expect {
-        -re "No such .*$kernel_prompt" {
+        -re "(Hardware Trace|No such).*$kernel_prompt" {
+            send_user "mkdosfs sda1 fail\n"
             case_fail $case_num
         }
-        -re "$kernel_prompt" {
+        -re $kernel_prompt {
             send_user "mkdosfs done, test pass\n"
             case_pass $case_num
             break
@@ -606,7 +612,11 @@ set timeout 120
 send "mke2fs /dev/$mmc_dev1\r"
 while 1 {
     expect {
-        -re "Filesystem.*$kernel_prompt" {
+        -re "(Hardware Trace|No such).*$kernel_prompt" {
+            send_user "mke2fs sda2 fail\n"
+            case_fail $case_num
+        }
+        -re "(Superblock backups stored on blocks:|Writing superblocks).*$kernel_prompt" {
             send_user "mke2fs done, test pass\n"
             case_pass $case_num
             break

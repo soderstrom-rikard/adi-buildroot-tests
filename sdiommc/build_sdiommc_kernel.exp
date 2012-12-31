@@ -108,6 +108,49 @@ while 1 {
     }
 }
 
+step "Make busybox config"
+cd $src_root
+set timeout 300
+spawn make busybox-config
+while 1 {
+    expect {
+        -nocase -re "\\\[\[^\r]*] (\\\(NEW\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+            continue
+        }
+
+        -re "fdisk \\\(FDISK\\\) \\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "mkfs_ext2 \\\(MKFS_EXT2\\\) \\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "mkfs_vfat \\\(MKFS_VFAT\\\) \\\[.*]" {
+            send "Y\r"
+        }
+
+        "\\\(*) \\\[*]" {
+            sleep .01
+            send "\r"
+        }
+
+        -re "\[cC]hoice\\\[.*]:" {
+            send "\r"
+        }
+
+        eof {
+            send_user "\nEnd of configuration\n"
+            break
+        }
+
+        timeout {
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n\n"
+            exit
+        }
+    }
+}
+
 step "user space config"
 cd $src_root
 set timeout 300
@@ -116,30 +159,6 @@ while 1 {
     expect {
         -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
-        }
-
-        -re "dosfstools.*BR2_PACKAGE_DOSFSTOOLS.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "mkdosfs.*BR2_PACKAGE_DOSFSTOOLS_MKDOSFS.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "mtd/jffs2 utilities.*BR2_PACKAGE_MTD.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "mkfs.jffs2.*BR2_PACKAGE_MTD_MKFSJFFS2.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "flash_erase.*BR2_PACKAGE_MTD_FLASH_ERASE.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "flash_eraseall.*BR2_PACKAGE_MTD_FLASH_ERASEALL.*\\\[.*]" {
-            send "Y\r"
         }
 
         -re "bonnie\\\+\\\+.*BR2_PACKAGE_BONNIE.*\\\[.*]" {
