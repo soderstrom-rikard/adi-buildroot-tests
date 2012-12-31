@@ -1312,10 +1312,10 @@ fi
   ./${AUTO_TESTCASE[$((n+6))]}_test.exp $BOARD_TYPE $config >/dev/null  2>&1
   sleep 30
 
-  copy_image_config "snormtd_ext"
+  copy_image_config $config
   mv $TESTSUITES_DIR/${AUTO_TESTCASE[$((n+6))]}/*_log  $THIS_LOG
 
-  echo  "End testing snormtd ext..."
+  echo  "End testing $config..."
   sleep 10
 
     if [ $RESET_BOARD -eq 1 ] ; then
