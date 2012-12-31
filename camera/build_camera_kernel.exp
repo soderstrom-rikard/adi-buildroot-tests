@@ -64,7 +64,7 @@ while 1 {
         }
 
         -re "Video For Linux.*VIDEO_DEV.*\\\[.*]" {
-            send "M\r"
+            send "Y\r"
         }
 
         -re "Video capture adapters.*VIDEO_CAPTURE_DRIVERS.*\\\[.*]" {
@@ -73,7 +73,7 @@ while 1 {
 
         -re "ST VS6624 sensor support.*VIDEO_VS6624.*\\\[.*]" {
             if { $camera_dev == "vs6624" } {
-                send "M\r"
+                send "Y\r"
             } else {
                 send "N\r"
             }
@@ -81,7 +81,7 @@ while 1 {
 
         -re "Aptina MT9M114 sensor support.*VIDEO_MT9M114.*\\\[.*]" {
             if { $camera_dev == "mt9m114" } {
-                send "M\r"
+                send "Y\r"
             } else {
                 send "N\r"
             }
@@ -92,7 +92,7 @@ while 1 {
         }
 
         -re "Blackfin Video Capture Driver.*VIDEO_BLACKFIN_CAPTURE.*\\\[.*]" {
-            send "M\r"
+            send "Y\r"
         }
 
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
