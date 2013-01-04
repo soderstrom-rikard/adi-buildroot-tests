@@ -59,6 +59,11 @@ set TEST_FAIL fail
 set bootargs_param3 "root=/dev/mtdblock$spi_rootfs_num $bootargs_param3"
 set bootargs 		 $bootargs_param3
 
+send -s "set bootargs $bootargs\r"
+expect ">"
+send -s "save\r"
+expect ">"
+
 if { $board_type == "BF548-EZKIT" || [string match "BF527-EZKIT*" $board_type] || $board_type == "BF518F-EZBRD" || $board_type == "BF526-EZBRD" } {
 all_pass
 exit 0
@@ -72,11 +77,6 @@ set chip_select 2
 send_user "Don't support spi flash on this board. exit!"
 exit 1
 }
-
-send -s "set bootargs $bootargs\r"
-expect ">"
-send -s "save\r"
-expect ">"
 
 ###########################################################################################################
 set case_num 0
