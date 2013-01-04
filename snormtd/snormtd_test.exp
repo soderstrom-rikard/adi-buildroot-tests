@@ -246,6 +246,26 @@ while 1 {
 } 
                                                                                                                                                       
 sleep 1
+incr case_num
+
+step "Erase MTD "
+set timeout 500
+send -s "flash_erase /dev/mtd$spi_rootfs_num 0 0\r"
+while 1 {
+    expect {
+	
+	 -re $kernel_prompt {
+                case_pass $case_num
+		break
+	}
+
+	timeout {
+                case_fail $case_num
+		exit
+	}
+    }
+}
+
 step "Make jffs2 image"
 
 send_log " \n1)create file system directory\n"
