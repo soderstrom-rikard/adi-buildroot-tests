@@ -107,9 +107,9 @@ if [ info exists pnor_rootfs_num ] {
 
 # different bootargs_param5 setting for BF609-EZKIT due to bug 7567
     if { $board_type == "BF609-EZKIT" } {
-        set bootargs_param5 "root=/dev/mtdblock[ expr $pnor_rootfs_num - 1 ] ro rootfstype=romfs earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
-    } else {
         set bootargs_param5 "root=/dev/mtdblock$pnor_rootfs_num ro rootfstype=romfs earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
+    } else {
+        set bootargs_param5 "root=/dev/mtdblock[ expr $pnor_rootfs_num - 1 ] ro rootfstype=romfs earlyprintk=serial,uart$def_uart_port_num,$baud_rate console=$console_args"
     }
 }
 
