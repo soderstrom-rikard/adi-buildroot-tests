@@ -139,7 +139,7 @@ step "Copy linux"
 source   copy_image.exp
 
 #######################################################################
-## Build the sdiommc again for vmImage that doesn't include init ramfs.
+## Build again for vmImage that doesn't include init ramfs.
 
 cd $src_root/testsuites/common
 step "Make kernel config"
