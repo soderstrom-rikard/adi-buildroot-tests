@@ -1637,14 +1637,14 @@ if { $board_type == "BF548-EZKIT" || $board_type == "BF561-EZKIT" } {
 	expect {
 	  -re	"(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU1\\\)\[^\r]*\[\r]" {
 	                set CPU1_NUM $expect_out(1,string)
-			if { [ string first kgdb_test $expect_out(0,string) 0 ] > 0 } {
+			if { [ string first kgdb_l2_test $expect_out(0,string) 0 ] > 0 } {
 	        	        set CUR_CPU $expect_out(1,string) 
 			}
 			exp_continue
 		}
 	  -re	"(\[0-9]+) +Thread +-\[0-9]+ +\\\(shadowCPU0\\\)\[^\r]*\[\r]" {
         	        set CPU0_NUM $expect_out(1,string)
-			if { [ string first kgdb_test $expect_out(0,string) 0 ] > 0 } {
+			if { [ string first kgdb_l2_test $expect_out(0,string) 0 ] > 0 } {
 	        	        set CUR_CPU $expect_out(1,string) 
 			} 
 			exp_continue
