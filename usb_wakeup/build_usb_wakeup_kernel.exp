@@ -1,12 +1,12 @@
 #!/usr/bin/expect --
 #
-# Build kernel for ethernet wake up test
+# Build kernel for usb interrupt wake up test
 #
 # Usage:
-#   ./build_ethernet_wakeup_kernel.exp board_type
+#   ./build_usb_wakeup_kernel.exp board_type
 #
 # Example:
-#   ./build_ethernet_wakeup_kernel.exp BF609-EZKIT
+#   ./build_usb_wakeup_kernel.exp BF609-EZKIT
 #
 
 source ../common/kernel_config.exp
@@ -23,8 +23,12 @@ set timeout 300
 spawn make linux-config
 while 1 {
     expect {
-        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+        -nocase -re "\\\[\[^\r]*] (\\\(NEW\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
+        }
+
+        -re "MMC/SD/SDIO card support \\\(MMC\\\).*\\\[.*]" {
+            send "N\r"
         }
 
         -re "Virtual terminal.*VT.*\\\[.*]" {
@@ -33,10 +37,6 @@ while 1 {
 
         -re "USB support.*USB_SUPPORT.*\\\[.*]" {
             #USB driver now doesn't support power function
-            send "N\r"
-        }
-
-        -re "MMC/SD/SDIO card support \\\(MMC\\\).*\\\[.*]" {
             send "N\r"
         }
 
@@ -82,10 +82,6 @@ while 1 {
     expect {
         -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
-        }
-
-        -re "ethtool.*BR2_PACKAGE_ETHTOOL.*\\\[.*]" {
-            send "Y\r"
         }
 
         "\\\(*) \\\[*]" {
