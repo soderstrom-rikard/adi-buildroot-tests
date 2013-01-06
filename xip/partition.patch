@@ -125,3 +125,21 @@ index 7ae2a6a..98146dd 100644
  		.offset     = MTDPART_OFS_APPEND,
  	}, {
  		.name       = "config(nor)",
+diff --git a/arch/blackfin/mach-bf609/boards/ezkit.c b/arch/blackfin/mach-bf609/boards/ezkit.c
+index 691a014..983bb8c 100644
+--- a/arch/blackfin/mach-bf609/boards/ezkit.c
++++ b/arch/blackfin/mach-bf609/boards/ezkit.c
+@@ -649,12 +649,8 @@ static struct mtd_partition ezkit_partitions[] = {
+ 		.size       = 0x80000,
+ 		.offset     = 0,
+ 	}, {
+-		.name       = "linux kernel(nor)",
+-		.size       = 0x400000,
+-		.offset     = MTDPART_OFS_APPEND,
+-	}, {
+ 		.name       = "file system(nor)",
+-		.size       = 0x1000000 - 0x80000 - 0x400000,
++		.size       = 0x1000000 - 0x80000,
+ 		.offset     = MTDPART_OFS_APPEND,
+ 	},
+ };
