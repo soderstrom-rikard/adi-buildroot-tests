@@ -112,10 +112,8 @@ set timeout 60
 send "/usr/share/qt/examples/widgets/calendarwidget/calendarwidget -qws\r"
 while 1 {
     expect {
-        -re "calendarwidget:" {
-            case_fail $case_num
-        }
         -re "\r\n\[a-zA-Z0-9]" {
+            expect -re $kernel_prompt
             case_fail $case_num
         }
         timeout {
