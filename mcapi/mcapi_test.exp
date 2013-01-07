@@ -1,7 +1,6 @@
 #!/usr/bin/expect
 
 source ../common/kernel_config.exp
-source ../common/board_info.exp
 log_file [log_file_name "$argv0"]
 send_user "Starting $argv0\n"
 set TITLE [title "$argv0"]
@@ -61,6 +60,7 @@ while 1 {
 send -s "echo 1 > /proc/sys/kernel/printk\r"
 
 #### Test two core case between linux and CCES. ####
+if { $board_type == "BF609-EZKIT" } {
 
 set case_num 0
 set corea_case_status  0
@@ -186,6 +186,8 @@ expect {
                 case_fail $case_num
                 exit
        }
+}
+
 }
 # There are 3 parts of testcases testing rounds. 
 # 1 part: allcases run one time respectively.
