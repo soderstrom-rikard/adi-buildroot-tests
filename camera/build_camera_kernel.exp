@@ -77,7 +77,7 @@ while 1 {
         }
 
         -re "ST VS6624 sensor support.*VIDEO_VS6624.*\\\[.*]" {
-            if { $camera_dev == "vs6624" } {
+            if { $camera_dev == "camera_vs6624" } {
                 send "Y\r"
             } else {
                 send "N\r"
@@ -85,7 +85,7 @@ while 1 {
         }
 
         -re "Aptina MT9M114 sensor support.*VIDEO_MT9M114.*\\\[.*]" {
-            if { $camera_dev == "mt9m114" } {
+            if { $camera_dev == "camera_mt9m114" } {
                 send "Y\r"
             } else {
                 send "N\r"
