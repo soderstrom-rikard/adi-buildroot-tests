@@ -743,6 +743,10 @@ do
             mv $TESTSUITES_DIR/$TESTCASE_DIR/${AUTO_TESTCASE[$i]}.yuv $THIS_LOG
         fi
 
+        if [ ${AUTO_TESTCASE[$i]} == "usb_camera" ] ; then
+            mv $TESTSUITES_DIR/$TESTCASE_DIR/usb_camera.mp4 $THIS_LOG
+        fi
+
         if [ ${AUTO_TESTCASE[$i]} == "power_audio" ] ; then
             copy_image_config "power_${audio_dev}"
         else
