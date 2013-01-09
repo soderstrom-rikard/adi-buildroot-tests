@@ -152,6 +152,7 @@ while 1 {
       }
       }
 }
+}
 #### Test linux two core cases. ####
  
 incr case_num
@@ -188,7 +189,6 @@ expect {
        }
 }
 
-}
 # There are 3 parts of testcases testing rounds. 
 # 1 part: allcases run one time respectively.
 # 2 part: allcases run $test_round times respectively. case one, case one,... case two, case two,...
