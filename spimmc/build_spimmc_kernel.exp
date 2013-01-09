@@ -28,6 +28,10 @@ if { $board_type == "BF537-STAMP" } {
     }
 }
 
+if { $board_type == "BF533-STAMP" } {
+    set board_file $src_root/linux/linux-kernel/arch/blackfin/mach-bf533/boards/stamp.c
+}
+
 if { $spi_mode == "interrupt" } {
     if [ catch {exec sed -i "/pio_interrupt/ s/0/1/" $board_file} ] {
         send_user "\nfail to modify board file\n"
