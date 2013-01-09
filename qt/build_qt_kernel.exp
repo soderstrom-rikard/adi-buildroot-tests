@@ -148,6 +148,10 @@ while 1 {
             send "Y\r"
         }
 
+        -re "24 bpp.*BR2_PACKAGE_QT_PIXEL_DEPTH_24.*\\\[.*]" {
+            send "Y\r"
+        }
+
         -re "32 bpp.*BR2_PACKAGE_QT_PIXEL_DEPTH_32.*\\\[.*]" {
             send "N\r"
         }
