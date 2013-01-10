@@ -19,6 +19,10 @@ source ../common/spawn_kermit.exp
 step "Reset the uboot."
 source ../common/reset_to_uboot.exp
 
+if { $board_type == "BF526-EZBRD" } {
+send_user "Don't support spi flash reboot on this board for its small size. exit!"
+exit 1
+}
 
 send_log "*********************************\r"
 send_log "Start $TITLE\r"
