@@ -216,6 +216,10 @@ while 1 {
             send "Y\r"
         }
 
+        -re "video test program.*BR2_PACKAGE_VIDEO_TEST.*\\\[.*]" {
+            send "Y\r"
+        }
+
         "\\\(*) \\\[*]" {
             sleep .01
             send "\r"
