@@ -74,8 +74,8 @@ set chip_select 1
 }  elseif { $board_type == "BF533-STAMP"  } {
 set chip_select 2
 } else {
-send_user "Don't support spi flash on this board. exit!"
-exit 1
+send_user "Don't support spi flash on this board."
+all_pass
 }
 
 ###########################################################################################################
