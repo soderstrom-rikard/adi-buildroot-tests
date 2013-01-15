@@ -31,6 +31,12 @@ cd $src_root/testsuites/common
 step "Kernel config for specified usb host"
 source_args config_usb.exp musb $musb_mode
 
+cd $src_root/testsuites/common
+step "Kernel config for specified audio driver"
+if { $board_type == "BF609-EZKIT" } {
+    source_args config_audio.exp audio_adau1761
+}
+
 step "Make kernel config"
 cd $src_root
 set timeout 300
