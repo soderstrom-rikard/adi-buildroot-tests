@@ -1021,6 +1021,14 @@ if [ ${AUTO_RUN_STATUS[$((n+5))]} -eq 1 ] ; then
                 ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
             fi
 
+            if [ $BOARD_TYPE == "BF609-EZKIT" ] ; then
+                sleep 30
+                cd $TESTSUITES_DIR/usbdev
+                ./gadget_audio_test.exp $BOARD_TYPE $config >/dev/null  2>&1
+                cd $TESTSUITES_DIR/common
+                ./reset_board.exp $BOARD_TYPE > /dev/null 2>&1
+            fi
+
         fi
 
         copy_image_config "usbdev.$config"
