@@ -14,6 +14,7 @@ step "Reboot the kernel."
 if { $board_type == "BF537-STAMP" || $board_type == "BF561-EZKIT" || $board_type == "BF548-EZKIT" || [string match "BF527-EZKIT*" $board_type] || $board_type == "BF609-EZKIT" } {
     set bootargs  $bootargs_param4
 }
+
 set boot_image vmImage
 source ../common/reboot_kernel.exp
 
@@ -52,10 +53,11 @@ while 1 {
 
 set timeout 500
 expect "root:/bin>"
-set path [exec pwd]
-send_user " $path"
-
-cd ../../output/build/file_operation_test-HEAD
+set path [exec pwd ]
+set path [exec find $path/../../output/build -name  file_operation_test* ]
+send_user "Path is $path\n"
+cd $path
+ 
 incr case_num
 if [ catch { exec find . -maxdepth 2 -type f -perm +100 -name *\[^g\]\[^d\]\[^b\]  -exec rcp \{\}  root@$targetip:/bin/  \; } ] {
     send_user "\nFAIL: Copy file test to target board\n"
