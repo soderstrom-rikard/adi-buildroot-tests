@@ -9,24 +9,40 @@
 #   Use ffmpeg to encode and send video dato to UDP port.
 #
 # Usage:
-#   ./video_decoder_test.exp board_type
+#   ./video_decoder_test.exp board_type video_input
 #
 # Example:
+#   ./video_decoder_test.exp BF561-EZKIT
 #   ./video_decoder_test.exp BF609-EZKIT
+#   ./video_decoder_test.exp BF609-EZKIT hdmi
+#   ./video_decoder_test.exp BF609-EZKIT composite
 #
 
 source ../common/kernel_config.exp
 
+if { $argc >= 2} {
+    set video_input [lindex $argv 1]
+}
+
 if { $board_type == "BF561-EZKIT" } {
     set video_dev adv7183
-    set video_input 0
+    set video_input composite
 } elseif { $board_type == "BF609-EZKIT" } {
     set video_dev adv7842
-    set video_input 4
+    if { ![info exists video_input] } {
+        set video_input hdmi
+    }
 } else {
     puts "Wrong board type, only BF561-EZKIT and BF609-EZKIT support this test\r"
     exit
 }
+
+if { $video_input == "composite" } {
+    set video_input_num 0
+} elseif { $video_input == "hdmi" } {
+    set video_input_num 4
+}
+
 set TITLE [title "$argv0"]
 append TITLE " ($video_dev)"
 set log_name video_decoder_${video_dev}_test_log
@@ -128,7 +144,7 @@ expect -re $kernel_prompt
 
 set timeout 10
 incr case_num
-send "v4l2_video_capture -I $video_input -F /video_decoder_$video_dev.yuv\r"
+send "v4l2_video_capture -I $video_input_num -F /video_decoder_$video_dev.yuv\r"
 while 1 {
     expect {
         -re "\[eE]rror|\[fF]ail|Hardware Trace|SIGSEGV" {
