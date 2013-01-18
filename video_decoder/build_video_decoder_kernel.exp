@@ -93,7 +93,7 @@ while 1 {
             }
         }
 
-# Need high system clock 125 MHz for bf609-ezkit
+# Need high system clock 250 MHz for bf609-ezkit
         -re "Re-program Clocks while Kernel boots.*BFIN_KERNEL_CLOCK.*\\\[.*]" {
             if { $board_type == "BF609-EZKIT" } {
                 send "Y\r"
@@ -104,7 +104,23 @@ while 1 {
 
         -re "System Clock Divider.*SCLK_DIV.*\\\[.*]" {
             if { $board_type == "BF609-EZKIT" } {
-                send "4\r"
+                send "2\r"
+            } else {
+                send "\r"
+            }
+        }
+
+        -re "System Clock0 Divider.*SCLK0_DIV.*\\\[.*]" {
+            if { $board_type == "BF609-EZKIT" } {
+                send "2\r"
+            } else {
+                send "\r"
+            }
+        }
+
+        -re "System Clock1 Divider.*SCLK1_DIV.*\\\[.*]" {
+            if { $board_type == "BF609-EZKIT" } {
+                send "2\r"
             } else {
                 send "\r"
             }

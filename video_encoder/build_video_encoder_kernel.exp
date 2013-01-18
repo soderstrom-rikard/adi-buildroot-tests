@@ -69,7 +69,7 @@ while 1 {
             }
         }
 
-# Need high system clock 125 MHz for bf609-ezkit
+# Need high system clock 250 MHz for bf609-ezkit
         -re "Re-program Clocks while Kernel boots.*BFIN_KERNEL_CLOCK.*\\\[.*]" {
             send "Y\r"
         }
