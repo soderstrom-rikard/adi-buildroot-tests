@@ -109,7 +109,8 @@ set timeout 5
 send "iwlist wlan0 scan\r"
 while 1 {
    expect {
-       -re "$essid.*$kernel_prompt" {
+       -re "$essid" {
+         expect -re $kernel_prompt
          case_pass $case_num
          break
       }
@@ -157,7 +158,7 @@ set timeout 5
 send "udhcpc -i wlan0 &\r"
 while 1 {
    expect {
-       -re "dhcpcd wlan0\r\n$kernel_prompt" {
+       -re "udhcpc -i wlan0\r\n$kernel_prompt" {
          case_pass $case_num
          break
       }
@@ -180,7 +181,7 @@ while 1 {
          break
       }
       timeout {
-         send_user "\nCan not find $essid\n"
+         send_user "\nCan not get ip\n"
          case_fail $case_num
       }
    }
