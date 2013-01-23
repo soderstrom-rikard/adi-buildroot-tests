@@ -21,7 +21,8 @@ source ../common/reset_to_uboot.exp
 
 if { $board_type == "BF526-EZBRD" } {
 send_user "Don't support spi flash reboot on this board for its small size. exit!"
-exit 1
+all_pass
+exit 0
 }
 
 send_log "*********************************\r"
