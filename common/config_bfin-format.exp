@@ -78,7 +78,7 @@ while 1 {
 if { $bfin_format == "shared-flat" } {
     step "kernel config - only shared-flat format has different kernel config"
     cd $src_root
-    set timeout 300
+    set timeout 500
     spawn make linux-config
     while 1 {
         expect {
