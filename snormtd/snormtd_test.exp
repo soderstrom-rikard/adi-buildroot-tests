@@ -448,6 +448,8 @@ while 1 {
     }
 }
 
+if { $board_type != "BF526-EZBRD" } {
+
 #Copy a rootfs into flash partition.
 incr case_num
 set timeout 5
@@ -477,6 +479,8 @@ while 1 {
             case_fail $case_num
         }
     }
+
+}
 }
 
 incr case_num
