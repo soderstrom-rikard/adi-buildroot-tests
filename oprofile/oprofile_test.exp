@@ -125,6 +125,13 @@ set timeout 30
 send "opreport -l\r"
 while 1 {
     expect {
+        -re "No sample file found: try running opcontrol --dump.*$kernel_prompt" {
+            send_user "\nSo run bfin_opcontrol --dump again\n"
+            send "ps\r"
+            expect -re $kernel_prompt
+            case_pass $case_num
+            break
+        }
         -re "not found|\[eE]rror|\[fF]ail|Hardware Trace" {
             expect -re $kernel_prompt
             case_fail $case_num
