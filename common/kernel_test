@@ -703,6 +703,8 @@ do
                 else
                     ./${AUTO_TESTCASE[$i]}_test.exp $BOARD_TYPE mem >/dev/null 2>&1
                 fi
+            elif [ ${AUTO_TESTCASE[$i]} == "multichannel" ] ; then
+                ./multichannel_test.exp $BOARD_TYPE $audio_dev >/dev/null 2>&1
             elif [ ${AUTO_TESTCASE[$i]} == "usbhost_isp1362" ] ; then
                 ./usbhost_test.exp $BOARD_TYPE usbhost_isp1362 >/dev/null 2>&1
             elif [ ${AUTO_TESTCASE[$i]} == "usbhost_isp1760" ] ; then
