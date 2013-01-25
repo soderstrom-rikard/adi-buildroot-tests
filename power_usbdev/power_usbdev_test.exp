@@ -445,11 +445,7 @@ set case_num 0
 set Total_Count 5
 set mnt_point "/mnt/usb"
 
-if { $board_type == "BF548-EZKIT" || $board_type == "BF609-EZKIT" } {
-    set dev "/dev/sdb"
-} else {
-    set dev "/dev/sdc"
-}
+set dev "/dev/sdb"
 
 set timeout 15
 expect -re "Up.*Full"
