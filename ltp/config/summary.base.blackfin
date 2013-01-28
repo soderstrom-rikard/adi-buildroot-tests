@@ -1,24 +1,25 @@
 
-test started Mar-26-2012-05:15am
+test started Jan-27-2013-06:22am
 
 Test Results
 =====================================
   Total Tests        :  958
-  Passed Tests       :  729
-  Failed Tests       :  2
-  Broken Tests       :  0
+  Passed Tests       :  740
+  Failed Tests       :  1
+  Broken Tests       :  2
   Warning Tests      :  0
   Crashing Tests     :  0
-  Skipped Tests     :  113
-  NA on uClinux Tests     :  114
+  Skipped Tests     :  98
+  NA on uClinux Tests     :  117
 
 Failed Tests List
 =====================================
   -  readv02
-  -  sockioctl01
 
 Broken Tests List
 =====================================
+  -  fcntl15
+  -  fcntl15_64
 
 Warning Tests List
 =====================================
@@ -33,6 +34,8 @@ Passed Tests List
   -  access02
   -  access04
   -  access05
+  -  acct01
+  -  acct02
   -  adjtimex01
   -  adjtimex02
   -  alarm01
@@ -45,6 +48,7 @@ Passed Tests List
   -  bdflush01
   -  bind01
   -  bind02
+  -  cacheflush01
   -  chdir01
   -  chdir01A
   -  chdir02
@@ -145,8 +149,6 @@ Passed Tests List
   -  fcntl04_64
   -  fcntl05
   -  fcntl05_64
-  -  fcntl06
-  -  fcntl06_64
   -  fcntl07
   -  fcntl07_64
   -  fcntl07B
@@ -207,6 +209,12 @@ Passed Tests List
   -  getcwd03
   -  getdents01
   -  getdents01_64
+  -  getdents02
+  -  getdents02_64
+  -  getdents03
+  -  getdents03_64
+  -  getdents04
+  -  getdents04_64
   -  getdomainname01
   -  getdtablesize01
   -  getegid01
@@ -312,7 +320,6 @@ Passed Tests List
   -  lstat02_64
   -  lstat03
   -  lstat03_64
-  -  mem03
   -  memcmp01
   -  memcpy01
   -  memset01
@@ -337,7 +344,6 @@ Passed Tests List
   -  mknodat01
   -  mmap001
   -  mmap02
-  -  mmap03
   -  mmap04
   -  mmap06
   -  mmap07
@@ -394,6 +400,8 @@ Passed Tests List
   -  pause01
   -  pause02
   -  pause03
+  -  personality01
+  -  personality02
   -  pipe01
   -  pipe02
   -  pipe03
@@ -660,9 +668,9 @@ Passed Tests List
   -  socketcall04
   -  socketpair01
   -  socketpair02
+  -  sockioctl01
   -  splice01
   -  splice02
-  -  ssetmask01
   -  stat01
   -  stat01_64
   -  stat02
@@ -692,12 +700,16 @@ Passed Tests List
   -  symlinkat01
   -  sync01
   -  sync02
+  -  sync_file_range01
   -  syscall01
   -  sysconf01
   -  sysinfo01
   -  tee01
   -  time01
   -  time02
+  -  timerfd01
+  -  timerfd02
+  -  timerfd03
   -  timer_getoverrun01
   -  timer_gettime01
   -  times01
@@ -724,6 +736,7 @@ Passed Tests List
   -  unlink07
   -  unlink08
   -  unlinkat01
+  -  unshare02
   -  ustat01
   -  ustat02
   -  utime01
@@ -733,7 +746,6 @@ Passed Tests List
   -  utime04
   -  utime05
   -  utime06
-  -  utimes01
   -  vfork01
   -  vfork02
   -  vhangup01
@@ -762,26 +774,23 @@ Skipped Tests List(Tests Not Run)
 =====================================
   -  accept4_01
   -  access03
-  -  acct01
-  -  acct02
   -  add_key01
   -  add_key02
   -  brk01
-  -  cacheflush01
   -  endian_switch01
   -  eventfd01
   -  eventfd2_01
   -  eventfd2_02
   -  fcntl01
   -  fcntl01_64
+  -  fcntl06
+  -  fcntl06_64
   -  fcntl11
   -  fcntl11_64
   -  fcntl12
   -  fcntl12_64
   -  fcntl13
   -  fcntl13_64
-  -  fcntl15
-  -  fcntl15_64
   -  fcntl16
   -  fcntl16_64
   -  fcntl17
@@ -804,12 +813,6 @@ Skipped Tests List(Tests Not Run)
   -  ftruncate04
   -  ftruncate04_64
   -  getcpu01
-  -  getdents02
-  -  getdents02_64
-  -  getdents03
-  -  getdents03_64
-  -  getdents04
-  -  getdents04_64
   -  getitimer02
   -  get_mempolicy01
   -  io_cancel01
@@ -847,8 +850,6 @@ Skipped Tests List(Tests Not Run)
   -  munlockall01
   -  munlockall02
   -  munmap02
-  -  personality01
-  -  personality02
   -  pwrite03
   -  pwrite03_64
   -  quotactl01
@@ -863,15 +864,11 @@ Skipped Tests List(Tests Not Run)
   -  settimeofday02
   -  signalfd4_01
   -  signalfd4_02
-  -  sync_file_range01
   -  sysinfo02
-  -  timerfd01
-  -  timerfd02
-  -  timerfd03
   -  uname02
   -  unshare01
-  -  unshare02
   -  utimensat01
+  -  utimes01
   -  write03
 
 NA on uClinux Tests List(Tests Not Avaliable to run on uClinux)
@@ -913,7 +910,9 @@ NA on uClinux Tests List(Tests Not Avaliable to run on uClinux)
   -  kill11
   -  llseek01
   -  llseek02
+  -  mem03
   -  mmap01
+  -  mmap03
   -  mmap05
   -  mmap09
   -  mount01
@@ -952,6 +951,7 @@ NA on uClinux Tests List(Tests Not Avaliable to run on uClinux)
   -  shmat01
   -  shmdt01
   -  signalfd01
+  -  ssetmask01
   -  swapoff01
   -  swapoff02
   -  swapon01
@@ -993,7 +993,7 @@ NA on uClinux Tests List(Tests Not Avaliable to run on uClinux)
 
 Measurement Tests
 =====================================
-  linux version            = 3.2.0-ADI-2012R1-pre-00516-g910f034-dirty
+  linux version            = 3.5.7-ADI-2012R2
   gcc version              = 4.3.5
   BogoMips                 = not measured
   Dhrystones per second    = not measured
@@ -1003,11 +1003,11 @@ Measurement Tests
   D cache size             = not measured
   I cache enable/disable   = not measured
   D cache enable/disable   = not measured
-  text map                 = 0x00001000-0x001b04c8
+  text map                 = 0x00001000-0x001d6988
   rootfs map               = not found
-  data map                 = 0x00252578-0x00274000
+  data map                 = 0x0027d300-0x002a4000
   stack map                = not found
-  bss map                  = 0x00240000-0x00252578
+  bss map                  = 0x0026a000-0x0027d2fc
   crashes during stability test               = not measured
   failures during stability test              = not measured
   warnings during stability test              = not measured
