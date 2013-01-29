@@ -1,7 +1,7 @@
 #!/usr/bin/expect
 
-source ../kernel_config.exp
-source ../board_info.exp
+source ../common/kernel_config.exp
+source ../common/board_info.exp
 log_file [log_file_name "$argv0"]
 send_user "Starting $argv0\n"
 set TITLE [title "$argv0"]
@@ -9,10 +9,10 @@ set TITLE [title "$argv0"]
 step "$TITLE needs :\n SW5: on on on on for bf537 stamp board and bf548 ezkit board.\n SW13: on xx off off off off for bf527 ezkit board."
 
 step "Start kermit."
-source ../spawn_kermit.exp
+source ../common/spawn_kermit.exp
 
 step "Reboot the kernel."
-source ../reboot_kernel.exp
+source ../common/reboot_kernel.exp
 
 if { $board_type == "BF537-STAMP" } {
    set led1_gpio_number 6
