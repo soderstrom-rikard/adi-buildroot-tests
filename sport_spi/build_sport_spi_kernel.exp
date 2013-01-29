@@ -108,7 +108,7 @@ source   copy_image.exp
 step "Reverse  patch."
 
 cd $src_root/linux/linux-kernel/
-exec patch -p0 -R < ../testsuites/sport_spi/stamp.diff
+exec patch -p0 -R < ../../testsuites/sport_spi/stamp.diff
 
 send_user "Ending $argv0\n"
 log_file
