@@ -340,11 +340,11 @@ if  { $mtd_temp_result!=$TEST_PASS } {
 }
 
 incr case_num
-step "cp version to JFFS."
+step "cp busybox to JFFS."
 set jffs_temp_result $TEST_FAIL
 
 set timeout 200
-send -s "cp /bin/version /mnt\r"
+send -s "cp /bin/busybox /mnt\r"
 while 1 {
     expect {
          -re $kernel_prompt {
@@ -366,10 +366,10 @@ set jffs_temp_result $TEST_FAIL
 incr case_num
 
 set timeout 60
-send "while \[ 1 \]; do md5sum /mnt/version ; done\r"
+send "while \[ 1 \]; do md5sum /mnt/busybox ; done\r"
 while 1 {
    expect {
-      -re "\[0-9a-z]+  /mnt/version" {
+      -re "\[0-9a-z]+  /mnt/busybox" {
                 sleep 3
                 send "\3"
                 case_pass $case_num
