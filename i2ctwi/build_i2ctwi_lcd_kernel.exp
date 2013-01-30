@@ -60,21 +60,9 @@ while 1 {
             }
         }
 
-        -re "Misc devices.*MISC_DEVICES.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "Analog Devices Digital Potentiometers.*AD525X_DPOT.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "support I2C bus connection.*AD525X_DPOT_I2C.*\\\[.*]" {
-            send "Y\r"
-        }
-
-        -re "Hardware Monitoring support.*HWMON.*\\\[.*]" {
-            send "Y\r"
-        }
+   #     -re "Hardware Monitoring support.*HWMON.*\\\[.*]" {
+   #         send "Y\r"
+   #     }
 
         "\\\(*) \\\[*]" {
             sleep .01
