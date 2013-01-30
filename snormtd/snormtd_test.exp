@@ -250,7 +250,7 @@ incr case_num
 
 step "Erase MTD "
 set timeout 500
-send -s "flash_erase /dev/mtd$spi_rootfs_num 0 0\r"
+send -s "flash_erase -j /dev/mtd$spi_rootfs_num 0 0\r"
 while 1 {
     expect {
 	
