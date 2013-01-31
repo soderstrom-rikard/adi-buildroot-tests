@@ -114,6 +114,14 @@ while 1 {
             send "\r"
         }
 
+        -re "NEC NL8048HL WVGA LCD for BF609.*FB_BF609_NL8048.*\\\[.*]" {
+            if { $board_type == "BF609-EZKIT" } {
+                    send "Y\r"
+            } else {
+                    send "\r"
+            }
+        }
+
         -re "Generic input layer.*needed for keyboard, mouse.*INPUT.*\\\[.*]" {
             send "Y\r"
         }
