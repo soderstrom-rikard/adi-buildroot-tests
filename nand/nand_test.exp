@@ -407,6 +407,8 @@ while 1 {
     }
 }
 
+if { $board_type != "BF527-EZKIT" && $board_type != "BF526-EZBRD" } {
+
 spawn /bin/sh
 set telnet_spawn_id $spawn_id
 
@@ -455,6 +457,7 @@ while 1 {
     }
 }
 
+}
 set spawn_id $kermit_spawn_id
 set timeout 15
 send -s "\3"
@@ -505,6 +508,7 @@ while 1 {
     }
 }
 
+if { $board_type != "BF527-EZKIT" && $board_type != "BF526-EZBRD" } {
 step "Reboot the kernel."
 set boot_image vmImage
 set bootargs   $bootargs_param11
@@ -523,6 +527,7 @@ while 1 {
             case_fail $case_num
         }
     }
+}
 }
 
 all_pass
