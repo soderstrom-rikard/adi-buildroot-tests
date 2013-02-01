@@ -140,7 +140,7 @@ while 1 {
         }
 
         -re "AD7877 based touchscreens.*TOUCHSCREEN_AD7877.*\\\[.*]" {
-            if { $board_type != "BF526-EZBRD" } {
+            if { $board_type != "BF526-EZBRD" && $board_type != "BF609-EZKIT" } {
                 send "Y\r"
             } else {
                 send "N\r"
@@ -148,7 +148,7 @@ while 1 {
         }
 
         -re "Analog Devices.*touchscreen interface.*TOUCHSCREEN_AD7879.*\\\[.*]" {
-            if { $board_type == "BF526-EZBRD" } {
+            if { $board_type == "BF526-EZBRD" || $board_type == "BF609-EZKIT" } {
                 send "Y\r"
             } else {
                 send "N\r"
@@ -156,7 +156,7 @@ while 1 {
         }
 
         -re "support SPI bus connection.*TOUCHSCREEN_AD7879_SPI.*\\\[.*]" {
-            if { $board_type == "BF526-EZBRD" } {
+            if { $board_type == "BF526-EZBRD" || $board_type == "BF609-EZKIT" } {
                 send "Y\r"
             } else {
                 send "N\r"
@@ -172,10 +172,22 @@ while 1 {
 
         }
 
+# Framebuffer config
+        -re "Support for frame buffer devices.*FB.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "NEC NL8048HL WVGA LCD for BF609.*FB_BF609_NL8048.*\\\[.*]" {
+            if { $board_type == "BF609-EZKIT" } {
+                    send "Y\r"
+               } else {
+                    send "\r"
+               }
+        }
+
         -re "Sound card support.*SOUND.*\\\[.*]" {
             send "N\r"
         }
-
 
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
             send "\r"

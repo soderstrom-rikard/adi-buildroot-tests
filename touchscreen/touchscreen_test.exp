@@ -29,7 +29,7 @@ incr case_num
 send -s "event_test /dev/input/event0\r"
 while 1 {
     expect {
-        -re "Input device name.*AD7877 Touchscreen.*Testing.*exit" {
+        -re "Input device name.* Touchscreen.*Testing.*exit" {
             case_pass $case_num
             break
         }
