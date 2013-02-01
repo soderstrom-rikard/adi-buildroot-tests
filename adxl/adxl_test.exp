@@ -21,10 +21,8 @@ if { $port_config == "i2c" || $port_config == "spi" } {
 
 if { $port_config == "i2c" } {
     set input_num 1
-    set interrupt_num 140
 } elseif { $port_config == "spi" } {
     set input_num 0
-    set interrupt_num 56
 } else {
     exit
 }
@@ -48,10 +46,22 @@ expect -re $kernel_prompt
 send -s "dmesg|grep input\r"
 while 1 {
     expect {
-        -re "input: ADXL34x accelerometer.*$kernel_prompt" {
+        -re "input: ADXL34x accelerometer.*i2c\[^\r]*/(\[^\/]*)/input/input(\[0-9])\r.*$kernel_prompt" {
+            set interrupt $expect_out(1,string)
+            set input_num $expect_out(2,string)
+            send_user "interrupt $interrupt !! input_num $input_num !! \n\n"
             case_pass $case_num
             break
         }
+
+        -re "input: ADXL34x accelerometer.*spi\[^\r]*/(\[^\/]*)/input/input(\[0-9])\r.*$kernel_prompt" {
+            set interrupt $expect_out(1,string)
+            set input_num $expect_out(2,string)
+            send_user "interrupt $interrupt !! input_num $input_num !! \n\n"
+            case_pass $case_num
+            break
+        }
+
         timeout {
             case_fail $case_num
         }
@@ -76,7 +86,7 @@ incr case_num
 send -s "cat /proc/interrupts\r"
 while 1 {
     expect {
-        -re "$interrupt_num.*$kernel_prompt" {
+        -re "$interrupt.*$kernel_prompt" {
             case_pass $case_num
             break
         }
