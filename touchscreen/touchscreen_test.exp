@@ -10,9 +10,26 @@
 #
 
 source ../common/kernel_config.exp
-log_file [log_file_name "$argv0"]
+
+set screen_name "7877"
+if { $argc >= 2} {
+    set screen_name [lindex $argv 1]
+}
+
+log_file [log_file_name $argv0.$screen_name ]
+
+source ../common/board_info.exp
 send_user "Starting $argv0\n"
+
+if { $screen_name == "7877" || $screen_name == "7879" } {
+    send_log "\n#### Board name is $screen_name.\n"
+} else {
+    send_log "\n#### This config $screen_name is not supported. Sorry.\n"
+    exit
+}
+
 set TITLE [title "$argv0"]
+append TITLE " ($screen_name)"
 
 step "Start kermit"
 source ../common/spawn_kermit.exp

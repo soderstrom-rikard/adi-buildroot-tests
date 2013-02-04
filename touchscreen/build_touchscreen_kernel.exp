@@ -14,8 +14,23 @@
 #
 
 source ../common/kernel_config.exp
-log_file [log_file_name "$argv0"]
+
+set screen_name "7877"
+if { $argc >= 2} {
+    set screen_name [lindex $argv 1]
+}
+
+log_file [log_file_name $argv0.$screen_name ]
+
+source ../common/board_info.exp
 send_user "Starting $argv0\n"
+
+if { $screen_name == "7877" || $screen_name == "7879" } {
+    send_log "\n#### Board name is $screen_name.\n"
+} else {
+    send_log "\n#### This config $screen_name is not supported. Sorry.\n"
+    exit
+}
 
 cd $src_root/testsuites/common
 step "Make default config"
@@ -140,7 +155,7 @@ while 1 {
         }
 
         -re "AD7877 based touchscreens.*TOUCHSCREEN_AD7877.*\\\[.*]" {
-            if { $board_type != "BF526-EZBRD" && $board_type != "BF609-EZKIT" } {
+            if { $board_type != "BF526-EZBRD" && $screen_name == "7877" } {
                 send "Y\r"
             } else {
                 send "N\r"
@@ -148,7 +163,7 @@ while 1 {
         }
 
         -re "Analog Devices.*touchscreen interface.*TOUCHSCREEN_AD7879.*\\\[.*]" {
-            if { $board_type == "BF526-EZBRD" || $board_type == "BF609-EZKIT" } {
+            if { $board_type == "BF526-EZBRD" || $board_type == "BF609-EZKIT" && $screen_name == "7879" } {
                 send "Y\r"
             } else {
                 send "N\r"
@@ -156,7 +171,7 @@ while 1 {
         }
 
         -re "support SPI bus connection.*TOUCHSCREEN_AD7879_SPI.*\\\[.*]" {
-            if { $board_type == "BF526-EZBRD" || $board_type == "BF609-EZKIT" } {
+            if { $board_type == "BF526-EZBRD" || $board_type == "BF609-EZKIT" && $screen_name == "7879" } {
                 send "Y\r"
             } else {
                 send "N\r"
