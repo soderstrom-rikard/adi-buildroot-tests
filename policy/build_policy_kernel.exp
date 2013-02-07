@@ -89,6 +89,10 @@ while 1 {
             }
         }
 
+        -re "strace.*BR2_PACKAGE_STRACE.*\\\[.*]" {
+            send -s "N\r"
+        }
+
         "\\\(*) \\\[*]" {
             sleep .05
             send "\r"
