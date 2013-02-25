@@ -35,6 +35,8 @@ cd $LOG_DIR
 rm -rf $THISRUN
 ln -s $THIS_LOG $THISRUN
 
+cp $COMMON_TESTSCRIPTS/startup.sh /home/test
+
 # Start time control script
 
 #$TESTSUITES_DIR/test_runtime_control & 
