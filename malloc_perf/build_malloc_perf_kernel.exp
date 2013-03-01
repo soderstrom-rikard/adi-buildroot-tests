@@ -40,6 +40,11 @@ while 1 {
             send "Y\r"
         }
 
+        #Since bfin-lq035q1 frame buffer driver conflict with GPTimer, so disable it.
+        -re "Support for frame buffer devices.*FB.*\\\[.*]" {
+            send "N\r"
+        }
+
         "\\\(*) \\\[*]" {
             sleep .01
             send "\r"
