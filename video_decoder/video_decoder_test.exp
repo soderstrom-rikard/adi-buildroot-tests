@@ -105,6 +105,9 @@ if { $board_type == "BF561-EZKIT" } {
     send "ffmpeg -f video4linux2 -s ntsc -pix_fmt uyvy422 -r 5 -i /dev/video0 -f mjpeg udp://$serverip:1234\r"
     while 1 {
         expect {
+            -re "dma_alloc_coherent.*fail.*\r\n" {
+                exp_continue
+            }
             -re "\[eE]rror|\[fF]ail|Hardware Trace|SIGSEGV" {
                 case_fail $case_num
             }
