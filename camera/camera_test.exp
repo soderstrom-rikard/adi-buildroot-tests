@@ -163,6 +163,10 @@ set timeout 10
 send "v4l2_video_capture -w 320 -h 240 -N 5 -F /var/$camera_dev.yuv\r"
 while 1 {
     expect {
+        -re "0 error frame.*\r\n" {
+                exp_continue
+        }
+
         -re "\[eE]rror|\[fF]ail|Hardware Trace|SIGSEGV" {
             case_fail $case_num
         }
