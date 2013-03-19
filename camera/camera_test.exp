@@ -163,14 +163,15 @@ set timeout 10
 send "v4l2_video_capture -w 320 -h 240 -N 5 -F /var/$camera_dev.yuv\r"
 while 1 {
     expect {
-        -re "0 error frame.*\r\n" {
+        -re "0 error frame" {
                 exp_continue
         }
 
         -re "\[eE]rror|\[fF]ail|Hardware Trace|SIGSEGV" {
             case_fail $case_num
         }
-        -re "frames captured.*$kernel_prompt" {
+
+        -re "frames captured" {
             case_pass $case_num
             break
         }
@@ -179,6 +180,8 @@ while 1 {
         }
     }
 }
+
+expect -re "$kernel_prompt"
 
 if [ catch {exec rcp root@$targetip:/var/$camera_dev.yuv ./} ] {
     send_user "FAIL: rcp $camera_dev.yuv to host PC\n"
