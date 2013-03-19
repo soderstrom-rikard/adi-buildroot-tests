@@ -1,21 +1,29 @@
 #!/usr/bin/expect --
+
 #
-# Build kernel for usb interrupt wake up test
-#
-# Usage:
-#   ./build_usb_wakeup_kernel.exp board_type
-#
-# Example:
-#   ./build_usb_wakeup_kernel.exp BF609-EZKIT
+# Build Kernel for USB wakeup test
 #
 
 source ../common/kernel_config.exp
+
+set musb_mode dma
 log_file [log_file_name "$argv0"]
+
 send_user "Starting $argv0\n"
+send_user "\n#### Build kernel in $musb_mode mode. ####\n"
 
 cd $src_root/testsuites/common
 step "Make default config"
-source make_default_config.exp
+source  make_default_config.exp
+
+cd $src_root/testsuites/common
+step "Kernel config for specified usb host"
+source_args config_usb.exp musb $musb_mode
+
+cd $src_root/testsuites/common
+step "Release memory from user space"
+source config_cut_app.exp
+
 
 step "Make kernel config"
 cd $src_root
@@ -23,7 +31,7 @@ set timeout 300
 spawn make linux-config
 while 1 {
     expect {
-        -nocase -re "\\\[\[^\r]*] (\\\(NEW\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
             continue
         }
 
@@ -32,11 +40,6 @@ while 1 {
         }
 
         -re "Virtual terminal.*VT.*\\\[.*]" {
-            send "N\r"
-        }
-
-        -re "USB support.*USB_SUPPORT.*\\\[.*]" {
-            #USB driver now doesn't support power function
             send "N\r"
         }
 
