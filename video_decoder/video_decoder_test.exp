@@ -153,7 +153,7 @@ while 1 {
         -re "\[eE]rror|\[fF]ail|Hardware Trace|SIGSEGV" {
             case_fail $case_num
         }
-        -re "frames captured.*$kernel_prompt" {
+        -re "frames captured" {
             case_pass $case_num
             break
         }
@@ -162,6 +162,8 @@ while 1 {
         }
     }
 }
+
+expect -re "$kernel_prompt"
 
 if [ catch {exec rcp root@$targetip:/video_decoder_$video_dev.yuv ./} ] {
     send_user "FAIL: rcp video to host PC\n"
