@@ -63,13 +63,13 @@ while 1 {
             }
         }
 
-#        -re "Toolchain has IPv6 support.*BR2_TOOLCHAIN_EXTERNAL_INET_IPV6.*\\\[.*]" {
-#            send "Y\r"
-#        }
+        -re "Toolchain has IPv6 support.*BR2_TOOLCHAIN_EXTERNAL_INET_IPV6.*\\\[.*]" {
+            send "Y\r"
+        }
 
-#        -re "Toolchain has WCHAR support.*BR2_TOOLCHAIN_EXTERNAL_WCHAR.*\\\[.*]" {
-#            send "Y\r"
-#        }
+        -re "Toolchain has WCHAR support.*BR2_TOOLCHAIN_EXTERNAL_WCHAR.*\\\[.*]" {
+            send "Y\r"
+        }
 
         -re "Target CPU revision.*BR2_GCC_TARGET_CPU_REVISION.*\\\[.*]" {
             if { $revision == "default" } {
