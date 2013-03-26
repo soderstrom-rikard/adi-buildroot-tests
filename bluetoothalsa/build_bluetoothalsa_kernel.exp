@@ -226,6 +226,31 @@ cd $src_root/testsuites/common
 step "Make"
 source make_kernel.exp
 
+if [ catch {exec cp $src_root/testsuites/bluetoothalsa/audio.conf  $src_root/output/target/etc/bluetooth} ] {
+    send_user "copy audio.conf file to /etc/bluetooth fail\n"
+    send_user "$errorInfo\n"
+}
+
+step "Make images again."
+
+cd $src_root
+spawn make 
+set timeout 1200
+set bfin_make_status failure
+while 1 {
+    expect {
+        "Entering directory" { }
+        "Leaving directory" { set bfin_make_status success }
+        "Error" {set bfin_make_status failure }
+        "/bin/sh" { }
+        eof { break }
+    }
+}
+
+if { $bfin_make_status == "failure" } {
+    puts "ERROR: Error somewhere during make"
+}
+
 cd $src_root/testsuites/common
 step "Copy image"
 source copy_image.exp
