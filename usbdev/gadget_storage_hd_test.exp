@@ -73,7 +73,7 @@ while 1 {
 
 set timeout 20
 incr case_num
-send "modprobe g_file_storage file=/dev/$dev_target stall=0\r"
+send "modprobe g_mass_storage file=/dev/$dev_target stall=0\r"
 while 1 {
     expect {
         -re "(modprobe:|\[eE]rror|\[fF]ail).*$kernel_prompt" {
@@ -94,7 +94,7 @@ while 1 {
         -re "(lsmod:|\[eE]rror|\[fF]ail).*$kernel_prompt" {
             case_fail $case_num
         }
-        -re "g_file_storage.*$kernel_prompt" {
+        -re "g_mass_storage.*$kernel_prompt" {
             case_pass $case_num
             break
         }
@@ -359,7 +359,7 @@ expect -re $kernel_prompt
 
 incr case_num
 set timeout 80
-send "time modprobe -r g_file_storage\r"
+send "time modprobe -r g_mass_storage\r"
 while 1 {
     expect {
         -re "(modprobe:|\[eE]rror|\[fF]ail).*$kernel_prompt" {
@@ -380,7 +380,7 @@ set timeout 5
 send "lsmod\r"
 while 1 {
     expect {
-        -re "g_file_storage" {
+        -re "g_mass_storage" {
             case_fail $case_num
         }
         -re $kernel_prompt {
