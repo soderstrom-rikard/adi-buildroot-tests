@@ -32,19 +32,6 @@ while 1 {
             send "Y\r"
         }
 
-#        -re "Install ELF shared libraries \\\(INSTALL_ELF_SHARED_LIBS\\\) \\\[\[^\r]*]" {
-#            set timeout 5
-#            expect {
-#            -nocase -re  " (\[ym])\r\n" {
-#                send_user "\n Item_value is selected  $expect_out(1,string).\n"
-#            }
-#            timeout {
-#                send -s "Y\r"
-#            }
-#            }
-#            set timeout 100
-#        }
-
         "\\\(*) \\\[*]" {
             sleep .01
             send "\r"
@@ -79,7 +66,7 @@ while 1 {
             continue
         }
 
-        -re "Install ELF shared libraries.*BR2_BFIN_INSTALL_ELF_SHARED.*\\\[.*]" {
+        -re "Install FDPIC shared libraries.*BR2_BFIN_INSTALL_FDPIC_SHARED.*\\\[.*]" {
             send -s "Y\r"
         }
 
