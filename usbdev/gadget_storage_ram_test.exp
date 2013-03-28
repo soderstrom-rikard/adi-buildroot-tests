@@ -1,7 +1,7 @@
 #!/usr/bin/expect
 
 #
-# File-backed Storage Gadget driver test with Linux host, using RAM based file as backing storage.
+# Mass Storage Gadget driver test with Linux host, using RAM based file as backing storage.
 #
 # Usage:
 #   ./gadget_storage_ram_test.exp board_type
@@ -75,7 +75,7 @@ while 1 {
         -re "(modprobe:|\[eE]rror|\[fF]ail).*$kernel_prompt" {
             case_fail $case_num
         }
-        -re "File-backed Storage Gadget.*fsg\.block" {
+        -re "fsg\.block.*Mass Storage Gadget.*g_mass_storage ready" {
             expect "speed config #1"
             break
         }
