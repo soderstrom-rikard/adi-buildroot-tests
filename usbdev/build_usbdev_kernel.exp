@@ -121,8 +121,8 @@ while 1 {
 
 # Because app usb is compiled by bfin-linux-uclibc-gcc in host PC,
 # so need BR2_BFIN_INSTALL_ELF_SHARED for proper running.
-        -re "Install ELF shared libraries.*BR2_BFIN_INSTALL_ELF_SHARED.*\\\[.*]" {
-            send "Y\r"
+        -re "Install FDPIC shared libraries.*BR2_BFIN_INSTALL_FDPIC_SHARED.*\\\[.*]" {
+            send -s "Y\r"
         }
 
         "\\\(*) \\\[*]" {

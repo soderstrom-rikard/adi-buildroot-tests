@@ -79,7 +79,11 @@ while 1 {
             continue
         }
 
-        -re "Target ABI.*(\[0-9]+). Shared FLAT.*BR2_BFIN_SHARED_FLAT.*\r\nchoice\\\[.*]" {
+        -re "Target Binary Format.*(\[0-9]+). FLAT.*BR2_BINFMT_FLAT.*\r\nchoice\\\[.*]" {
+            send "$expect_out(1,string)\r"
+        }
+
+        -re "FLAT Binary type.*(\[0-9]+). Shared binary.*BR2_BINFMT_FLAT_SHARED.*\r\nchoice\\\[.*]" {
             send "$expect_out(1,string)\r"
         }
 
