@@ -29,6 +29,14 @@ while 1 {
                 send -s "N\r"
         }
 
+        -re "USB support.*USB_SUPPORT.*\\\[.*]" {
+                send -s "N\r"
+        }
+
+        -re "MMC/SD/SDIO card support \\\(MMC\\\).*\\\[.*]" {
+            send "N\r"
+        }
+
         -re "Watchdog Timer Support.*WATCHDOG.*\\\[.*]" {
                 send -s "N\r"
         }

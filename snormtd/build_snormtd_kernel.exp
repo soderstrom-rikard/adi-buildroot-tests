@@ -55,6 +55,9 @@ cd $src_root/testsuites/common
 source  config_cut_app.exp
 
 cd $src_root/testsuites/common
+source  config_cut_kernel.exp
+
+cd $src_root/testsuites/common
 source  make_mtd_config.exp
 
 cd $src_root/testsuites/snormtd
@@ -179,6 +182,12 @@ while 1 {
             break
         }
     }
+}
+
+step "Make sure vmImage get rebuilt clearly"
+if [ catch {exec rm $src_root/output/build/linux-custom/.stamp_initramfs_rebuilt} ] {
+    send_user "$errorInfo\n"
+    exit
 }
 
 cd $src_root/testsuites/common
