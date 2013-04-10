@@ -150,18 +150,17 @@ while 1 {
             continue
         }
 
-
-        -re "Target Binary Format.*ELF.*FDPIC.*FLAT.*\r\nchoice\\\[.*]" {
+        -re "Target Binary Format.*FDPIC.*FLAT.*\r\nchoice\\\[.*]" {
             if { $format == "fdpic" } {
-                send "2\r"
+                send "1\r"
             } elseif { $format == "shared-flat" } {
-                send "3\r"
+                send "2\r"
             } else {
                 send "\r"
             }
         }
 
-        -re "FLAT Binary type.*One binary.*BR2_BINFMT_FLAT_ONE.*Shared binary.*BR2_BINFMT_FLAT_SHARED.*\r\nchoice\\\[.*]" {
+        -re "FLAT Binary type.*BR2_BINFMT_FLAT_ONE.*BR2_BINFMT_FLAT_SEP_DATA.*BR2_BINFMT_FLAT_SHARED.*\r\nchoice\\\[.*]" {
             if { $format == "shared-flat" } {
                 send "3\r"
             } else {
