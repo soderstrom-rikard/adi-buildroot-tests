@@ -32,9 +32,15 @@ if { $screen_name == "7877" || $screen_name == "7879" } {
     exit
 }
 
+# Command source_args can pass arguments while running source.
+# Send bfin binary formats as argument for make_bfin-format.exp,
+# and change to the specified bfin binary formats.
+# It won't change formats for arm.
+# make clean and source make_default_config.exp are already included.
 cd $src_root/testsuites/common
-step "Make default config"
-source make_default_config.exp
+step "Make config for specified bfin format"
+source_args make_bfin-format.exp fdpic
+
 
 step "Make kernel config"
 cd $src_root

@@ -19,11 +19,15 @@ if { $port_config == "i2c" || $port_config == "spi" } {
     exit
 }
 
+# Command source_args can pass arguments while running source.
+# Send bfin binary formats as argument for make_bfin-format.exp,
+# and change to the specified bfin binary formats.
+# It won't change formats for arm.
+# make clean and source make_default_config.exp are already included.
 cd $src_root/testsuites/common
+step "Make config for specified bfin format"
+source_args make_bfin-format.exp fdpic
 
-step "Make config."
-
-source make_default_config.exp
 
 # Following make specific configuration for this case.
 cd $src_root
