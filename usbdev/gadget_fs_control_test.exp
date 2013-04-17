@@ -60,31 +60,6 @@ if [ catch {exec make -f Makefile.testusb -C src} ] {
     send_user "PASS: Build testusb\n"
 }
 
-if [ catch {exec make clean -f Makefile.usb -C src} ] {
-    send_user "FAIL: Make clean of usb\n"
-    send_user "$errorInfo\n"
-    case_fail $case_num
-} else {
-    send_user "PASS: Make clean of usb done\n"
-}
-
-if [ catch {exec make -f Makefile.usb -C src} ] {
-    send_user "FAIL: Build usb\n"
-    send_user "$errorInfo\n"
-    case_fail $case_num
-} else {
-    send_user "PASS: Build usb\n"
-}
-
-if [ catch {exec rcp src/usb root@$targetip:/ } ] {
-    send_user "FAIL: Copy target to board\n"
-    send_user "$errorInfo\n"
-    case_fail $case_num
-} else {
-    send_user "PASS: Copy target to board\n"
-}
-
-
 spawn /bin/bash
 set host_spawn_id $spawn_id
 
@@ -189,45 +164,25 @@ while 1 {
     }
 }
 
-incr case_num
-set timeout 15
-send "sudo mount -t usbfs none /proc/bus/usb/\r"
-while 1 {
-    expect {
-        -re "mount: none already mounted" {
-            case_pass $case_num
-            break
-        }
-        -re "\[eE]rror|\[fF]ail" {
-            case_fail $case_num
-        }
-        -re "#" {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
-
-incr case_num
-set timeout 4
-send "mount\r"
-while 1 {
-    expect {
-        -re "none on /proc/bus/usb type usbfs.*#" {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
-
-
 set spawn_id $kermit_spawn_id
+
+incr case_num
+set timeout 3
+send "modprobe gadgetfs\r"
+while 1 {
+    expect {
+        -re "mkdir:|\[eE]rror|\[fF]ail" {
+            case_fail $case_num
+        }
+        -re "USB Gadget filesystem.*$kernel_prompt" {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
 
 incr case_num
 set timeout 3
@@ -287,7 +242,7 @@ while 1 {
 
 incr case_num
 set timeout 20
-send "./usb -r \"1.3\" -v\r"
+send "gadgetfs-test -r \"1.3\" -v\r"
 while 1 {
     expect {
         -re "panic|\[fF]ail|\[eE]rror" {
@@ -309,7 +264,7 @@ set spawn_id $host_spawn_id
 
 incr case_num
 set timeout 5
-send "cat /proc/bus/usb/devices\r"
+send "sudo cat /sys/kernel/debug/usb/devices\r"
 while 1 {
     expect {
         -re "Manufacturer=Licensed to Code, LLC.*Product=My Source/Sink Product.*usbdev.*#" {
@@ -354,7 +309,7 @@ for {set count 1} {$cur_time <= $end_time} {incr count} {
 
     incr case_num
     set timeout 10
-    send "sudo ./src/testusb -D /proc/bus/usb/$gadget_bus/$gadget_dev -t9\r"
+    send "sudo ./src/testusb -D /dev/bus/usb/$gadget_bus/$gadget_dev -t9\r"
     while 1 {
         expect {
             -re "\[0-9]\\\.\[0-9]+ secs.*#" {
@@ -376,7 +331,7 @@ for {set count 1} {$cur_time <= $end_time} {incr count} {
 
 while 0 {
     incr case_num
-    send "sudo ./src/testusb -D /proc/bus/usb/$gadget_bus/$gadget_dev -t10\r"
+    send "sudo ./src/testusb -D /dev/bus/usb/$gadget_bus/$gadget_dev -t10\r"
     while 1 {
         expect {
             -re "\[0-9]\\\.\[0-9]+ secs.*#" {
@@ -448,43 +403,6 @@ while 1 {
         }
     }
 }
-
-incr case_num
-set timeout 5
-send "sudo umount /proc/bus/usb\r"
-while 1 {
-    expect {
-        -re "umount:|\[eE]rror|\[fF]ail" {
-            case_fail $case_num
-        }
-        -re "#" {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
-
-incr case_num
-set timeout 4
-send "mount\r"
-while 1 {
-    expect {
-        -re "none on /proc/bus/usb type usbfs.*#" {
-            case_fail $case_num
-        }
-        -re "#" {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
-
 
 set spawn_id $kermit_spawn_id
 
