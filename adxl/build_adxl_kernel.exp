@@ -118,6 +118,16 @@ while 1 {
             send "\r"
         }
 
+######### The following two items is disabled for conflict with adxl on bf609-ezkit.#####
+        -re "MMC/SD/SDIO card support \\\(MMC\\\).*\\\[.*]" {
+            send "N\r"
+        }
+
+        -re "MMC block device driver.*MMC_BLOCK.*\\\[.*]" {
+            send "N\r"
+        }
+########################################################################################
+
         -re "Support for frame buffer devices.*FB.*\\\[.*]" {
             if { $board_type == "BF609-EZKIT" } {
                     send "Y\r"
