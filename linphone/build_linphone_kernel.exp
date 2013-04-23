@@ -92,7 +92,7 @@ while 1 {
             continue
         }
 
-        -re "Target ABI.*FDPIC.*FLAT.*FLAT_SEP_DATA.*SHARED_FLAT.*\\\[.*]" {
+        -re "Target ABI.*FDPIC.*FLAT.*\\\[.*]" {
             send "1\r"
         }
 
