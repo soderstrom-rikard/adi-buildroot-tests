@@ -116,7 +116,7 @@ while 1 {
 
 set timeout 20
 incr case_num
-send -s "umount.cifs /mnt\r" 
+send -s "umount /mnt\r" 
 while 1 {
     expect {
         -nocase -re "(umount:|error|fail).*$kernel_prompt" {
