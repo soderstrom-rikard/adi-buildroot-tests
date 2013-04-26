@@ -287,7 +287,7 @@ while 1 {
         }
 
         -re "Install FDPIC shared libraries.*BR2_BFIN_INSTALL_FDPIC_SHARED.*\\\[.*]" {
-            send -s "Y\r"
+            send -s "N\r"
         }
 
         -re "Install FLAT shared libraries.*INSTALL_FLAT_SHARED_LIBS.*\\\[.*]" {
