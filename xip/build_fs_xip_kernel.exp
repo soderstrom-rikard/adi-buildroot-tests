@@ -162,7 +162,7 @@ while 1 {
 
         -re "FLAT Binary type.*BR2_BINFMT_FLAT_ONE.*BR2_BINFMT_FLAT_SEP_DATA.*BR2_BINFMT_FLAT_SHARED.*\r\nchoice\\\[.*]" {
             if { $format == "shared-flat" } {
-                send "3\r"
+                send "2\r"
             } else {
                 send "\r"
             }
