@@ -67,10 +67,6 @@ while 1 {
             send -s "Y\r"
         }
 
-        -re "mmap test.*BR2_PACKAGE_MMAP_TEST.*\\\[.*]" {
-            send -s "Y\r"
-        }
-
         "\\\(*) \\\[*]" {
             sleep .01
             send "\r"
@@ -96,6 +92,49 @@ step "Make clean."
 if { [source make_clean.exp] != 0 } {
     send_user "\n\nFail to make clean. Exit!\n\n"
     exit
+}
+
+cd $src_root/testsuites/common
+
+step "Make"
+
+source  make_kernel.exp
+
+cd $src_root
+set timeout 300
+set baud_rate_done_flag 0
+spawn make config
+
+#puts "Begin the interactive process of configuration"
+while 1 {
+    expect {
+
+        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+            continue
+        }
+
+        -re "mmap test.*BR2_PACKAGE_MMAP_TEST.*\\\[.*]" {
+            send -s "Y\r"
+        }
+
+        "\\\(*) \\\[*]" {
+            sleep .01
+            send "\r"
+        }
+
+        -re "\[cC]hoice\\\[.*]:" {
+            send "\r"
+        }
+
+        eof {
+            puts "End of configuration"
+            break
+        }
+
+        timeout {
+            puts "\n\nFATAL ERROR: config prompt timeout in make config"
+        }
+    }
 }
 
 cd $src_root/testsuites/common
