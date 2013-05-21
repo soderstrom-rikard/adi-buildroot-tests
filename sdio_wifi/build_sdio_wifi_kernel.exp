@@ -175,6 +175,14 @@ while 1 {
             continue
         }
 
+        -re "linux-firmware.*BR2_PACKAGE_LINUX_FIRMWARE.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "Libertas SD 8686 v9.*BR2_PACKAGE_LINUX_FIRMWARE_LIBERTAS_SD8686_V9.*\\\[.*]" {
+            send "Y\r"
+        }
+
         -re "wireless tools.*BR2_PACKAGE_WIRELESS_TOOLS.*\\\[.*]" {
             send "Y\r"
         }
@@ -198,20 +206,6 @@ while 1 {
             exit
         }
     }
-}
-
-step "Copy wifi firmware to target"
-if [catch "exec mkdir -p $src_root/output/target/lib/firmware" msg] {
-    send_user "\nFAIL: mkdir -p $src_root/output/target/lib/firmware\n"
-    send_user "$errorInfo\n"
-}
-if [catch "exec cp $src_root/dl/sd8686.bin $src_root/output/target/lib/firmware" msg] {
-    send_user "\nFAIL: cp $src_root/dl/sd8686.bin $src_root/output/target/lib/firmware\n"
-    send_user "$errorInfo\n"
-}
-if [catch "exec cp $src_root/dl/sd8686_helper.bin $src_root/output/target/lib/firmware" msg] {
-    send_user "\nFAIL: cp $src_root/dl/sd8686_helper.bin $src_root/output/target/lib/firmware\n"
-    send_user "$errorInfo\n"
 }
 
 cd $src_root/testsuites/common
