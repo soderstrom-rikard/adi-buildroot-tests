@@ -185,6 +185,10 @@ if { $usb_driver == "usbhost_isp1362" || $usb_driver == "usbhost_sl811" || $usb_
                 send "$expect_out(1,string)\r"
             }
 
+            -re "NOP USB Transceiver Driver.*NOP_USB_XCEIV.*\\\[.*]" {
+                send "Y\r"
+            }
+
             -re "($anomalous_option) \\\[\[^\]]+/.]" {
                 send "\r"
             }
