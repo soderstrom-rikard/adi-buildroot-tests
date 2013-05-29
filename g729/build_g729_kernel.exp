@@ -102,6 +102,10 @@ if { [source make_clean.exp] != 0 } {
     exit
 }
 
+step "Release L1 space"
+cd $src_root/testsuites/common
+source config_release_L1.exp
+
 cd $src_root/testsuites/common
 step "Make"
 source make_kernel.exp
