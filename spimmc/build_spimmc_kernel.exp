@@ -58,6 +58,10 @@ while 1 {
             continue
         }
 
+        -re "Sleep inside atomic section checking.*DEBUG_ATOMIC_SLEEP.*\\\[.*]" {
+            send "Y\r"
+        }
+
         -re "SPI bus lock.*SPI_BFIN_LOCK.*\\\[.*]" {
             send "Y\r"
         }

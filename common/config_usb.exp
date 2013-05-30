@@ -40,6 +40,10 @@ if { $usb_driver == "usbhost_isp1362" || $usb_driver == "usbhost_sl811" || $usb_
                 continue
             }
 
+            -re "Sleep inside atomic section checking.*DEBUG_ATOMIC_SLEEP.*\\\[.*]" {
+                send "Y\r"
+            }
+
             -re "Flash device in physical memory map.*MTD_PHYSMAP.*\\\[.*]" {
                 #CONFIG_MTD_PHYSMAP claims the entire Async. Memory Space
                 #need to entirely disable it while using various U-Connector boards
@@ -137,6 +141,10 @@ if { $usb_driver == "usbhost_isp1362" || $usb_driver == "usbhost_sl811" || $usb_
         expect {
             -nocase -re "\\\[\[^\r]*] (\\\(NEW\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
                 continue
+            }
+
+            -re "Sleep inside atomic section checking.*DEBUG_ATOMIC_SLEEP.*\\\[.*]" {
+                send "Y\r"
             }
 
             -re "USB support.*USB_SUPPORT.*\\\[.*]" {
