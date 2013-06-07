@@ -32,7 +32,7 @@ step "Start testing"
 set case_num 0
 
 incr case_num
-set timeout 20
+set timeout 30
 send "ffmpeg -f video4linux2 -r 5 -s 320x240 -i /dev/video0 -vcodec mpeg4 -f mp4 usb_camera.mp4\r"
 while 1 {
     expect {
