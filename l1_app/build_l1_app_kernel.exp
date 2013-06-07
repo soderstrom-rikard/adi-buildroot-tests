@@ -49,41 +49,6 @@ while 1 {
     }
 }
 
-step "Make busybox config"
-cd $src_root
-set timeout 300
-spawn make busybox-config
-while 1 {
-    expect {
-        -nocase -re "\\\[\[^\r]*] (\\\(NEW\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
-            continue
-        }
-
-        -re "taskset \\\(TASKSET\\\) \\\[.*]" {
-            send "Y\r"
-        }
-
-        "\\\(*) \\\[*]" {
-            sleep .01
-            send "\r"
-        }
-
-        -re "\[cC]hoice\\\[.*]:" {
-            send "\r"
-        }
-
-        eof {
-            send_user "\nEnd of configuration\n"
-            break
-        }
-
-        timeout {
-            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n\n"
-            exit
-        }
-    }
-}
-
 cd $src_root
 set timeout 300
 set baud_rate_done_flag 0
@@ -126,6 +91,41 @@ step "Make clean."
 if { [source make_clean.exp] != 0 } {
     send_user "\n\nFail to make clean. Exit!\n\n"
     exit
+}
+
+step "Make busybox config"
+cd $src_root
+set timeout 300
+spawn make busybox-config
+while 1 {
+    expect {
+        -nocase -re "\\\[\[^\r]*] (\\\(NEW\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+            continue
+        }
+
+        -re "taskset \\\(TASKSET\\\) \\\[.*]" {
+            send "Y\r"
+        }
+
+        "\\\(*) \\\[*]" {
+            sleep .01
+            send "\r"
+        }
+
+        -re "\[cC]hoice\\\[.*]:" {
+            send "\r"
+        }
+
+        eof {
+            send_user "\nEnd of configuration\n"
+            break
+        }
+
+        timeout {
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config\n\n"
+            exit
+        }
+    }
 }
 
 cd $src_root/testsuites/common
