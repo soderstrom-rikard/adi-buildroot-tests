@@ -28,6 +28,8 @@ expect -re $kernel_prompt
 send "\r"
 expect -re $kernel_prompt
 
+sleep 10
+
 step "Start testing"
 set case_num 0
 
