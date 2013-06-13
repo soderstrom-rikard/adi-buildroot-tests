@@ -70,6 +70,7 @@ set path [exec pwd ]
 set path [exec find $path/../../output/build -name  file_operation_test* ]
 send_user "Path is $path\n"
 cd $path
+sleep 5
  
 incr case_num
 if [ catch { exec find . -maxdepth 2 -type f -perm +100 -name *\[^g\]\[^d\]\[^b\]  -exec rcp \{\}  root@$targetip:/bin/  \; } ] {
