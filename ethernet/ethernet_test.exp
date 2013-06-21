@@ -148,7 +148,7 @@ while 1 {
 }
 
 incr case_num
-set timeout 2000
+set timeout 2500
 send "netperf -H $test_server_ip -t TCP_RR -l $test_time > netperf_tcp_rr\r"
 while 1 {
     expect {
@@ -167,7 +167,7 @@ while 1 {
 }
 
 incr case_num
-set timeout 2000
+set timeout 2500
 send "netperf -H $test_server_ip -t TCP_STREAM -l $test_time  > netperf_tcp_stream\r"
 while 1 {
     expect {
