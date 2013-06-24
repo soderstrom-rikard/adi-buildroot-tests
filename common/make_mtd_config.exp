@@ -130,6 +130,57 @@ while 1 {
     }
 }
 
+step "Make busybox config"
+cd $src_root
+set timeout 300
+spawn make busybox-config
+while 1 {
+    expect {
+        -nocase -re "\\\[\[^\r]*] (\\\(new\\\) )?(\[ymn])|choice\\\[.*]: \[0-9]+\r" {
+            continue
+        }
+
+        -re "flashcp.*FLASHCP.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "flash_lock.*FLASH_LOCK.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "flash_unlock.*FLASH_UNLOCK.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "flash_eraseall.*FLASH_ERASEALL.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "fdisk \\\(FDISK\\\) \\\[.*]" {
+            send "Y\r"
+        }
+
+        "\\\(*) \\\[*]" {
+            sleep .01
+            send "\r"
+        }
+
+        -re "\[cC]hoice\\\[.*]:" {
+            send "\r"
+        }
+
+        eof {
+            send_user "End of configuration"
+            break
+        }
+
+        timeout {
+            send_user "\n\nFATAL ERROR: config prompt timeout in make config"
+            break
+        }
+    }
+}
+
 cd $src_root
 spawn make mtd-reconfigure
 set timeout 1200
