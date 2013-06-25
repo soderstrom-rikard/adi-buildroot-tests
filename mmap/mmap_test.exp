@@ -92,6 +92,7 @@ while 1 {
 set spawn_id $kermit_spawn_id
 
 # insert simple mod for the first time.
+sleep 3
 
 incr case_num
 send "./mmap_test_load\r"
