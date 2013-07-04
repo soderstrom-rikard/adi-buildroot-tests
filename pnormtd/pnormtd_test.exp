@@ -37,17 +37,6 @@ step "Erase MTD"
 sleep 1
 incr case_num
 set timeout 180
-send -s "flash_unlock /dev/mtd$pnor_rootfs_num\r"
-while 1 {
-    expect {
-        -re $kernel_prompt {
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
 
 send -s "flash_erase -j /dev/mtd$pnor_rootfs_num 0 0\r"
 while 1 {
