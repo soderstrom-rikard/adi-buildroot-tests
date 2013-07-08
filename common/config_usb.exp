@@ -185,16 +185,20 @@ if { $usb_driver == "usbhost_isp1362" || $usb_driver == "usbhost_sl811" || $usb_
                 send "Y\r"
             }
 
+            -re "USB Physical Layer drivers.*USB_PHY.*\\\[.*]" {
+                send "Y\r"
+            }
+
+            -re "NOP USB Transceiver Driver.*NOP_USB_XCEIV.*\\\[.*]" {
+                send "Y\r"
+            }
+
             -re "USB Gadget Drivers \\\[.*]" {
                 send "Y\r"
             }
 
             -re "USB Gadget Drivers.* (\[0-9]+). Gadget Zero.*USB_ZERO.*\[cC]hoice\\\[.*]" {
                 send "$expect_out(1,string)\r"
-            }
-
-            -re "NOP USB Transceiver Driver.*NOP_USB_XCEIV.*\\\[.*]" {
-                send "Y\r"
             }
 
             -re "($anomalous_option) \\\[\[^\]]+/.]" {

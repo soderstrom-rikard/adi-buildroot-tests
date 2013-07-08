@@ -48,16 +48,20 @@ while 1 {
             send "Y\r"
         }
 
+        -re "USB Physical Layer drivers.*USB_PHY.*\\\[.*]" {
+            send "Y\r"
+        }
+
+        -re "NOP USB Transceiver Driver.*NOP_USB_XCEIV.*\\\[.*]" {
+            send "Y\r"
+        }
+
         -re "USB Gadget Drivers \\\[.*]" {
             send "Y\r"
         }
 
         -re "(\[0-9]+)\. Ethernet Gadget.*choice\\\[.*]:" {
             send "$expect_out(1,string)\r"
-        }
-
-        -re "NOP USB Transceiver Driver.*NOP_USB_XCEIV.*\\\[.*]" {
-            send "Y\r"
         }
 
         -re "RNDIS support.*USB_ETH_RNDIS.*\\\[.*]" {
