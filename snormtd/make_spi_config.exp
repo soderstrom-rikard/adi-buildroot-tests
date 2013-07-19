@@ -28,7 +28,7 @@ while 1 {
             }
         }
 
-        -re "SPI controller driver for ADI Blackfin6xx.*SPI_BFIN6XX.*\\\[.*]" {
+        -re "SPI controller v3 for Blackfin.*SPI_BFIN_V3.*\\\[.*]" {
             if { $board_type == "BF609-EZKIT" } {
                 send "Y\r"
             }
