@@ -22,7 +22,7 @@ fi
 
 # Checkout ltp source directory
 echo "$0:	Checking out from SVN, ltp/$LTP_SUB_DIR"
-svn -q co svn://$cvs_server_addr/ltp/trunk/$LTP_SUB_DIR
+svn -q co svn://$cvs_server_addr/svn/adi-openapp/trunk/ltp/$LTP_SUB_DIR
 if [ $? -ne 0 ]
 then
     echo "$0:	Error, SVN checkout failed"
