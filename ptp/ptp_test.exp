@@ -250,6 +250,20 @@ while 1 {
          }
      }
 }
+send -s "hwstamp_ctl -i eth0 -r 7 -t 1\r" 
+while 1 {
+   expect {
+      -re "$kernel_prompt" { 
+                case_pass $case_num
+         break
+      }
+
+      timeout {                           
+                case_fail $case_num
+      exit
+         }
+     }
+}
 incr case_num
 
 send -s "$ptp_cmd & \r" 
