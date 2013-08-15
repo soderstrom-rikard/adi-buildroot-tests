@@ -194,7 +194,9 @@ if { $usb_driver == "usbhost_isp1362" || $usb_driver == "usbhost_sl811" || $usb_
             }
 
             -re "USB Gadget Drivers \\\[.*]" {
+                sleep .1
                 send "Y\r"
+                sleep .1
             }
 
             -re "USB Gadget Drivers.* (\[0-9]+). Gadget Zero.*USB_ZERO.*\[cC]hoice\\\[.*]" {
