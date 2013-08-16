@@ -13,6 +13,7 @@ set targetip 10.100.4.51
 source ../common/spawn_kermit.exp
 
 step "Reboot the kernel."
+set bootargs  $bootargs_param8
 source ../common/reboot_kernel.exp
 
 set case_num 0
@@ -112,6 +113,7 @@ set targetip 10.100.4.50
 source ../common/spawn_kermit.exp
 
 step "Reboot the kernel."
+set bootargs  $bootargs_param8
 source ../common/reboot_kernel.exp
 
 set second_target_id $kermit_spawn_id
@@ -133,7 +135,7 @@ while 1 {
 for {set i 0} {$i < 1 } {incr i} {
 
 if { $i == 0 } {
-set ptp_cmd "ptp4l -i eth0 -q -v"
+set ptp_cmd "ptp4l -i eth0 "
 set year "2012"
 }
 
@@ -269,7 +271,7 @@ incr case_num
 send -s "$ptp_cmd & \r" 
 while 1 {
    expect {
-      -re "selected .* as PTP clock" { 
+      -re "selected .* as PTP clock.*$kernel_prompt" { 
                 case_pass $case_num
          break
       }
@@ -281,6 +283,22 @@ while 1 {
      }
 }
 
+incr case_num
+
+send -s "phc2sys -i eth0 & \r" 
+while 1 {
+   expect {
+      -re "$kernel_prompt" { 
+                case_pass $case_num
+         break
+      }
+
+      timeout {                           
+                case_fail $case_num
+      exit
+         }
+     }
+}
 incr case_num
 
 send -s "ps \r" 
