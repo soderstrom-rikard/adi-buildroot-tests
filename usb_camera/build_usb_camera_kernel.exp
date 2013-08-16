@@ -119,6 +119,22 @@ while 1 {
             send "Y\r"
         }
 
+#  select usb gadget driver zero again to make sure it is selected instead of as module.
+
+        -re "USB Gadget Support.*USB_GADGET.*\\\[.*]" {
+                send "Y\r"
+        }
+
+        -re "USB Gadget Drivers \\\[.*]" {
+                sleep .1
+                send "Y\r"
+                sleep .1
+        }
+
+        -re "USB Gadget Drivers.* (\[0-9]+). Gadget Zero.*USB_ZERO.*\[cC]hoice\\\[.*]" {
+                send "$expect_out(1,string)\r"
+        }
+
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
             send "\r"
         }
