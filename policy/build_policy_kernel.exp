@@ -184,6 +184,10 @@ while 1 {
             }
         }
 
+        -re "Blackfin LINKPORT driver.*BFIN_LINKPORT.*\\\[.*]" {
+            send -s "N\r"
+        }
+
         -nocase -re "UART Mode.* (\[0-9]+). $uart_mode mode .*\[cC]hoice\\\[.*]" {
             if { $uart_mode == "default" } {
                 send  "\r"
