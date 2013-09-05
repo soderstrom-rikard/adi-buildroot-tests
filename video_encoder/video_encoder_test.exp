@@ -11,9 +11,21 @@
 #
 
 source ../common/kernel_config.exp
-log_file [log_file_name "$argv0"]
+
+puts "Default video device is adv7511."
+puts "Else please input: board_type, video_dev, like adv7343."
+
+if { $argc == 2} {
+    set video_dev [lindex $argv 1]
+} else {
+    set video_dev adv7511
+}
+
+set log_name ${video_dev}_test_log
+log_file $log_name
 send_user "Starting $argv0\n"
 set TITLE [title "$argv0"]
+append TITLE " ($video_dev)"
 
 step "Start kermit"
 source ../common/spawn_kermit.exp
@@ -33,7 +45,7 @@ step "Start testing"
 set case_num 0
 
 # Prepare adv7842.yuv for auto test; in manual test, use video_decoder_adv7842.yuv from video_decoder test
-if [ catch {exec rcp $src_root/dl/adv7842.yuv root@$targetip:/} ] {
+if [ catch {exec rcp $src_root/dl/*.yuv root@$targetip:/} ] {
     send_user "FAIL: rcp test file to target\n"
     send_user "$errorInfo\n"
     case_fail $case_num
@@ -41,12 +53,23 @@ if [ catch {exec rcp $src_root/dl/adv7842.yuv root@$targetip:/} ] {
     send_user "PASS: rcp test file to target\n"
 }
 
+if [ catch {exec rcp $src_root/testsuites/video_encoder/*.yuv root@$targetip:/} ] {
+    send_user "FAIL: rcp test file to target\n"
+    send_user "$errorInfo\n"
+    case_fail $case_num
+} else {
+    send_user "PASS: rcp test file to target\n"
+}
 send "v4l2_video_display -h\r"
 expect -re $kernel_prompt
 
 set timeout 10
 incr case_num
+if { $video_dev == "adv7343" } {
+send "v4l2_video_display -O 2 -F /ntsc_for_adv7343.yuv -s ntsc\r"
+} else {
 send "v4l2_video_display -F /adv7842.yuv\r"
+}
 while 1 {
     expect {
         -re "\[eE]rror|\[fF]ail|Hardware Trace|SIGSEGV" {

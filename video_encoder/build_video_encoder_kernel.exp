@@ -12,6 +12,9 @@
 
 source ../common/kernel_config.exp
 
+puts "Default video device is adv7511."
+puts "Else please input: board_type, video_dev, like adv7343."
+
 if { $argc == 2} {
     set video_dev [lindex $argv 1]
 } else {
@@ -116,8 +119,21 @@ while 1 {
         }
 
         -re "Analog Devices ADV7511 HDMI transmitter.*VIDEO_ADV7511.*\\\[.*]" {
-            send "Y\r"
+            if { $video_dev == "adv7511" } {
+                send "Y\r"
+            } else {
+                send "N\r"
+            }
         }
+
+        -re "ADV7343 video encoder.*VIDEO_ADV7343.*\\\[.*]" {
+            if { $video_dev == "adv7343" } {
+                send "Y\r"
+            } else {
+                send "N\r"
+            }
+        }
+
 
         -re "V4L platform devices.*V4L_PLATFORM_DRIVERS.*\\\[.*]" {
             send "Y\r"
