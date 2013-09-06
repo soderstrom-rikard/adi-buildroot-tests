@@ -105,7 +105,7 @@ while 1 {
      }
 }
 
-send_user "Start another machine to test canbus."
+send_user "Start another machine to test ptp."
 
 step "Start kermit."
 set kermit_ttydev $ttydev
@@ -238,6 +238,20 @@ while 1 {
          }
      }
 }
+send -s "hwstamp_ctl -i eth0 -r 6 -t 1\r" 
+while 1 {
+   expect {
+      -re "$kernel_prompt" { 
+                case_pass $case_num
+         break
+      }
+
+      timeout {                           
+                case_fail $case_num
+      exit
+         }
+     }
+}
 send -s "testptp -g \r" 
 while 1 {
    expect {
@@ -252,23 +266,9 @@ while 1 {
          }
      }
 }
-send -s "hwstamp_ctl -i eth0 -r 7 -t 1\r" 
-while 1 {
-   expect {
-      -re "$kernel_prompt" { 
-                case_pass $case_num
-         break
-      }
-
-      timeout {                           
-                case_fail $case_num
-      exit
-         }
-     }
-}
 incr case_num
 
-send -s "$ptp_cmd & \r" 
+send -s "$ptp_cmd & ;tail /var/log/messages\r" 
 while 1 {
    expect {
       -re "selected .* as PTP clock.*$kernel_prompt" { 
@@ -283,22 +283,6 @@ while 1 {
      }
 }
 
-incr case_num
-
-send -s "phc2sys -i eth0 & \r" 
-while 1 {
-   expect {
-      -re "$kernel_prompt" { 
-                case_pass $case_num
-         break
-      }
-
-      timeout {                           
-                case_fail $case_num
-      exit
-         }
-     }
-}
 incr case_num
 
 send -s "ps \r" 
@@ -368,7 +352,7 @@ while 1 {
      }
 }
 incr case_num
-send -s "hwstamp_ctl -i eth0 -r 7 -t 1\r"
+send -s "hwstamp_ctl -i eth0 -r 6 -t 1\r"
 while 1 {
    expect {
       -re "$kernel_prompt" {
@@ -383,7 +367,7 @@ while 1 {
      }
 }
 
-send -s "$ptp_cmd -s &\r" 
+send -s "$ptp_cmd -s & ;tail /var/log/messages\r" 
 while 1 {
    expect {
       -re "selected .* as PTP clock" { 
@@ -400,7 +384,7 @@ while 1 {
 
 sleep 15
 
-send -s "phc2sys -i eth0 &\r" 
+send -s "phc2sys -s /dev/ptp0 -O 0 &\r" 
 while 1 {
    expect {
       -re "phc" { 
