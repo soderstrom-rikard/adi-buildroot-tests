@@ -21,7 +21,7 @@ if { $argc == 2} {
     set video_dev adv7511
 }
 
-set log_name ${video_dev}_test_log
+set log_name video_encoder_${video_dev}_test_log
 log_file $log_name
 send_user "Starting $argv0\n"
 set TITLE [title "$argv0"]
@@ -45,7 +45,7 @@ step "Start testing"
 set case_num 0
 
 # Prepare adv7842.yuv for auto test; in manual test, use video_decoder_adv7842.yuv from video_decoder test
-if [ catch {exec rcp $src_root/dl/*.yuv root@$targetip:/} ] {
+if [ catch {exec rcp $src_root/dl/adv7842.yuv root@$targetip:/} ] {
     send_user "FAIL: rcp test file to target\n"
     send_user "$errorInfo\n"
     case_fail $case_num
@@ -53,7 +53,7 @@ if [ catch {exec rcp $src_root/dl/*.yuv root@$targetip:/} ] {
     send_user "PASS: rcp test file to target\n"
 }
 
-if [ catch {exec rcp $src_root/testsuites/video_encoder/*.yuv root@$targetip:/} ] {
+if [ catch {exec rcp $src_root/testsuites/video_encoder/ntsc_for_adv7343.yuv root@$targetip:/} ] {
     send_user "FAIL: rcp test file to target\n"
     send_user "$errorInfo\n"
     case_fail $case_num
