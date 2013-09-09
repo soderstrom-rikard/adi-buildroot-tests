@@ -190,9 +190,9 @@ while 1 {
     expect {
         -re "Partition number.*:" {
             send -s "1\r"
-            expect -re "First cylinder|sector .*:"
+            expect -re "First (cylinder|sector).*:"
             send -s "\r"
-            expect -re "Last cylinder|sector.*:"
+            expect -re "Last (cylinder|sector).*:"
             send -s "$NUM_CYLINDER_DOS\r"
             expect -re "Command.*:"
             send -s "t\r"
@@ -215,9 +215,9 @@ while 1 {
     expect {
         -re "Partition number.*:" {
             send -s "2\r"
-            expect -re "First cylinder|sector .*:"
+            expect -re "First (cylinder|sector).*:"
             send -s "\r"
-            expect -re "Last cylinder|sector.*:"
+            expect -re "Last (cylinder|sector).*:"
             send -s "$NUM_CYLINDER_EXT2\r"
             expect -re "Command.*:"
             send -s "t\r"

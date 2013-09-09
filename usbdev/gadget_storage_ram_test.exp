@@ -176,11 +176,11 @@ while 1 {
             send "p\r"
             expect -re "Partition number.*:"
             send "1\r"
-            expect -re "First cylinder|sector.*:"
+            expect -re "First (cylinder|sector).*:"
             send "\r"
-            expect -re "Using default.*Last cylinder|sector.*:"
+            expect -re "Last (cylinder|sector).*:"
             send "\r"
-            expect -re "Using default.*Command.*:"
+            expect -re "Command.*:"
             send "w\r"
             while 1 {
                 expect {
