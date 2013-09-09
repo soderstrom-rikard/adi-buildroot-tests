@@ -268,7 +268,9 @@ while 1 {
 }
 incr case_num
 
-send -s "$ptp_cmd & ;tail /var/log/messages\r" 
+send -s "$ptp_cmd & \r" 
+sleep 5
+send -s "tail /var/log/messages\r" 
 while 1 {
    expect {
       -re "selected .* as PTP clock.*$kernel_prompt" { 
@@ -366,8 +368,9 @@ while 1 {
          }
      }
 }
-
-send -s "$ptp_cmd -s -q -v & ; sleep 200 ;cat /var/log/messages\r" 
+send -s "$ptp_cmd -s & \r" 
+sleep 50
+send -s "cat /var/log/messages \r" 
 while 1 {
    expect {
       -re "selected .* as PTP clock" { 
