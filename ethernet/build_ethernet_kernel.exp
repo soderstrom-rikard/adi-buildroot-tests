@@ -117,6 +117,10 @@ while 1 {
             send "Y\r"
         }
 
+        -re "host netperf.*BR2_PACKAGE_HOST_NETPERF.*\\\[.*]" {
+            send "Y\r"
+        }
+
         -re "Target ABI.*BFIN_FDPIC.*BFIN_FLAT.*\\\[.*]" {
             if { $arch == "blackfin" } {
                 send "1\r"

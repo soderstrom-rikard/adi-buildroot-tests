@@ -66,21 +66,40 @@ set timeout 5
 
 spawn /bin/sh
 expect -re  $sh_prompt
-send -s  "ps aux | grep netserver | grep -v grep | head -1 \r"
+send -s  "ps aux| grep netserver | grep -v grep | head -1 \r"
 expect "\r"
 while 1 {
    expect {
-      "netserver" {
-        break
+      -re "test +(\[0-9]+) +.*netserver.*$kernel_prompt" {
+         set process_id $expect_out(1,string)
+                case_pass $case_num
+         break
         }
 
       timeout {
-        send -s  "netserver \r"
-        expect "Starting netserver"
-        break
-        }
+         break
+         }
      }
 }
+
+if { [ info exists process_id ] } {
+send_user "\nprocess_id: $process_id \n"
+send -s  "kill -9 $process_id\r"
+while 1 {
+         expect {
+         -re "$kernel_prompt" {
+                break
+         }
+
+         timeout {
+                exit
+         }
+         }
+}
+}
+
+cd $src_root/output/build/host-netperf-*/src/
+send -s  "./netserver\r"
 
 expect -re  $sh_prompt
 set netserver_id $spawn_id
