@@ -51,7 +51,7 @@ while 1 {
         -re "(modprobe:|\[eE]rror|\[fF]ail).*$kernel_prompt" {
             case_fail $case_num
         }
-        -re "Ethernet Gadget.*g_ether ready.*(high|full)-speed.*CDC Ethernet" {
+        -re "Ethernet Gadget.*g_ether ready.*(high|full)-speed.*CDC Ethernet\r\n" {
             break
         }
         timeout {
@@ -123,6 +123,7 @@ while 1 {
     }
 }
 
+sleep 3
 incr case_num
 set timeout 5
 send "ifconfig eth2 $usb_host\r"
