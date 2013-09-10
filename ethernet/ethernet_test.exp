@@ -70,7 +70,7 @@ send -s  "ps aux| grep netserver | grep -v grep | head -1 \r"
 expect "\r"
 while 1 {
    expect {
-      -re "test +(\[0-9]+) +.*netserver.*$kernel_prompt" {
+      -re "test +(\[0-9]+) +.*netserver.*$sh_prompt" {
          set process_id $expect_out(1,string)
                 case_pass $case_num
          break
@@ -83,7 +83,7 @@ while 1 {
 }
 
 if { [ info exists process_id ] } {
-send_user "\nprocess_id: $process_id \n"
+send_log "\nprocess_id: $process_id \n"
 send -s  "kill -9 $process_id\r"
 while 1 {
          expect {
@@ -98,9 +98,18 @@ while 1 {
 }
 }
 
-cd $src_root/output/build/host-netperf-*/src/
-send -s  "./netserver\r"
+send -s  "$src_root/output/build/host-netperf-*/src/netserver\r"
+while 1 {
+   expect {
+      -re "Starting netserver.*$sh_prompt" {
+         break
+        }
 
+      timeout {
+         break
+         }
+     }
+}
 expect -re  $sh_prompt
 set netserver_id $spawn_id
 set spawn_id $kermit_spawn_id
