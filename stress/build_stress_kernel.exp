@@ -5,6 +5,14 @@ source ../common/board_info.exp
 log_file [log_file_name "$argv0"]
 send_user "Starting $argv0\n"
 
+if { $board_type == "BF533-EZKIT" } {
+    set file_num 0
+} elseif { $board_type == "BF609-EZKIT" || $board_type == "BF533-STAMP" } {
+    set file_num 2
+} else {
+    set file_num 1
+}
+
 cd $src_root/testsuites/common
 
 step "Make config."
@@ -79,6 +87,19 @@ while 1 {
 cd $src_root/testsuites/common
 
 step "Make"
+
+source  make_kernel.exp
+
+if [ catch { exec echo "ls $src_root/dl/u-boot-* | tail -$file_num | xargs -I{}   cp {} $src_root/output/target/bin" \| sh } ] {
+    send_log "\nFAIL: Copy bigfile to target folder.\n"
+    send_log "$errorInfo\n"
+} else {
+    send_log "\nPASS: Copy bigfile to target folder.\n"
+}
+
+cd $src_root/testsuites/common
+
+step "Make again"
 
 source  make_kernel.exp
 
