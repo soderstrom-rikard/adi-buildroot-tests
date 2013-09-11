@@ -53,7 +53,7 @@ if [ catch {exec rcp $src_root/dl/adv7842.yuv root@$targetip:/} ] {
     send_user "PASS: rcp test file to target\n"
 }
 
-if [ catch {exec echo "rcp $src_root/testsuites/video_encoder/*.yuv root@$targetip:/" } ] {
+if [ catch {exec echo "rcp $src_root/testsuites/video_encoder/*.yuv root@$targetip:/" \| sh } ] {
     send_user "FAIL: rcp test file to target\n"
     send_user "$errorInfo\n"
     case_fail $case_num
