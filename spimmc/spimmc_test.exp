@@ -181,7 +181,7 @@ while 1 {
         }
         -re "Command.*:" {
             send "n\r"
-            expect -re "primary.*:" 
+            expect -re "primary partition \\\(1-4\\\)"
             send "p\r"
             expect -re "Partition number.*:"
             send "1\r"
@@ -223,7 +223,7 @@ while 1 {
         }
         -re "Command.*:" {
             send "n\r"
-            expect -re "primary.*:"
+            expect -re "primary partition \\\(1-4\\\)"
             send "p\r"
             expect -re "Partition number.*:"
             send "2\r"
@@ -659,7 +659,7 @@ while 1 {
         }
         -re "Command.*:" {
             send "n\r"
-            expect -re "primary.*:"
+            expect -re "primary partition \\\(1-4\\\)"
             send "p\r"
             expect -re "Partition number.*:"
             send "1\r"
@@ -919,7 +919,7 @@ while 1 {
         }
         -re "Command.*:" {
             send "n\r"
-            expect -re "primary.*:"
+            expect -re "primary partition \\\(1-4\\\)"
             send "p\r"
             expect -re "Partition number.*:"
             send "1\r"
