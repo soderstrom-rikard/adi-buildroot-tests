@@ -70,24 +70,50 @@ send -s  "ps aux| grep netserver | grep -v grep | head -1 \r"
 expect "\r"
 while 1 {
    expect {
-      -re "test +(\[0-9]+) +.*netserver.*$sh_prompt" {
+      -re "\[a-z]\{3\}t +(\[0-9]+) +.*netserver" {
+         send_log "\nprocess_id: process_id \n"
          set process_id $expect_out(1,string)
-                case_pass $case_num
          break
         }
 
-      timeout {
+     timeout {
          break
          }
      }
 }
 
 if { [ info exists process_id ] } {
+
+set timeout 10
+send "su -\r"
+while 1 {
+    expect {
+        -re "\[pP]assword:" {
+            sleep 1
+            send "$password\r"
+            while 1 {
+                expect {
+                    -re "#" {
+                        break
+                    }
+                    timeout {
+                        send_user "FAIL: log in as root!\n"
+                    }
+                }
+            }
+            break
+        }
+        timeout {
+            send_user "FAIL: run su command!\n"
+        }
+    }
+}
+
 send_log "\nprocess_id: $process_id \n"
 send -s  "kill -9 $process_id\r"
 while 1 {
          expect {
-         -re "$kernel_prompt" {
+         -re "#" {
                 break
          }
 
@@ -101,7 +127,7 @@ while 1 {
 send -s  "$src_root/output/build/host-netperf-*/src/netserver\r"
 while 1 {
    expect {
-      -re "Starting netserver.*$sh_prompt" {
+      -re "Starting netserver.*#" {
          break
         }
 
@@ -114,7 +140,7 @@ expect -re  $sh_prompt
 set netserver_id $spawn_id
 set spawn_id $kermit_spawn_id
 
-set test_time  600
+set test_time  6
 set TransRate  0
 set Throughput 0
 
