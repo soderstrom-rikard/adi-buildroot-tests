@@ -46,6 +46,10 @@ while 1 {
             send "N\r"
         }
 
+        -re "Copy gdb server to the Target.*BR2_TOOLCHAIN_EXTERNAL_GDB_SERVER_COPY.*\\\[.*]" {
+            send "N\r"
+        }
+
         -re "libgpg-error.*BR2_PACKAGE_LIBGPG_ERROR.*\\\[.*]" {
             send "N\r"
         }
@@ -115,6 +119,10 @@ while 1 {
         }
 
         -re "dosfstools.*BR2_PACKAGE_DOSFSTOOLS.*\\\[.*]" {
+            send "N\r"
+        }
+
+        -re "libiconv.*BR2_PACKAGE_LIBICONV.*\\\[.*]" {
             send "N\r"
         }
 
