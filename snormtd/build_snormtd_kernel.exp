@@ -130,6 +130,13 @@ while 1 {
 }
 
 cd $src_root/testsuites/common
+step "Make clean."
+if { [source make_clean.exp] != 0 } {
+    send_user "\n\nFail to make clean. Exit!\n\n"
+    exit
+}
+
+cd $src_root/testsuites/common
 
 step "Make"
 
