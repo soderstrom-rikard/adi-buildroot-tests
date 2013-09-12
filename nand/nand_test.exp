@@ -368,7 +368,7 @@ incr case_num
 send -s "ls /mnt\r"
 while 1 {
     expect {
-        -re "sys.*var.*$kernel_prompt" {
+        -re "var.*$kernel_prompt" {
             case_pass $case_num
             break
         }
