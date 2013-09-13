@@ -67,11 +67,12 @@ while 1 {
         -re "($anomalous_option) \\\[\[^\]]+/.]" {
             send "\r"
         }
+# Disable dosfstools since it looks not needed in mtd case and it take too much space as it needs libiconv.
 
-        -re "dosfstools.*BR2_PACKAGE_DOSFSTOOLS.*\\\[.*]" {
-            send "Y\r"
-        }
-
+#        -re "dosfstools.*BR2_PACKAGE_DOSFSTOOLS.*\\\[.*]" {
+#            send "Y\r"
+#        }
+#
         -re "mkdosfs.*BR2_PACKAGE_DOSFSTOOLS_MKDOSFS.*\\\[.*]" {
             send "Y\r"
         }
@@ -106,6 +107,11 @@ while 1 {
 
         # Disable this config to use copy command cp normally.
         -re "Non-POSIX, but safer, copying to special nodes.*USER_BUSYBOX_FEATURE_NON_POSIX_CP.*\\\[.*]" {
+            send "N\r"
+        }
+
+        # To cut filesystem size.
+        -re "libiconv.*BR2_PACKAGE_LIBICONV.*\\\[.*]" {
             send "N\r"
         }
 
