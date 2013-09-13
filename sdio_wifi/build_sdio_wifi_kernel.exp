@@ -45,7 +45,7 @@ while 1 {
             send "Y\r"
         }
 
-        -re "Wireless extensions sysfs files.*WIRELESS_EXT_SYSFS.*\\\[.*]" {
+        -re "cfg80211 wireless extensions compatibility.*CFG80211_WEXT.*\\\[.*]" {
             send "Y\r"
         }
 
