@@ -44,7 +44,7 @@ sleep 3
 step "Gadget Ethernet config in peripheral board"
 
 incr case_num
-set timeout 5
+set timeout 10
 send "modprobe g_ether host_addr=00:dc:c8:f7:75:05 dev_addr=00:dd:dc:eb:6d:f1\r"
 while 1 {
     expect {
@@ -59,6 +59,8 @@ while 1 {
         }
     }
 }
+sleep 3
+
 send "lsmod\r"
 while 1 {
     expect {
