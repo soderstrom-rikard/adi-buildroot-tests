@@ -51,7 +51,7 @@ while 1 {
         -re "(modprobe:|\[eE]rror|\[fF]ail).*$kernel_prompt" {
             case_fail $case_num
         }
-        -re "Ethernet Gadget.*g_ether ready.*(high|full)-speed.*CDC Ethernet\r\n" {
+        -re "Ethernet Gadget.*g_ether ready.*(high|full)-speed.*CDC Ethernet.*\r\n" {
             break
         }
         timeout {
