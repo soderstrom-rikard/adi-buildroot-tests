@@ -101,7 +101,7 @@ while 1 {
 }
 
 incr case_num
-set timeout 40
+set timeout 100
 send "time dd conv=fsync if=/dev/zero of=/mnt/mmc/$FILE_SIZE.bin bs=1M count=$FILE_SIZE\r"
 while 1 {
     expect {
@@ -410,7 +410,7 @@ while 1 {
 }
 
 incr case_num
-set timeout 30
+set timeout 150
 send "time mkdosfs -F 32 /dev/$mmc_dev2\r"
 while 1 {
     expect {
