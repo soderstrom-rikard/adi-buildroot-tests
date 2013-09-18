@@ -444,12 +444,107 @@ step "Start testing"
 set case_num 0
 set Total_Count 5
 set mnt_point "/mnt/usb"
-
 set dev "/dev/sdb"
 
+
+spawn /bin/bash
+set host_spawn_id $spawn_id
+set timeout 5
+expect -re $sh_prompt
+
+incr case_num
 set timeout 15
-expect -re "Up.*Full"
-send "\r"
+send "su -\r"
+while 1 {
+    expect {
+        -re "\[pP]assword" {
+            send "$password\r"
+            continue
+        }
+        -re "\[eE]rror|\[fF]ail" {
+            case_fail $case_num
+        }
+        -re $sh_prompt {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
+
+incr case_num
+set timeout 5
+send "mkdir -p $mnt_point\r"
+while 1 {
+    expect {
+        -re "(mkdir:|\[eE]rror|\[fF]ail).*$sh_prompt" {
+            case_fail $case_num
+        }
+        -re $sh_prompt {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
+
+incr case_num
+set timeout 5
+send "mount\r"
+while 1 {
+    expect {
+        -re "$mnt_point.*$sh_prompt" {
+            send "umount $mnt_point\r"
+            while 1 {
+                expect {
+                    -re "(umount:|\[eE]rror|\[fF]ail).*$sh_prompt" {
+                        case_fail $case_num
+                    }
+                    -re $sh_prompt {
+                        break
+                    }
+                    timeout {
+                        case_fail $case_num
+                    }
+                }
+            }
+
+            send "mount\r"
+            while 1 {
+                expect {
+                    -re "$mnt_point.*$sh_prompt" {
+                        send_user "$mnt_point is still mounted\r"
+                        case_fail $case_num
+                    }
+                    -re $sh_prompt {
+                        case_pass $case_num
+                        break
+                    }
+                    timeout {
+                        case_fail $case_num
+                    }
+                }
+            }
+
+            break
+        }
+        -re $sh_prompt {
+            case_pass $case_num
+            break
+        }
+        timeout {
+            case_fail $case_num
+        }
+    }
+}
+
+
+set spawn_id $kermit_spawn_id
+set timeout 5
 expect -re $kernel_prompt
 
 incr case_num
@@ -533,54 +628,11 @@ while 1 {
     }
 }
 
-
-spawn /bin/bash
-
-set host_spawn_id $spawn_id
+set spawn_id $host_spawn_id
 set timeout 5
 expect -re $sh_prompt
 
-incr case_num
-set timeout 15
-send "su\r"
-while 1 {
-    expect {
-        -re "\[pP]assword" {
-            send "$password\r"
-            continue
-        }
-        -re "\[eE]rror|\[fF]ail" {
-            case_fail $case_num
-        }
-        -re $sh_prompt {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
-
-incr case_num
-set timeout 5
-send "mkdir -p $mnt_point\r"
-while 1 {
-    expect {
-        -re "(mkdir:|\[eE]rror|\[fF]ail).*$sh_prompt" {
-            case_fail $case_num
-        }
-        -re $sh_prompt {
-            case_pass $case_num
-            break
-        }
-        timeout {
-            case_fail $case_num
-        }
-    }
-}
-
-sleep 10
+sleep 5
 incr case_num
 set timeout 10
 send "ls $dev\r"
