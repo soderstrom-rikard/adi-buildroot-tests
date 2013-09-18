@@ -184,7 +184,7 @@ while 1 {
     }
 }
 send -s "n\r"
-expect -re "primary.*Select.*:"
+expect -re "primary.*(partition \\\(1-4\\\))|(Select.*:)"
 send -s "p\r"
 while 1 {
     expect {
@@ -209,7 +209,7 @@ while 1 {
     }
 }
 send -s "n\r"
-expect -re "primary.*Select.*:"
+expect -re "primary.*(partition \\\(1-4\\\))|(Select.*:)"
 send -s "p\r"
 while 1 {
     expect {

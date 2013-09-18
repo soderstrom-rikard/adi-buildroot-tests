@@ -609,7 +609,7 @@ while 1 {
         }
         -re "Command.*:" {
             send "n\r"
-            expect -re "primary partition \\\(1-4\\\)"
+            expect -re "primary.*(partition \\\(1-4\\\))|(Select.*:)"
             send "p\r"
             expect -re "Partition number.*:"
             send "1\r"

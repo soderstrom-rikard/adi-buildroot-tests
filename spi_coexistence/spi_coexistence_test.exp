@@ -112,7 +112,7 @@ set timeout 10
 send "fdisk /dev/$mmc_dev\r"
 expect -re "Command.*:"
 send "n\r"
-expect -re "primary partition \\\(1-4\\\)"
+expect -re "primary.*(partition \\\(1-4\\\))|(Select.*:)"
 send "p\r"
 expect -re "Partition number.*:"
 send "1\r"
