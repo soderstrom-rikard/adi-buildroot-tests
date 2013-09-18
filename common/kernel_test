@@ -749,6 +749,8 @@ do
             cp $IMAGE_DIR/vmImage $THIS_LOG/vmImage.${AUTO_TESTCASE[$i]}
             cp $IMAGE_DIR/rootfs.jffs2 $THIS_LOG/rootfs.jffs2.${AUTO_TESTCASE[$i]}
             cp $TESTSUITES_DIR/$TESTCASE_DIR/flash_images_log $THIS_LOG/flash_images_log.${AUTO_TESTCASE[$i]}
+        elif [ `echo ${AUTO_TESTCASE[$i]}|grep ide_` ] || [ ${AUTO_TESTCASE[$i]} == "cfcard" ] ; then
+            cp $IMAGE_DIR/vmImage $THIS_LOG/vmImage.${AUTO_TESTCASE[$i]}
         elif [ `echo ${AUTO_TESTCASE[$i]}|grep audio_` ] ; then
             mv $TESTSUITES_DIR/audio/audio_data $THIS_LOG/audio_data.${AUTO_TESTCASE[$i]}
         fi
