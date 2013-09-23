@@ -40,7 +40,7 @@ if { $uboot_flag == 1 } {
     send -s "reboot\r"
     send_user "sending reboot\n"
 }
-
+sleep 3
 set timeout 60
 while 1 {
     expect {
