@@ -125,15 +125,15 @@ set timeout 30
 send "opreport -l\r"
 while 1 {
     expect {
-        -re "opreport error.*No sample file found.*opcontrol --dump.*$kernel_prompt" {
-            send_user "\nSo run bfin_opcontrol --dump again\n"
+        -re "opreport error.*No sample file found.*opcontrol.*dump.*$kernel_prompt" {
+            send_user "\nNeed to run bfin_opcontrol --dump again\n"
             send "ps\r"
             expect -re $kernel_prompt
             case_pass $case_num
             break
         }
-        -re "not found|\[eE]rror|\[fF]ail|Hardware Trace" {
-            expect -re $kernel_prompt
+        -re "(not found|\[eE]rror|\[fF]ail|Hardware Trace).*$kernel_prompt" {
+            send_user "\nFAIL: error happens\n"
             case_fail $case_num
         }
         -re "Profiling through timer interrupt.*symbol name.*$kernel_prompt" {
@@ -141,7 +141,7 @@ while 1 {
             break
         }
         timeout {
-            send_log "\nopreport timeout\n"
+            send_user "\nopreport timeout\n"
             case_fail $case_num
         }
     }
