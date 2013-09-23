@@ -150,13 +150,17 @@ incr case_num
 send "v4l2_video_capture -I $video_input_num -F /video_decoder_$video_dev.yuv\r"
 while 1 {
     expect {
-        -re "\[eE]rror|\[fF]ail|Hardware Trace|SIGSEGV" {
+        -re "\[fF]ail|Hardware Trace|SIGSEGV" {
             send_user "FAIL: print error info.\n"
             case_fail $case_num
         }
-        -re "frames captured" {
+        -re "frames captured, 0 error frames" {
             case_pass $case_num
             break
+        }
+        -re "\[eE]rror" {
+            send_user "FAIL: error happens.\n"
+            case_fail $case_num
         }
         timeout {
             case_fail $case_num
