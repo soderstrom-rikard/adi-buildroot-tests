@@ -150,15 +150,15 @@ incr case_num
 send "v4l2_video_capture -I $video_input_num -F /video_decoder_$video_dev.yuv\r"
 while 1 {
     expect {
-        -re "\[fF]ail|Hardware Trace|SIGSEGV" {
+        -re "(\[fF]ail|Hardware Trace|SIGSEGV).*$kernel_prompt" {
             send_user "FAIL: print error info.\n"
             case_fail $case_num
         }
-        -re "frames captured, 0 error frames" {
+        -re "frames captured, 0 error frames.*$kernel_prompt" {
             case_pass $case_num
             break
         }
-        -re "\[eE]rror" {
+        -re "\[eE]rror.*$kernel_prompt" {
             send_user "FAIL: error happens.\n"
             case_fail $case_num
         }
@@ -167,8 +167,6 @@ while 1 {
         }
     }
 }
-
-expect -re "$kernel_prompt"
 
 if [ catch {exec rcp root@$targetip:/video_decoder_$video_dev.yuv ./} ] {
     send_user "FAIL: rcp video to host PC\n"
