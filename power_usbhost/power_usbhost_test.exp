@@ -278,6 +278,7 @@ proc pm_test_case1_rtcwake {} {
     set timeout 10
     expect -re $kernel_prompt
     expect -re "Attached SCSI removable disk"
+    sleep 2
 
     incr case_num
     set timeout 60
