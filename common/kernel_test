@@ -389,7 +389,7 @@ elif [ $BOARD_CONFIG = "BF609-EZKIT-STD" ] ; then
 
     AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[24]="1"; AUTO_RUN_STATUS[29]="1"; AUTO_RUN_STATUS[30]="1"; AUTO_RUN_STATUS[34]="1"; AUTO_RUN_STATUS[38]="1"; AUTO_RUN_STATUS[39]="1"; AUTO_RUN_STATUS[45]="1"; AUTO_RUN_STATUS[49]="1"; AUTO_RUN_STATUS[50]="1"; AUTO_RUN_STATUS[51]="1"; AUTO_RUN_STATUS[52]="1"; AUTO_RUN_STATUS[58]="1"; AUTO_RUN_STATUS[59]="1"; AUTO_RUN_STATUS[60]="1"; AUTO_RUN_STATUS[62]="1"; AUTO_RUN_STATUS[63]="1"; AUTO_RUN_STATUS[64]="1"; AUTO_RUN_STATUS[66]="1"; AUTO_RUN_STATUS[68]="1"; AUTO_RUN_STATUS[76]="1"; 
     AUTO_RUN_STATUS[$((n+4))]="1"; AUTO_RUN_STATUS[$((n+6))]="0"; AUTO_RUN_STATUS[$((n+9))]="1"; AUTO_RUN_STATUS[$((n+10))]="1"; AUTO_RUN_STATUS[$((n+11))]="1";
-    MANUAL_RUN_STATUS[0]="1"; MANUAL_RUN_STATUS[3]="1"; MANUAL_RUN_STATUS[7]="1"; MANUAL_RUN_STATUS[12]="1"; MANUAL_RUN_STATUS[23]="1"; MANUAL_RUN_STATUS[26]="1";MANUAL_RUN_STATUS[28]="1";
+    MANUAL_RUN_STATUS[0]="1"; MANUAL_RUN_STATUS[3]="1"; MANUAL_RUN_STATUS[7]="1"; MANUAL_RUN_STATUS[12]="1"; MANUAL_RUN_STATUS[15]="1"; MANUAL_RUN_STATUS[23]="1"; MANUAL_RUN_STATUS[26]="1";MANUAL_RUN_STATUS[28]="1";
 
 elif [ $BOARD_CONFIG = "BF609-EZKIT-UPGRADE" ] ; then
     BOARD_TYPE=BF609-EZKIT
@@ -425,7 +425,7 @@ elif [ $BOARD_CONFIG = "BF609-EZKIT-CAN" ] ; then
 
     AUTO_RUN_STATUS[1]="1"; AUTO_RUN_STATUS[11]="1"; AUTO_RUN_STATUS[12]="1"; AUTO_RUN_STATUS[29]="1"; AUTO_RUN_STATUS[30]="1"; AUTO_RUN_STATUS[34]="1"; AUTO_RUN_STATUS[39]="1"; AUTO_RUN_STATUS[50]="1"; AUTO_RUN_STATUS[51]="0"; AUTO_RUN_STATUS[52]="0"; AUTO_RUN_STATUS[54]="1"; AUTO_RUN_STATUS[55]="1"; AUTO_RUN_STATUS[59]="1"; AUTO_RUN_STATUS[60]="1"; 
     AUTO_RUN_STATUS[$((n+4))]="1"; AUTO_RUN_STATUS[$((n+6))]="1";
-    MANUAL_RUN_STATUS[23]="1"; MANUAL_RUN_STATUS[26]="1"
+    MANUAL_RUN_STATUS[15]="1"; MANUAL_RUN_STATUS[23]="1"; MANUAL_RUN_STATUS[26]="1";MANUAL_RUN_STATUS[28]="1";
 
 elif [ $BOARD_CONFIG = "BF609-EZKIT-FLAT" ] ; then
     BOARD_TYPE=BF609-EZKIT
@@ -743,7 +743,7 @@ do
 
 
         # backup all test results (configs, images and logs)
-        if [ ${AUTO_TESTCASE[$i]} == "sdiommc" ] || [ `echo ${AUTO_TESTCASE[$i]}|grep spimmc` ] || [ ${AUTO_TESTCASE[$i]} == "kgdb_uart" ] || [ ${AUTO_TESTCASE[$i]} == "kgdb_smp" ]; then
+        if [ ${AUTO_TESTCASE[$i]} == "sdiommc" ] || [ `echo ${AUTO_TESTCASE[$i]}|grep spimmc` ] || [ `echo ${AUTO_TESTCASE[$i]}|grep ide_` ] || [ ${AUTO_TESTCASE[$i]} == "cfcard" ] ; then
             cp $IMAGE_DIR/vmImage $THIS_LOG/vmImage.${AUTO_TESTCASE[$i]}
         elif [ `echo ${AUTO_TESTCASE[$i]}|grep jffs2` ] ; then
             cp $IMAGE_DIR/vmImage $THIS_LOG/vmImage.${AUTO_TESTCASE[$i]}
@@ -751,6 +751,8 @@ do
             cp $TESTSUITES_DIR/$TESTCASE_DIR/flash_images_log $THIS_LOG/flash_images_log.${AUTO_TESTCASE[$i]}
         elif [ `echo ${AUTO_TESTCASE[$i]}|grep audio_` ] ; then
             mv $TESTSUITES_DIR/audio/audio_data $THIS_LOG/audio_data.${AUTO_TESTCASE[$i]}
+        elif [ `echo ${AUTO_TESTCASE[$i]}|grep kgdb` ] ; then
+            cp $IMAGE_DIR/vmlinux $THIS_LOG/vmlinux.${AUTO_TESTCASE[$i]}
         fi
 
         if [ `echo ${AUTO_TESTCASE[$i]}|grep camera_` ] ; then
